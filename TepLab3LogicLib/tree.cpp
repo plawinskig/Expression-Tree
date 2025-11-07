@@ -8,3 +8,14 @@ std::string readUserName(std::istream &input, std::ostream &output)
     input >> name;
     return name;
 }
+
+Tree::Tree(Node *root, int number_of_nodes)
+{
+    root_ = root;
+    number_of_nodes_ = number_of_nodes;
+}
+
+std::string Tree::get_formula()
+{
+    return std::string();
+}

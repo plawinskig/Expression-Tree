@@ -1,6 +1,14 @@
 #include "pch.h"
 #include "node.hpp"
 
+Node::Node(Node *parent, Node *child, Node *sibling)
+	:parent_(parent),
+	child_(child),
+	sibling_(sibling)
+{
+	data_ = NO_DATA_STRING;
+}
+
 Node *Node::get_parent()
 {
 	return parent_;
@@ -19,4 +27,24 @@ Node *Node::get_sibling()
 std::string Node::get_data()
 {
 	return data_;
+}
+
+void Node::set_parent(Node *parent)
+{
+	parent_ = parent;
+}
+
+void Node::set_child(Node *child)
+{
+	child_ = child;
+}
+
+void Node::set_sibling(Node *sibling)
+{
+	sibling_ = sibling;
+}
+
+void Node::set_data(std::string data)
+{
+	data_ = data;
 }
