@@ -17,5 +17,24 @@ Tree::Tree(Node *root, int number_of_nodes)
 
 std::string Tree::get_formula()
 {
-    return std::string();
+    std::string formula;
+    get_formula(root_, formula);
+    return formula;
+}
+
+void Tree::get_formula(Node *node, std::string &formula)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    if (!formula.empty())
+    {
+        formula += FORMULA_DATA_SEPARATOR;
+    }
+
+    formula += node->get_data();
+    get_formula(node->get_child(), formula);
+    get_formula(node->get_sibling(), formula);
 }

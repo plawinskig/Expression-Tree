@@ -2,24 +2,37 @@
 #include "node.hpp"
 
 Node::Node()
-	:parent_(nullptr),
+	:up_(nullptr),
 	child_(nullptr),
 	sibling_(nullptr),
 	data_(NO_DATA_STRING)
 {
 }
 
+Node::Node(std::string data)
+	:up_(nullptr),
+	child_(nullptr),
+	sibling_(nullptr),
+	data_(data)
+{
+}
+
 Node::Node(Node *parent, Node *child, Node *sibling)
-	:parent_(parent),
+	:up_(parent),
 	child_(child),
 	sibling_(sibling),
 	data_(NO_DATA_STRING)
 {
 }
 
+bool Node::is_nil()
+{
+	return child_ == nullptr && sibling_ == nullptr;
+}
+
 Node *Node::get_parent()
 {
-	return parent_;
+	return up_;
 }
 
 Node *Node::get_child()
@@ -37,9 +50,9 @@ std::string Node::get_data()
 	return data_;
 }
 
-void Node::set_parent(Node *parent)
+void Node::set_up_node(Node *parent)
 {
-	parent_ = parent;
+	up_ = parent;
 }
 
 void Node::set_child(Node *child)
@@ -56,3 +69,4 @@ void Node::set_data(std::string data)
 {
 	data_ = data;
 }
+

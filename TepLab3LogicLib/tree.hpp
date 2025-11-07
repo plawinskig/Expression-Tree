@@ -4,6 +4,11 @@
 #include <string>
 #include "node.hpp"
 
+namespace
+{
+	std::string FORMULA_DATA_SEPARATOR = " ";
+}
+
 std::string readUserName(std::istream &input, std::ostream &output);
 
 class Tree
@@ -14,6 +19,8 @@ public:
 	std::string get_formula();
 
 private:
+	void get_formula(Node *node, std::string &formula);
+
 	Node *root_;
 	int number_of_nodes_;
 };

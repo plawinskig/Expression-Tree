@@ -11,20 +11,23 @@ class Node
 {
 public:
 	Node();
-	Node(Node *parent, Node *child = nullptr, Node *sibling = nullptr);
+	Node(std::string data);
+	Node(Node *up, Node *child = nullptr, Node *sibling = nullptr);
+
+	bool is_nil();
 
 	Node *get_parent();
 	Node *get_child();
 	Node *get_sibling();
 	std::string get_data();
 
-	void set_parent(Node *parent);
+	void set_up_node(Node *up);
 	void set_child(Node *child);
 	void set_sibling(Node *sibling);
 	void set_data(std::string data);
 
 private:
-	Node *parent_;
+	Node *up_;
 	Node *child_;
 	Node *sibling_;
 	std::string data_;
