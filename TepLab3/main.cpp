@@ -1,7 +1,8 @@
 #include "tree.hpp"
 #include <iostream>
 
-int main() {
+int main() 
+{
     std::string user = readUserName(std::cin, std::cout);
     std::cout << "Witaj, " << user << "!" << std::endl;
 
