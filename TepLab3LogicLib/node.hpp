@@ -10,6 +10,7 @@ namespace
 class Node
 {
 public:
+	Node();
 	Node(Node *parent, Node *child = nullptr, Node *sibling = nullptr);
 
 	Node *get_parent();

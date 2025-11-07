@@ -1,12 +1,20 @@
 #include "pch.h"
 #include "node.hpp"
 
+Node::Node()
+	:parent_(nullptr),
+	child_(nullptr),
+	sibling_(nullptr),
+	data_(NO_DATA_STRING)
+{
+}
+
 Node::Node(Node *parent, Node *child, Node *sibling)
 	:parent_(parent),
 	child_(child),
-	sibling_(sibling)
+	sibling_(sibling),
+	data_(NO_DATA_STRING)
 {
-	data_ = NO_DATA_STRING;
 }
 
 Node *Node::get_parent()
