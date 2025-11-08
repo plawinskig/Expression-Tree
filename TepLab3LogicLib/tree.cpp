@@ -82,7 +82,7 @@ void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
     }
 }
 
-Node *Tree::load_formula_elem_into_node(std::string formula_elem)
+Node *Tree::load_formula_elem_into_node(std::string &formula_elem)
 {
     Node *node = nullptr;
 
@@ -119,7 +119,7 @@ Node *Tree::load_formula_elem_into_node(std::string formula_elem)
     return node;
 }
 
-operation Tree::load_operation(std::string formula_elem)
+operation Tree::load_operation(std::string &formula_elem)
 {
     for (int i = 0; i < SIZE_OF_OPR_ARR; i++)
     {
@@ -134,7 +134,7 @@ operation Tree::load_operation(std::string formula_elem)
     return NOT_OPERATION;
 }
 
-std::string Tree::load_variable(std::string formula_elem)
+std::string Tree::load_variable(std::string &formula_elem)
 {
     for (int i = 0; i < formula_elem.length(); i++)
     {
@@ -152,7 +152,7 @@ std::string Tree::load_variable(std::string formula_elem)
     return formula_elem;
 }
 
-bool Tree::is_constant(std::string formula_elem)
+bool Tree::is_constant(std::string &formula_elem)
 {
     for (int i = 0; i < formula_elem.length(); i++)
     {
@@ -168,11 +168,11 @@ bool Tree::is_constant(std::string formula_elem)
 std::string Tree::get_formula()
 {
     std::string formula;
-    get_formula(root_->get_child(0), formula);
+    get_formula_helper(root_->get_child(0), formula);
     return formula;
 }
 
-void Tree::get_formula(Node *node, std::string &formula)
+void Tree::get_formula_helper(Node *node, std::string &formula)
 {
     if (node == nullptr)
     {
@@ -191,7 +191,7 @@ void Tree::get_formula(Node *node, std::string &formula)
 
     for (int i = 0; i < num_of_children; i++)
     {
-        get_formula(node->get_child(i), formula);
+        get_formula_helper(node->get_child(i), formula);
     }
 }
 

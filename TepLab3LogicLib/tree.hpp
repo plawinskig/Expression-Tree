@@ -65,13 +65,12 @@ public:
 	std::string get_formula();
 
 private:
-	void load_new_formula_helper(std::string &formula, Node *parent_node);
-	Node *load_formula_elem_into_node(std::string formula_elem);
-	operation load_operation(std::string formula_elem);
-	std::string load_variable(std::string formula_elem);
-	bool is_constant(std::string formula_elem);
-	void get_formula(Node *node, std::string &formula);
-
+	static void load_new_formula_helper(std::string &formula, Node *parent_node);
+	static Node *load_formula_elem_into_node(std::string &formula_elem);
+	static operation load_operation(std::string &formula_elem);
+	static bool is_constant(std::string &formula_elem);
+	static void get_formula_helper(Node *node, std::string &formula);
+	static std::string load_variable(std::string &formula_elem);
 	static bool is_variable_character(char chr);
 
 	Node *root_;
