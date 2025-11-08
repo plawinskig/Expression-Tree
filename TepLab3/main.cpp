@@ -44,11 +44,23 @@ int main()
 
     std::cout << formula_short << "\n";
     Tree tree_short(formula_short);
-    std::cout << tree_short.get_formula() << "\n";
+    std::cout << tree_short.get_formula() << "\n\n";
 
-    //std::cout << formula_long << "\n";
-    //Tree tree_long(formula_long);
-    //std::cout << tree_long.get_formula() << "\n";
+    std::cout << formula_long << "\n";
+    Tree tree_long(formula_long);
+    std::cout << tree_long.get_formula() << "\n\n";
+
+
+    std::string formula_short_bug = "+ * 1 & 2 a";
+    std::string formula_long_bug = "+ * 5 sin x * avg3 $a$ $b c$ 8";
+
+    std::cout << formula_short_bug << "\n";
+    Tree tree_short_bug(formula_short_bug);
+    std::cout << tree_short_bug.get_formula() << "\n\n";
+
+    std::cout << formula_long_bug << "\n";
+    Tree tree_long_bug(formula_long_bug);
+    std::cout << tree_long_bug.get_formula() << "\n\n";
 
     return 0;
 }

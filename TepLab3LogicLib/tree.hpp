@@ -7,6 +7,9 @@
 
 namespace
 {
+	const bool DEBUG_LOAD_NEW_FORMULA = false;
+	const bool ENABLE_WARNINGS = false;
+
 	const std::string FORMULA_REGEX = " ";
 
 	const struct operation
@@ -20,7 +23,7 @@ namespace
 		}
 	};
 
-	const operation DEFAULT_OPERATIONS_ARRAY[] = 
+	const operation DEFAULT_OPERATIONS_ARRAY[] =
 	{
 		{"+", 2},
 		{"-", 2},
@@ -32,7 +35,7 @@ namespace
 	};
 	const int SIZE_OF_OPR_ARR = sizeof(DEFAULT_OPERATIONS_ARRAY) / sizeof(*DEFAULT_OPERATIONS_ARRAY);
 
-	const operation NOT_OPERATION = {"_", 0};
+	const operation NOT_OPERATION = { "_", 0 };
 
 	const std::string ROOT_DATA = "[root]";
 	const int ROOT_NUMBER_OF_CHILDREN = 1;
@@ -44,6 +47,9 @@ namespace
 	const char MAX_VARIABLE_LOWER = 'z';
 	const char MIN_VARIABLE_UPPER = 'A';
 	const char MAX_VARIABLE_UPPER = 'Z';
+
+	const std::string DEFAULT_VARIABLE_NAME = "X";
+	const std::string DEFAULT_CONSTANT = "1";
 }
 
 std::string readUserName(std::istream &input, std::ostream &output);
