@@ -5,11 +5,25 @@
 #include <map>
 #include "node.hpp"
 
+#define ENABLE_DEBUGGING 0
+
+#if ENABLE_DEBUGGING
+#define LOG_DEBUG(message) (std::cout << message << "\n")
+#else
+#define LOG_DEBUG(message) ((void)0)
+#endif
+
+
+#define ENABLE_WARNINGS 0
+
+#if ENABLE_WARNINGS
+#define LOG_WARN(message) (std::cout << "[WARNING] " << message << "\n")
+#else
+#define LOG_WARN(message) ((void)0)
+#endif
+
 namespace
 {
-	const bool DEBUG_LOAD_NEW_FORMULA = false;
-	const bool ENABLE_WARNINGS = false;
-
 	const std::string FORMULA_REGEX = " ";
 
 	const struct operation

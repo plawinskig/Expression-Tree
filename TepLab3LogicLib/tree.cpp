@@ -30,11 +30,11 @@ void Tree::load_new_formula(std::string formula)
 
 void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
 {
-    if(DEBUG_LOAD_NEW_FORMULA) std::cout << "\nNew recursion for (" << formula << ") and (" << *parent_node << ")\n";
+    LOG_DEBUG("\nNew recursion for (" << formula << ") and (" << *parent_node << ")");
 
     if (parent_node->is_nil())
     {
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "End recursion for (" << formula << ") and (" << *parent_node << "): [" << *parent_node << " is nil]\n";
+        LOG_DEBUG("End recursion for (" << formula << ") and (" << *parent_node << "): [" << *parent_node << " is nil]");
         return;
     }
 
@@ -55,8 +55,8 @@ void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
             formula_tail = formula.substr(regex_idx + FORMULA_REGEX.length());
         }
 
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "\nChild: " << i << "\n";
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "Head: (" << formula_head << ")\tTail: (" << formula_tail << ")\n";
+        LOG_DEBUG("\nChild: " << i);
+        LOG_DEBUG("Head: (" << formula_head << ")\tTail: (" << formula_tail << ")");
 
         Node *child_node = load_formula_elem_into_node(formula_head);
 
@@ -67,7 +67,7 @@ void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
         }
         
         parent_node->set_child(child_node, i);
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "Connected: " << *parent_node << " ---> " << *child_node << "\n";
+        LOG_DEBUG("Connected: " << *parent_node << " ---> " << *child_node);
 
         if (!formula_tail.empty())
         {
@@ -86,7 +86,7 @@ Node *Tree::load_formula_elem_into_node(std::string &formula_elem)
     if (is_constant(formula_elem))
     {
         node = new Node(formula_elem, 0);
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "Created node: " << node << "\n";
+        LOG_DEBUG("Created node: " << node);
         return node;
     }
 
@@ -109,7 +109,7 @@ Node *Tree::load_formula_elem_into_node(std::string &formula_elem)
 
     if (node != nullptr)
     {
-        if (DEBUG_LOAD_NEW_FORMULA) std::cout << "Created node: " << node << "\n";
+        LOG_DEBUG("Created node: " << node);
     }
     
     return node;
@@ -136,10 +136,7 @@ std::string Tree::load_variable(std::string &formula_elem)
     {
         if (!is_variable_character(*it))
         {
-            if (ENABLE_WARNINGS)
-            {
-                std::cout << "[WARNING] Character '" << *it << "' is not permitted in variable names. Omitting.\n";
-            }
+            LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
 
             it = formula_elem.erase(it);
         }
