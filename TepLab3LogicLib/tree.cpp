@@ -168,7 +168,7 @@ bool Tree::is_constant(std::string formula_elem)
 std::string Tree::get_formula()
 {
     std::string formula;
-    get_formula(root_, formula);
+    get_formula(root_->get_child(0), formula);
     return formula;
 }
 
