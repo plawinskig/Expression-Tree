@@ -6,40 +6,33 @@ int main()
     //std::string user = readUserName(std::cin, std::cout);
     //std::cout << "Witaj, " << user << "!" << std::endl;
 
-    Node *plus = new Node("+");
-    Node *lmult = new Node("*");
-    Node *rmult = new Node("*");
-    Node *five = new Node("5");
-    Node *sin = new Node("sin");
-    Node *avg = new Node("avg");
-    Node *eight = new Node("8");
-    Node *x = new Node("x");
-    Node *a = new Node("a");
-    Node *b = new Node("b");
-    Node *c = new Node("c");
+    Node *plus = new Node("+", 2);
+    Node *lmult = new Node("*", 2);
+    Node *rmult = new Node("*", 2);
+    Node *five = new Node("5", 0);
+    Node *sin = new Node("sin", 1);
+    Node *avg = new Node("avg", 3);
+    Node *eight = new Node("8", 0);
+    Node *x = new Node("x", 0);
+    Node *a = new Node("a", 0);
+    Node *b = new Node("b", 0);
+    Node *c = new Node("c", 0);
     int non = 11;
 
-    //c->set_up_node(b);
-    b->set_sibling(c);
-    //b->set_up_node(a);
-    a->set_sibling(b);
-    //a->set_up_node(avg);
-    avg->set_child(a);
-    avg->set_sibling(eight);
-    //avg->set_up_node(rmult);
-    rmult->set_child(avg);
-    //rmult->set_up_node(lmult);
+    plus->set_child(lmult, 0);
+    plus->set_child(rmult, 1);
 
-    //x->set_up_node(sin);
-    sin->set_child(x);
-    //sin->set_up_node(five);
-    five->set_sibling(sin);
-    //five->set_up_node(lmult);
-    lmult->set_child(five);
-    lmult->set_sibling(rmult);
-    //lmult->set_up_node(plus);
+    lmult->set_child(five, 0);
+    lmult->set_child(sin, 1);
 
-    plus->set_child(lmult);
+    sin->set_child(x, 0);
+
+    rmult->set_child(avg, 0);
+    rmult->set_child(eight, 1);
+
+    avg->set_child(a, 0);
+    avg->set_child(b, 1);
+    avg->set_child(c, 2);
 
     Tree tree(plus, non);
     std::cout << tree.get_formula() << "\n";

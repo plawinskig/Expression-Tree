@@ -2,45 +2,48 @@
 #include "node.hpp"
 
 Node::Node()
-	:child_(nullptr),
-	sibling_(nullptr),
+	:number_of_children_(0),
+	children_array_(nullptr),
 	data_(NO_DATA_STRING)
 {
 }
 
-Node::Node(std::string data)
-	:child_(nullptr),
-	sibling_(nullptr),
+Node::Node(std::string data, int number_of_children)
+	:number_of_children_(number_of_children),
+	children_array_(new Node * [number_of_children]),
 	data_(data)
-{
-}
-
-Node::Node(Node *parent, Node *child, Node *sibling)
-	:child_(child),
-	sibling_(sibling),
-	data_(NO_DATA_STRING)
 {
 }
 
 Node::~Node()
 {
-	delete[] child_;
-	delete[] sibling_;
+	delete[] children_array_;
 }
 
 bool Node::is_nil()
 {
-	return child_ == nullptr && sibling_ == nullptr;
+	return children_array_ == nullptr;
 }
 
-Node *Node::get_child()
+Node **Node::get_children()
 {
-	return child_;
+	return children_array_;
 }
 
-Node *Node::get_sibling()
+Node *Node::get_child(int child_index)
 {
-	return sibling_;
+	if (child_index < 0 || child_index >= number_of_children_)
+	{
+		std::cerr << "Node " << data_ << " child index " << child_index << " out of bounds of " << number_of_children_ << "\n";
+		return nullptr;
+	}
+
+	return children_array_[child_index];
+}
+
+int Node::get_number_of_children()
+{
+	return number_of_children_;
 }
 
 std::string Node::get_data()
@@ -48,18 +51,54 @@ std::string Node::get_data()
 	return data_;
 }
 
-void Node::set_child(Node *child)
+bool Node::set_child(Node *child, int child_index)
 {
-	child_ = child;
+	if (child_index < 0 || child_index > number_of_children_)
+	{
+		return false;
+	}
+
+	if (child_index == number_of_children_)
+	{
+		if (children_array_ == nullptr)
+		{
+			if (number_of_children_ != 0)
+			{
+				std::cerr << "Node " << data_ << " children array is nullptr and number of children is not zero\n";
+				return false;
+			}
+
+			number_of_children_ = 1;
+			children_array_ = new Node * [number_of_children_];
+			children_array_[child_index] = child;
+
+			return true;
+		}
+
+		Node **new_children_ = new Node * [number_of_children_ + 1];
+
+		for (int i = 0; i < number_of_children_; i++)
+		{
+			new_children_[i] = children_array_[i];
+		}
+
+		new_children_[child_index] = child;
+		number_of_children_++;
+		
+		delete[] children_array_;
+		children_array_ = new_children_;
+
+		return true;
+	}
+
+	children_array_[child_index] = child;
+
+	return true;
 }
 
-void Node::set_sibling(Node *sibling)
-{
-	sibling_ = sibling;
-}
-
-void Node::set_data(std::string data)
+bool Node::set_data(std::string data)
 {
 	data_ = data;
+	return true;
 }
 

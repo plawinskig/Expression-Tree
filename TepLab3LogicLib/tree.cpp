@@ -27,17 +27,15 @@ void Tree::load_new_formula(std::string formula)
         delete root_;
     }
 
-    root_ = new Node(ROOT_DATA);
-    
-    //int formula_length = formula.length();
-    
+    root_ = new Node(ROOT_DATA, ROOT_NUMBER_OF_CHILDREN);
+        
     std::string::iterator formula_iter = formula.begin();
 
     while (formula_iter != formula.end())
     {
         std::string operation = load_formula_operation(formula_iter);
 
-        root_->set_child(new Node(operation));
+        root_->set_child(new Node(operation, 1), 0); // TODO
 
         formula_iter += operation.length();
     }
@@ -93,6 +91,11 @@ void Tree::get_formula(Node *node, std::string &formula)
 
     // preorder adding
     formula += node->get_data();
-    get_formula(node->get_child(), formula);
-    get_formula(node->get_sibling(), formula);
+
+    int num_of_children = node->get_number_of_children();
+
+    for (int i = 0; i < num_of_children; i++)
+    {
+        get_formula(node->get_child(i), formula);
+    }
 }

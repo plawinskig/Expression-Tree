@@ -12,6 +12,7 @@ namespace
 	const int SIZE_OF_OPR_ARR = sizeof(DEFAULT_OPERATIONS_ARRAY) / sizeof(std::string);
 
 	const std::string ROOT_DATA = "[root]";
+	const int ROOT_NUMBER_OF_CHILDREN = 1;
 }
 
 std::string readUserName(std::istream &input, std::ostream &output);
