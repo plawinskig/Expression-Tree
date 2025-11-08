@@ -11,7 +11,7 @@ int main()
     Node rmult("*");
     Node five("5");
     Node sin("sin");
-    Node fun("fun");
+    Node avg("avg");
     Node eight("8");
     Node x("x");
     Node a("a");
@@ -19,25 +19,25 @@ int main()
     Node c("c");
     int non = 11;
 
-    c.set_up_node(&b);
+    //c.set_up_node(&b);
     b.set_sibling(&c);
-    b.set_up_node(&a);
+    //b.set_up_node(&a);
     a.set_sibling(&b);
-    a.set_up_node(&fun);
-    fun.set_child(&a);
-    fun.set_sibling(&eight);
-    fun.set_up_node(&rmult);
-    rmult.set_child(&fun);
-    rmult.set_up_node(&lmult);
+    //a.set_up_node(&avg);
+    avg.set_child(&a);
+    avg.set_sibling(&eight);
+    //avg.set_up_node(&rmult);
+    rmult.set_child(&avg);
+    //rmult.set_up_node(&lmult);
 
-    x.set_up_node(&sin);
+    //x.set_up_node(&sin);
     sin.set_child(&x);
-    sin.set_up_node(&five);
+    //sin.set_up_node(&five);
     five.set_sibling(&sin);
-    five.set_up_node(&lmult);
+    //five.set_up_node(&lmult);
     lmult.set_child(&five);
     lmult.set_sibling(&rmult);
-    lmult.set_up_node(&plus);
+    //lmult.set_up_node(&plus);
 
     plus.set_child(&lmult);
 

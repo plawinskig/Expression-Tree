@@ -9,10 +9,19 @@ std::string readUserName(std::istream &input, std::ostream &output)
     return name;
 }
 
-Tree::Tree(Node *root, int number_of_nodes)
+Tree::Tree(std::string formula)
 {
-    root_ = root;
-    number_of_nodes_ = number_of_nodes;
+}
+
+Tree::Tree(Node *root, int number_of_nodes)
+    :root_(root),
+    number_of_nodes_(number_of_nodes)
+{
+}
+
+void Tree::load_formula(std::string formula)
+{
+
 }
 
 std::string Tree::get_formula()
@@ -34,6 +43,7 @@ void Tree::get_formula(Node *node, std::string &formula)
         formula += FORMULA_DATA_SEPARATOR;
     }
 
+    // preorder adding
     formula += node->get_data();
     get_formula(node->get_child(), formula);
     get_formula(node->get_sibling(), formula);

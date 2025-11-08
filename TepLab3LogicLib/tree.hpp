@@ -6,7 +6,8 @@
 
 namespace
 {
-	std::string FORMULA_DATA_SEPARATOR = " ";
+	const std::string FORMULA_DATA_SEPARATOR = " ";
+	const std::string DEFAULT_FUNCTIONS_ARRAY[] = {"sin", "cos", "avg"};
 }
 
 std::string readUserName(std::istream &input, std::ostream &output);
@@ -14,8 +15,10 @@ std::string readUserName(std::istream &input, std::ostream &output);
 class Tree
 {
 public:
+	Tree(std::string formula);
 	Tree(Node *root, int number_of_nodes);
 
+	void load_formula(std::string formula);
 	std::string get_formula();
 
 private:

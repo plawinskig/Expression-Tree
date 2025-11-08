@@ -13,6 +13,7 @@ public:
 	Node();
 	Node(std::string data);
 	Node(Node *up, Node *child = nullptr, Node *sibling = nullptr);
+	~Node();
 
 	bool is_nil();
 
@@ -27,7 +28,6 @@ public:
 	void set_data(std::string data);
 
 private:
-	Node *up_;
 	Node *child_;
 	Node *sibling_;
 	std::string data_;
