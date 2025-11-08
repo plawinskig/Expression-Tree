@@ -132,16 +132,20 @@ operation Tree::load_operation(std::string &formula_elem)
 
 std::string Tree::load_variable(std::string &formula_elem)
 {
-    for (int i = 0; i < formula_elem.length(); i++)
+    for (std::string::iterator it = formula_elem.begin(); it != formula_elem.end();)
     {
-        if (!is_variable_character(formula_elem[i]))
+        if (!is_variable_character(*it))
         {
             if (ENABLE_WARNINGS)
             {
-                std::cout << "[WARNING] Character '" << formula_elem[i] << "' is not permitted in variable names. Omitting.\n";
+                std::cout << "[WARNING] Character '" << *it << "' is not permitted in variable names. Omitting.\n";
             }
 
-            formula_elem = formula_elem.erase(i, 1);
+            it = formula_elem.erase(it);
+        }
+        else
+        {
+            it++;
         }
     }
 
