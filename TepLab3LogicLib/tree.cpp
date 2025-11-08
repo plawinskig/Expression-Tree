@@ -32,36 +32,47 @@ void Tree::load_new_formula(std::string formula)
     load_new_formula_helper(formula, root_);
 }
 
-void Tree::load_new_formula_helper(std::string formula, Node *parent_node)
+void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
 {
     std::cout << "\nNew recursion for (" << formula << ") and (" << *parent_node << ")\n";
-    int regex_idx = formula.find(FORMULA_REGEX);
 
-    std::string formula_head;
-    std::string formula_tail;
-
-    if (regex_idx == -1)
+    if (parent_node->is_nil())
     {
-        formula_head = formula;
+        std::cout << "End recursion for (" << formula << ") and (" << *parent_node << "): [" << *parent_node << " is nil]\n";
+        return;
     }
-    else
-    {
-        formula_head = formula.substr(0, regex_idx);
-        formula_tail = formula.substr(regex_idx + FORMULA_REGEX.length());
-    }
-
-    std::cout << "Head: (" << formula_head << ")\tTail: (" << formula_tail << ")\n";
 
     for (int i = 0; i < parent_node->get_number_of_children(); i++)
     {
+        int regex_idx = formula.find(FORMULA_REGEX);
+
+        std::string formula_head;
+        std::string formula_tail;
+
+        if (regex_idx == -1)
+        {
+            formula_head = formula;
+        }
+        else
+        {
+            formula_head = formula.substr(0, regex_idx);
+            formula_tail = formula.substr(regex_idx + FORMULA_REGEX.length());
+        }
+
+        std::cout << "\nChild: " << i << "\n";
+        std::cout << "Head: (" << formula_head << ")\tTail: (" << formula_tail << ")\n";
+
         Node *child_node = load_formula_elem_into_node(formula_head);
         parent_node->set_child(child_node, i);
+
         std::cout << "Connected: " << *parent_node << " ---> " << *child_node << "\n";
 
         if (!formula_tail.empty())
         {
             load_new_formula_helper(formula_tail, child_node);
         }
+
+        formula = formula_tail;
     }
 }
 
@@ -71,16 +82,19 @@ Node *Tree::load_formula_elem_into_node(std::string formula_elem)
 
     if (is_constant(formula_elem))
     {
-        node = new Node("0", 0);
+        node = new Node(formula_elem, 0);
+        std::cout << "Created node: " << node << "\n";
+        return node;
     }
-    else if (is_variable(formula_elem))
+
+    operation operation = load_operation(formula_elem);
+
+    if (operation == NOT_OPERATION)
     {
         node = new Node("X", 0);
     }
     else
     {
-        operation operation = load_operation(formula_elem);
-
         node = new Node(operation.type, operation.number_of_arguments);
     }
 
@@ -105,12 +119,15 @@ operation Tree::load_operation(std::string formula_elem)
 
 bool Tree::is_constant(std::string formula_elem)
 {
-    //if ('0' <= *formula_elem <= '9')
-    //{
-    //    return true;
-    //}
-
-    return false;
+    for (int i = 0; i < formula_elem.length(); i++)
+    {
+        if (formula_elem[i] < MIN_CONSTANT_DIGIT || formula_elem[i] > MAX_CONSTANT_DIGIT)
+        {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 bool Tree::is_variable(std::string formula_elem)

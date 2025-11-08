@@ -59,7 +59,7 @@ public:
 	std::string get_formula();
 
 private:
-	void load_new_formula_helper(std::string formula, Node *parent_node);
+	void load_new_formula_helper(std::string &formula, Node *parent_node);
 	Node *load_formula_elem_into_node(std::string formula_elem);
 	operation load_operation(std::string formdla_elem);
 	bool is_constant(std::string formula_elem);

@@ -46,9 +46,9 @@ int main()
     Tree tree_short(formula_short);
     std::cout << tree_short.get_formula() << "\n";
 
-    std::cout << formula_long << "\n";
-    Tree tree_long(formula_long);
-    std::cout << tree_long.get_formula() << "\n";
+    //std::cout << formula_long << "\n";
+    //Tree tree_long(formula_long);
+    //std::cout << tree_long.get_formula() << "\n";
 
     return 0;
 }

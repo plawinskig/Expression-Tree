@@ -10,9 +10,16 @@ Node::Node()
 
 Node::Node(std::string data, int number_of_children)
 	:number_of_children_(number_of_children),
-	children_array_(new Node * [number_of_children]),
 	data_(data)
 {
+	if (number_of_children > 0)
+	{
+		children_array_ = new Node *[number_of_children];
+	}
+	else
+	{
+		children_array_ = nullptr;
+	}
 }
 
 Node::~Node()
