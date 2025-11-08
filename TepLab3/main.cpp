@@ -37,5 +37,14 @@ int main()
     Tree tree(plus, non);
     std::cout << tree.get_formula() << "\n";
 
+    std::string formula_short = "+ * 1 2 a";
+    std::string formula_long = "+ * 5 sin x * avg3 a b c 8";
+
+    Tree tree_short(formula_short);
+    std::cout << tree_short.get_formula() << "\n";
+
+    Tree tree_long(formula_long);
+    std::cout << tree_long.get_formula() << "\n";
+
     return 0;
 }

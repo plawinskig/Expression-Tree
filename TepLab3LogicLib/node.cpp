@@ -20,17 +20,17 @@ Node::~Node()
 	delete[] children_array_;
 }
 
-bool Node::is_nil()
+bool Node::is_nil() const
 {
 	return children_array_ == nullptr;
 }
 
-Node **Node::get_children()
+Node **Node::get_children() const
 {
 	return children_array_;
 }
 
-Node *Node::get_child(int child_index)
+Node *Node::get_child(int child_index) const
 {
 	if (child_index < 0 || child_index >= number_of_children_)
 	{
@@ -41,12 +41,12 @@ Node *Node::get_child(int child_index)
 	return children_array_[child_index];
 }
 
-int Node::get_number_of_children()
+int Node::get_number_of_children() const
 {
 	return number_of_children_;
 }
 
-std::string Node::get_data()
+std::string Node::get_data() const
 {
 	return data_;
 }
@@ -102,3 +102,12 @@ bool Node::set_data(std::string data)
 	return true;
 }
 
+std::ostream &operator<<(std::ostream &os, const Node *node)
+{
+	return os << node->get_data();
+}
+
+std::ostream &operator<<(std::ostream &os, const Node &node)
+{
+	return os << node.get_data();
+}

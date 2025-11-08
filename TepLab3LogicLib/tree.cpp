@@ -30,19 +30,52 @@ void Tree::load_new_formula(std::string formula)
     root_ = new Node(ROOT_DATA, ROOT_NUMBER_OF_CHILDREN);
         
     std::string::iterator formula_iter = formula.begin();
-    Node *node;
+    load_new_formula(formula_iter, root_);
+}
 
-    while (formula_iter != formula.end())
+void Tree::load_new_formula(std::string::iterator &formula_iter, Node *parent_node)
+{
+    std::cout << "Current iter: " << *formula_iter << "\tParent node: " << parent_node << "\n";
+
+    int num_of_children = parent_node->get_number_of_children();
+
+    if (num_of_children == 0)
     {
-        operation operation = load_formula_operation(formula_iter);
-
-        //node = new Node(operation, 1);
-
-        //root_->set_child(new Node(operation, 1), 0); // TODO
-
-        formula_iter += operation.type.length();
+        std::cout << "Current iter has no children\n";
+        return;
     }
 
+    for (int i = 0; i < num_of_children; i++)
+    {
+        std::cout << "Current iter: " << *formula_iter << "\tChild no. " << i << "\n";
+        
+        if (is_whitespace(formula_iter))
+        {
+            std::cout << "Not connected\n";
+            formula_iter++;
+            i--;
+        }
+        else if (is_constant(formula_iter))
+        {
+
+        }
+        else if (is_variable(formula_iter))
+        {
+
+        }
+        else
+        {
+            operation operation = load_formula_operation(formula_iter);
+
+            Node *child_node = new Node(operation.type, operation.number_of_arguments);
+            parent_node->set_child(child_node, i);
+
+            std::cout << "Connected: " << parent_node << " ---> " << child_node << "\n";
+
+            formula_iter += operation.type.length();
+            load_new_formula(formula_iter, child_node);
+        }
+    }
 }
 
 operation Tree::load_formula_operation(std::string::iterator formula_iter)
@@ -56,6 +89,8 @@ operation Tree::load_formula_operation(std::string::iterator formula_iter)
             return operation;
         }
     }
+
+    return NOT_OPERATION;
 }
 
 bool Tree::is_operation(std::string::iterator formula_iter, operation &operation)
@@ -71,6 +106,34 @@ bool Tree::is_operation(std::string::iterator formula_iter, operation &operation
     }
 
     return true;
+}
+
+bool Tree::is_whitespace(std::string::iterator formula_iter)
+{
+    for (int i = 0; i < SIZE_OF_WHITESPACE_CHARS; i++)
+    {
+        if (*formula_iter == WHITESPACE_CHARS[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Tree::is_constant(std::string::iterator formula_iter)
+{
+    if ('0' <= *formula_iter <= '9')
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Tree::is_variable(std::string::iterator formula_iter)
+{
+    return false;
 }
 
 std::string Tree::get_formula()
