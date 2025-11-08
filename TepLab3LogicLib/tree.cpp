@@ -30,23 +30,26 @@ void Tree::load_new_formula(std::string formula)
     root_ = new Node(ROOT_DATA, ROOT_NUMBER_OF_CHILDREN);
         
     std::string::iterator formula_iter = formula.begin();
+    Node *node;
 
     while (formula_iter != formula.end())
     {
-        std::string operation = load_formula_operation(formula_iter);
+        operation operation = load_formula_operation(formula_iter);
 
-        root_->set_child(new Node(operation, 1), 0); // TODO
+        //node = new Node(operation, 1);
 
-        formula_iter += operation.length();
+        //root_->set_child(new Node(operation, 1), 0); // TODO
+
+        formula_iter += operation.type.length();
     }
 
 }
 
-std::string Tree::load_formula_operation(std::string::iterator formula_iter)
+operation Tree::load_formula_operation(std::string::iterator formula_iter)
 {
     for (int i = 0; i < SIZE_OF_OPR_ARR; i++)
     {
-        std::string operation = DEFAULT_OPERATIONS_ARRAY[i];
+        operation operation = DEFAULT_OPERATIONS_ARRAY[i];
 
         if (is_operation(formula_iter, operation))
         {
@@ -55,13 +58,13 @@ std::string Tree::load_formula_operation(std::string::iterator formula_iter)
     }
 }
 
-bool Tree::is_operation(std::string::iterator formula_iter, std::string operation)
+bool Tree::is_operation(std::string::iterator formula_iter, operation &operation)
 {
-    int operation_length = operation.length();
+    int operation_length = operation.type.length();
 
     for (int i = 0; i < operation_length; i++, formula_iter++)
     {
-        if (*formula_iter != operation[i])
+        if (*formula_iter != operation.type[i])
         {
             return false;
         }
