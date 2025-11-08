@@ -22,11 +22,7 @@ Tree::Tree(Node *root, int number_of_nodes)
 
 void Tree::load_new_formula(std::string formula)
 {
-    if (root_ != nullptr)
-    {
-        delete root_;
-    }
-
+    delete root_;
     root_ = new Node(ROOT_DATA, ROOT_NUMBER_OF_CHILDREN);
         
     load_new_formula_helper(formula, root_);
