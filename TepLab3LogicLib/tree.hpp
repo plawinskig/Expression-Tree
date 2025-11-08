@@ -7,7 +7,7 @@
 
 namespace
 {
-	const std::string FORMULA_DATA_SEPARATOR = " ";
+	const std::string FORMULA_REGEX = " ";
 
 	const struct operation
 	{
@@ -32,10 +32,7 @@ namespace
 	};
 	const int SIZE_OF_OPR_ARR = sizeof(DEFAULT_OPERATIONS_ARRAY) / sizeof(*DEFAULT_OPERATIONS_ARRAY);
 
-	const operation NOT_OPERATION = {" ", 0};
-
-	const char WHITESPACE_CHARS[] = {' ', '\t', '\n'};
-	const int SIZE_OF_WHITESPACE_CHARS = sizeof(WHITESPACE_CHARS) / sizeof(*WHITESPACE_CHARS);
+	const operation NOT_OPERATION = {"_", 0};
 
 	const std::string ROOT_DATA = "[root]";
 	const int ROOT_NUMBER_OF_CHILDREN = 1;
@@ -58,15 +55,15 @@ public:
 	Tree(Node *root, int number_of_nodes);
 
 	void load_new_formula(std::string formula);
+
 	std::string get_formula();
 
 private:
-	void load_new_formula(std::string::iterator &formula_iter, Node *parent_node);
-	operation load_formula_operation(std::string::iterator formdla_iter);
-	bool is_operation(std::string::iterator formula_iter, operation &operation);
-	bool is_whitespace(std::string::iterator formula_iter);
-	bool is_constant(std::string::iterator formula_iter);
-	bool is_variable(std::string::iterator formula_iter);
+	void load_new_formula_helper(std::string formula, Node *parent_node);
+	Node *load_formula_elem_into_node(std::string formula_elem);
+	operation load_operation(std::string formdla_elem);
+	bool is_constant(std::string formula_elem);
+	bool is_variable(std::string formula_elem);
 	void get_formula(Node *node, std::string &formula);
 
 	Node *root_;

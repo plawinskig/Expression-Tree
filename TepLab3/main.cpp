@@ -6,6 +6,8 @@ int main()
     //std::string user = readUserName(std::cin, std::cout);
     //std::cout << "Witaj, " << user << "!" << std::endl;
 
+    //return 0;
+
     Node *plus = new Node("+", 2);
     Node *lmult = new Node("*", 2);
     Node *rmult = new Node("*", 2);
@@ -34,15 +36,17 @@ int main()
     avg->set_child(b, 1);
     avg->set_child(c, 2);
 
-    Tree tree(plus, non);
-    std::cout << tree.get_formula() << "\n";
+    //Tree tree(plus, non);
+    //std::cout << tree.get_formula() << "\n";
 
     std::string formula_short = "+ * 1 2 a";
     std::string formula_long = "+ * 5 sin x * avg3 a b c 8";
 
+    std::cout << formula_short << "\n";
     Tree tree_short(formula_short);
     std::cout << tree_short.get_formula() << "\n";
 
+    std::cout << formula_long << "\n";
     Tree tree_long(formula_long);
     std::cout << tree_long.get_formula() << "\n";
 
