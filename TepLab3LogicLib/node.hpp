@@ -17,12 +17,10 @@ public:
 
 	bool is_nil();
 
-	Node *get_parent();
 	Node *get_child();
 	Node *get_sibling();
 	std::string get_data();
 
-	void set_up_node(Node *up);
 	void set_child(Node *child);
 	void set_sibling(Node *sibling);
 	void set_data(std::string data);

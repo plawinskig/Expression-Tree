@@ -24,7 +24,8 @@ Node::Node(Node *parent, Node *child, Node *sibling)
 
 Node::~Node()
 {
-
+	delete[] child_;
+	delete[] sibling_;
 }
 
 bool Node::is_nil()
