@@ -80,6 +80,7 @@ Node *Tree::load_formula_elem_into_node(std::string formula_elem)
 {
     Node *node;
 
+    // constant
     if (is_constant(formula_elem))
     {
         node = new Node(formula_elem, 0);
@@ -89,10 +90,13 @@ Node *Tree::load_formula_elem_into_node(std::string formula_elem)
 
     operation operation = load_operation(formula_elem);
 
+    // variable
     if (operation == NOT_OPERATION)
     {
-        node = new Node("X", 0);
+        std::string variable = load_variable(formula_elem);
+        node = new Node(variable, 0);
     }
+    // operation
     else
     {
         node = new Node(operation.type, operation.number_of_arguments);
@@ -117,22 +121,30 @@ operation Tree::load_operation(std::string formula_elem)
     return NOT_OPERATION;
 }
 
+std::string Tree::load_variable(std::string formula_elem)
+{
+    for (int i = 0; i < formula_elem.length(); i++)
+    {
+        if (!is_variable_character(formula_elem[i]))
+        {
+            formula_elem = formula_elem.erase(i, 1);
+        }
+    }
+
+    return formula_elem;
+}
+
 bool Tree::is_constant(std::string formula_elem)
 {
     for (int i = 0; i < formula_elem.length(); i++)
     {
-        if (formula_elem[i] < MIN_CONSTANT_DIGIT || formula_elem[i] > MAX_CONSTANT_DIGIT)
+        if (formula_elem[i] < MIN_DIGIT || formula_elem[i] > MAX_DIGIT)
         {
             return false;
         }
     }
     
     return true;
-}
-
-bool Tree::is_variable(std::string formula_elem)
-{
-    return false;
 }
 
 std::string Tree::get_formula()
@@ -163,4 +175,13 @@ void Tree::get_formula(Node *node, std::string &formula)
     {
         get_formula(node->get_child(i), formula);
     }
+}
+
+bool Tree::is_variable_character(char chr)
+{
+    bool is_lower_case_letter = MIN_VARIABLE_LOWER <= chr && chr <= MAX_VARIABLE_LOWER;
+    bool is_upper_case_letter = MIN_VARIABLE_UPPER <= chr && chr <= MAX_VARIABLE_UPPER;
+    bool is_digit = MIN_DIGIT <= chr && chr <= MAX_DIGIT;
+
+    return is_lower_case_letter || is_upper_case_letter || is_digit;
 }

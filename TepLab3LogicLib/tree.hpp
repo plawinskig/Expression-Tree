@@ -37,13 +37,13 @@ namespace
 	const std::string ROOT_DATA = "[root]";
 	const int ROOT_NUMBER_OF_CHILDREN = 1;
 
-	const char MIN_CONSTANT_DIGIT = '0';
-	const char MAX_CONSTANT_DIGIT = '9';
+	const char MIN_DIGIT = '0';
+	const char MAX_DIGIT = '9';
 
-	const char MIN_VARIABLE_SIGN_1 = 'a';
-	const char MAX_VARIABLE_SIGN_1 = 'z';
-	const char MIN_VARIABLE_SIGN_2 = 'A';
-	const char MAX_VARIABLE_SIGN_2 = 'Z';
+	const char MIN_VARIABLE_LOWER = 'a';
+	const char MAX_VARIABLE_LOWER = 'z';
+	const char MIN_VARIABLE_UPPER = 'A';
+	const char MAX_VARIABLE_UPPER = 'Z';
 }
 
 std::string readUserName(std::istream &input, std::ostream &output);
@@ -61,10 +61,12 @@ public:
 private:
 	void load_new_formula_helper(std::string &formula, Node *parent_node);
 	Node *load_formula_elem_into_node(std::string formula_elem);
-	operation load_operation(std::string formdla_elem);
+	operation load_operation(std::string formula_elem);
+	std::string load_variable(std::string formula_elem);
 	bool is_constant(std::string formula_elem);
-	bool is_variable(std::string formula_elem);
 	void get_formula(Node *node, std::string &formula);
+
+	static bool is_variable_character(char chr);
 
 	Node *root_;
 	int number_of_nodes_;
