@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <map>
 #include "node.hpp"
 
 #define ENABLE_DEBUGGING 0
@@ -26,31 +25,6 @@ namespace
 {
 	const std::string FORMULA_REGEX = " ";
 
-	const struct operation
-	{
-		std::string type;
-		int number_of_arguments;
-
-		bool operator==(operation other)
-		{
-			return type == other.type;
-		}
-	};
-
-	const operation DEFAULT_OPERATIONS_ARRAY[] =
-	{
-		{"+", 2},
-		{"-", 2},
-		{"*", 2},
-		{"/", 2},
-		{"sin", 1},
-		{"cos", 1},
-		{"avg3", 3}
-	};
-	const int SIZE_OF_OPR_ARR = sizeof(DEFAULT_OPERATIONS_ARRAY) / sizeof(*DEFAULT_OPERATIONS_ARRAY);
-
-	const operation NOT_OPERATION = { "_", 0 };
-
 	const std::string ROOT_DATA = "[root]";
 	const int ROOT_NUMBER_OF_CHILDREN = 1;
 
@@ -66,8 +40,6 @@ namespace
 	const std::string DEFAULT_CONSTANT = "1";
 }
 
-std::string readUserName(std::istream &input, std::ostream &output);
-
 class Tree
 {
 public:
@@ -79,14 +51,6 @@ public:
 	std::string get_formula();
 
 private:
-	static void load_new_formula_helper(std::string &formula, Node *parent_node);
-	static Node *load_formula_elem_into_node(std::string &formula_elem);
-	static operation load_operation(std::string &formula_elem);
-	static bool is_constant(std::string &formula_elem);
-	static void get_formula_helper(Node *node, std::string &formula);
-	static std::string load_variable(std::string &formula_elem);
-	static bool is_variable_character(char chr);
-
 	Node *root_;
 	int number_of_nodes_;
 };
