@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "node.hpp"
 
+Error Node::load(std::vector<std::string> nodes, int off_start, int &off_end)
+{
+    return Error();
+}
+
 bool Node::is_nil() const
 {
     return children_.empty();

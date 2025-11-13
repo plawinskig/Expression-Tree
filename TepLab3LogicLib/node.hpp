@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "error.hpp"
+
 namespace
 {
 	const std::string NO_DATA_STRING = "[no data]";
@@ -15,6 +17,7 @@ public:
 	//Node(std::string data, int number_of_children);
 	//~Node();
 
+	Error load(std::vector<std::string> nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
 	Node *get_child(int child_index) const;

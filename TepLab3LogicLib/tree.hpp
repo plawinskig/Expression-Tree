@@ -23,7 +23,7 @@
 
 namespace
 {
-	const std::string FORMULA_REGEX = " ";
+	const std::string FORMULA_SEPARATOR = " ";
 
 	const std::string ROOT_DATA = "[root]";
 	const int ROOT_NUMBER_OF_CHILDREN = 1;
@@ -49,6 +49,8 @@ public:
 	void load_new_formula(std::string formula);
 
 	std::string get_formula();
+
+	static std::vector<std::string> split(std::string formula, std::string regex = FORMULA_SEPARATOR);
 
 private:
 	Node *root_;

@@ -10,8 +10,12 @@ int main()
 
     // 0 1 2 3 4 5
 
+    //                  0123456789012
+    std::string form = "abc_def_gh_i";
 
-    for (auto i : vec)
+    std::vector<std::string> vecstr = Tree::split(form, "_");
+
+    for (auto i : vecstr)
     {
         std::cout << i << "\n";
     }
