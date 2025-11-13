@@ -23,9 +23,35 @@ public:
 	bool set_child(Node *child, int child_index);
 	bool set_child(Node *child);
 
+	static Node *alloc(std::string node_type);
+
 private:
 	Node *parent;
 	std::vector<Node *> children_;
+};
+
+class NodeOperation : public Node
+{
+public:
+
+private:
+
+};
+
+class NodeVariable : public Node
+{
+public:
+
+private:
+
+};
+
+class NodeValue : public Node
+{
+public:
+
+private:
+
 };
 
 std::ostream &operator<<(std::ostream &os, const Node *node);
