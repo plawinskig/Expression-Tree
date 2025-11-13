@@ -15,3 +15,8 @@ bool Error::has_occured() const
 {
 	return !message_.empty();
 }
+
+std::string Error::get_message() const
+{
+	return message_;
+}

@@ -10,6 +10,8 @@ public:
 
 	bool has_occured() const;
 
+	std::string get_message() const;
+
 private:
 	std::string message_;
 };
