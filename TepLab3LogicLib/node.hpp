@@ -46,8 +46,6 @@ namespace
 class Node
 {
 public:
-	//Node();
-	//Node(std::string data, int number_of_children);
 	virtual ~Node();
 
 	Error load(const std::vector<std::string> &nodes, int off_start, int &off_end);
@@ -64,7 +62,6 @@ public:
 	static Node *alloc(std::string node_type);
 
 private:
-
 	static bool is_value(std::string node_type);
 	static bool is_variable(std::string node_type);
 	static std::string skip_invalid_characters(std::string node_type);
@@ -116,11 +113,12 @@ public:
 class NodeVariable : public Node
 {
 public:
-	NodeVariable(std::string name);
+	NodeVariable(std::string name, int value = DEFAULT_VALUE);
 
 	void set_value(int value);
 	
 	virtual int get_value();
+	std::string get_name();
 
 private:
 	std::string name_;
@@ -131,7 +129,7 @@ class NodeValue : public Node
 {
 public:
 	NodeValue(std::string value);
-	NodeValue(int value);
+	NodeValue(int value = DEFAULT_VALUE);
 
 	virtual int get_value();
 

@@ -115,9 +115,9 @@ std::string Node::skip_invalid_characters(std::string node_type)
     return node_type;
 }
 
-NodeVariable::NodeVariable(std::string name)
+NodeVariable::NodeVariable(std::string name, int value)
     :name_(name),
-    value_(DEFAULT_VALUE)
+    value_(value)
 {
 }
 
@@ -187,6 +187,11 @@ int NodeOperationCos::get_value()
 int NodeVariable::get_value()
 {
     return value_;
+}
+
+std::string NodeVariable::get_name()
+{
+    return name_;
 }
 
 NodeValue::NodeValue(std::string value)
