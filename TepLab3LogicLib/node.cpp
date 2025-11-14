@@ -22,8 +22,8 @@ Error Node::load(const std::vector<std::string> nodes, int off_start, int &off_e
     for (int i = 0; i < get_number_of_children(); i++)
     {
         Node *child = alloc(nodes.at(off_start));
-
-        //if (child->is_operation)
+        // nie, zrob num of child
+        //if (dynamic_cast<NodeOperation *> (child))
         //{
         //    for(int j = 0; j < DEFAULT_OPERATIONS.at(child->))
         //}
@@ -132,9 +132,9 @@ bool Node::is_variable(std::string node_type)
 
 bool Node::is_operation(std::string node_type)
 {
-    for (std::map<std::string, int>::const_iterator it = DEFAULT_OPERATIONS.begin(); it != DEFAULT_OPERATIONS.end(); it++)
+    for (int i = 0; i < OP_COUNT; i++)
     {
-        if (node_type == it->first)
+        if (node_type == OP_SYMBOLS[i])
         {
             return true;
         }

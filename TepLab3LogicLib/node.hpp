@@ -30,17 +30,19 @@ namespace
 	const int DEFAULT_VALUE = 1;
 	const int VALUE_BASE = 10;
 
-	const std::map<std::string, int> DEFAULT_OPERATIONS =
+	const enum
 	{
-		// type, number of input vars/vals
-		{"+", 2},
-		{"-", 2},
-		{"*", 2},
-		{"/", 2},
-		{"sin", 1},
-		{"cos", 1},
-		//{"avg3", 3}
+		OP_ADDITION_INDEX,
+		OP_SUBTRACTION_INDEX,
+		OP_MULTIPLICATION_INDEX,
+		OP_DIVISION_INDEX,
+		OP_SIN_INDEX,
+		OP_COS_INDEX,
+		OP_COUNT
 	};
+
+	static const char *OP_SYMBOLS[OP_COUNT] = { "+", "-", "*", "/", "sin", "cos" };
+	static const int OP_NUM_OF_ARGS[OP_COUNT] = { 2, 2, 2, 2, 1, 1 };
 }
 
 class Node
