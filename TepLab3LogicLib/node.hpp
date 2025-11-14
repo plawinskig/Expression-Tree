@@ -5,9 +5,40 @@
 
 #include "error.hpp"
 
+#define ENABLE_DEBUGGING 0
+
+#if ENABLE_DEBUGGING
+#define LOG_DEBUG(message) (std::cout << message << "\n")
+#else
+#define LOG_DEBUG(message) ((void)0)
+#endif
+
+
+#define ENABLE_WARNINGS 0
+
+#if ENABLE_WARNINGS
+#define LOG_WARN(message) (std::cout << "[WARNING] " << message << "\n")
+#else
+#define LOG_WARN(message) ((void)0)
+#endif
+
 namespace
 {
 	const std::string NO_DATA_STRING = "[no data]";
+
+	const std::string ROOT_DATA = "[root]";
+	const int ROOT_NUMBER_OF_CHILDREN = 1;
+
+	const char MIN_DIGIT = '0';
+	const char MAX_DIGIT = '9';
+
+	const char MIN_VARIABLE_LOWER = 'a';
+	const char MAX_VARIABLE_LOWER = 'z';
+	const char MIN_VARIABLE_UPPER = 'A';
+	const char MAX_VARIABLE_UPPER = 'Z';
+
+	const std::string DEFAULT_VARIABLE_NAME = "X";
+	const std::string DEFAULT_CONSTANT = "1";
 }
 
 class Node
@@ -17,7 +48,7 @@ public:
 	//Node(std::string data, int number_of_children);
 	//~Node();
 
-	Error load(std::vector<std::string> nodes, int off_start, int &off_end);
+	Error load(const std::vector<std::string> &nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
 	Node *get_child(int child_index) const;
@@ -29,6 +60,12 @@ public:
 	static Node *alloc(std::string node_type);
 
 private:
+
+	static bool is_constant(std::string node_type);
+	static bool is_variable(std::string node_type);
+	static std::string skip_invalid_characters(std::string node_type);
+	static bool is_variable_character(char chr, bool is_first = false);
+
 	Node *parent;
 	std::vector<Node *> children_;
 };

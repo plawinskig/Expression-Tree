@@ -8,7 +8,7 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "tree.hpp"
+//#include "tree.hpp"
 #include "node.hpp"
 
 #endif //PCH_H
