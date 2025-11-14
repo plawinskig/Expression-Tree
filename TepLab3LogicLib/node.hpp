@@ -73,6 +73,8 @@ private:
 
 class NodeOperation : public Node
 {
+public:
+	static NodeOperation *make_operation(std::string operation);
 };
 
 class NodeOperationAddition : public NodeOperation

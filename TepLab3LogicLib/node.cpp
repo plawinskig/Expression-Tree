@@ -235,3 +235,38 @@ int NodeValue::get_value()
 {
     return value_;
 }
+
+NodeOperation *NodeOperation::make_operation(std::string operation)
+{
+    if (operation == "+")
+    {
+        return new NodeOperationAddition();
+    }
+
+    else if (operation == "-")
+    {
+        return new NodeOperationSubtraction();
+    }
+
+    else if (operation == "*")
+    {
+        return new NodeOperationMultiplication();
+    }
+
+    else if (operation == "/")
+    {
+        return new NodeOperationDivision();
+    }
+
+    else if (operation == "sin")
+    {
+        return new NodeOperationSin();
+    }
+
+    else if (operation == "cos")
+    {
+        return new NodeOperationCos();
+    }
+
+    return nullptr;
+}
