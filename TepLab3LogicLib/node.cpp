@@ -59,8 +59,22 @@ bool Node::set_child(Node *child)
 
 Node *Node::alloc(std::string node_type)
 {
+    Node *node = nullptr;
 
-    return nullptr;
+    if (is_value(node_type))
+    {
+        node = new NodeValue(node_type);
+    }
+    else if (is_variable(node_type))
+    {
+        node = new NodeVariable(node_type);
+    }
+    else
+    {
+        //node = new NodeOperation();
+    }
+
+    return node;
 }
 
 bool Node::is_value(std::string node_type)
@@ -94,6 +108,19 @@ bool Node::is_variable(std::string node_type)
     }
 
     return !has_only_digits;
+}
+
+bool Node::is_operation(std::string node_type)
+{
+    for (std::map<std::string, int>::const_iterator it = DEFAULT_OPERATIONS.begin(); it != DEFAULT_OPERATIONS.end(); it++)
+    {
+        if (node_type == it->first)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 std::string Node::skip_invalid_characters(std::string node_type)

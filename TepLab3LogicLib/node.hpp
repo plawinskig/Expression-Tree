@@ -64,6 +64,7 @@ public:
 private:
 	static bool is_value(std::string node_type);
 	static bool is_variable(std::string node_type);
+	static bool is_operation(std::string node_type);
 	static std::string skip_invalid_characters(std::string node_type);
 
 	Node *parent_;
