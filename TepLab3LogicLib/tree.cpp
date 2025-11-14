@@ -5,18 +5,25 @@ std::vector<std::string> Tree::split(std::string formula, std::string separator)
 {
     std::vector<std::string> result;
 
-    std::string::size_type regex_index = formula.find(separator);
+    std::string::size_type next_regex_index = formula.find(separator);
     std::string::size_type regex_length = separator.length();
     std::string::size_type offset = 0;
 
-    while (regex_index != std::string::npos)
+    while (next_regex_index != std::string::npos)
     {
-        result.push_back(formula.substr(offset, regex_index - offset));
-        offset = regex_index + regex_length;
-        regex_index = formula.find(separator, offset);
+        if (next_regex_index > offset)
+        {
+            result.push_back(formula.substr(offset, next_regex_index - offset));
+        }
+
+        offset = next_regex_index + regex_length;
+        next_regex_index = formula.find(separator, offset);
     }
 
-    result.push_back(formula.substr(offset));
+    if (offset < formula.length())
+    {
+        result.push_back(formula.substr(offset));
+    }
 
     return result;
 }

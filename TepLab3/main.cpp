@@ -11,7 +11,7 @@ int main()
     // 0 1 2 3 4 5
 
     //                  0123456789012
-    std::string form = "abc_def_gh_i";
+    std::string form = "______abc_def_gh____i_";
 
     std::vector<std::string> vecstr = Tree::split(form, "_");
 
