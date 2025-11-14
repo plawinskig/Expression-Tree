@@ -48,7 +48,7 @@ class Node
 public:
 	virtual ~Node();
 
-	Error load(const std::vector<std::string> &nodes, int off_start, int &off_end);
+	Error load(const std::vector<std::string> nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
 	virtual int get_value() = 0;
@@ -76,6 +76,8 @@ private:
 class NodeOperation : public Node
 {
 public:
+	//virtual std::string get_type() = 0;
+
 	static NodeOperation *make_operation(std::string operation);
 };
 

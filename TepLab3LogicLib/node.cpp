@@ -12,14 +12,23 @@ Node::~Node()
     }
 }
 
-Error Node::load(const std::vector<std::string> &nodes, int off_start, int &off_end)
+Error Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
 {
     if (is_nil())
     {
         return Error();
     }
 
-    Node *child = alloc(nodes.at(off_start));
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        Node *child = alloc(nodes.at(off_start));
+
+        //if (child->is_operation)
+        //{
+        //    for(int j = 0; j < DEFAULT_OPERATIONS.at(child->))
+        //}
+
+    }
 
     return Error();
 }
