@@ -25,18 +25,6 @@
 namespace
 {
 	const std::string NO_DATA_STRING = "[no data]";
-
-	const std::string ROOT_DATA = "[root]";
-	const int ROOT_NUMBER_OF_CHILDREN = 1;
-
-	const char MIN_DIGIT = '0';
-	const char MAX_DIGIT = '9';
-
-	const char MIN_VARIABLE_LOWER = 'a';
-	const char MAX_VARIABLE_LOWER = 'z';
-	const char MIN_VARIABLE_UPPER = 'A';
-	const char MAX_VARIABLE_UPPER = 'Z';
-
 	const std::string DEFAULT_VARIABLE_NAME = "X";
 	const std::string DEFAULT_CONSTANT = "1";
 }

@@ -58,12 +58,12 @@ bool Node::is_value(std::string node_type)
 {
     for (std::string::iterator it = node_type.begin(); it != node_type.end(); it++)
     {
-        if (*it < MIN_DIGIT || *it > MAX_DIGIT)
+        if (!std::isdigit(*it))
         {
             return false;
         }
     }
-
+    
     return true;
 }
 
