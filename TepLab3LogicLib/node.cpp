@@ -2,6 +2,15 @@
 #include "node.hpp"
 
 #include <cctype>
+#include <cmath>
+
+Node::~Node()
+{
+    for (std::vector<Node *>::iterator it = children_.begin(); it != children_.end(); it++)
+    {
+        delete *it;
+    }
+}
 
 Error Node::load(const std::vector<std::string> &nodes, int off_start, int &off_end)
 {
@@ -104,4 +113,93 @@ std::string Node::skip_invalid_characters(std::string node_type)
     }
 
     return node_type;
+}
+
+NodeVariable::NodeVariable(std::string name)
+    :name_(name),
+    value_(DEFAULT_VALUE)
+{
+}
+
+void NodeVariable::set_value(int value)
+{
+    value_ = value;
+}
+
+int NodeOperationAddition::get_value()
+{
+    int result = 0;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        result += get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+int NodeOperationSubtraction::get_value()
+{
+    int result = get_child(0)->get_value();
+
+    for (int i = 1; i < get_number_of_children(); i++)
+    {
+        result -= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+int NodeOperationMultiplication::get_value()
+{
+    int result = 1;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        result *= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+int NodeOperationDivision::get_value()
+{
+    int result = get_child(0)->get_value();
+
+    for (int i = 1; i < get_number_of_children(); i++)
+    {
+        result /= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+int NodeOperationSin::get_value()
+{
+    return std::sin(get_child(0)->get_value());
+}
+
+int NodeOperationCos::get_value()
+{
+    return std::cos(get_child(0)->get_value());
+}
+
+int NodeVariable::get_value()
+{
+    return value_;
+}
+
+NodeValue::NodeValue(std::string value)
+    :value_(std::atoi(value.c_str()))
+{
+}
+
+NodeValue::NodeValue(int value)
+    :value_(value)
+{
+}
+
+int NodeValue::get_value()
+{
+    return value_;
 }
