@@ -80,7 +80,7 @@ Node *Node::alloc(std::string node_type)
     {
         node = new NodeVariable(node_type);
     }
-    else
+    else if(is_operation(node_type))
     {
         node = NodeOperation::make_operation(node_type);
     }
