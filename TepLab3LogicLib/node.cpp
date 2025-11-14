@@ -29,6 +29,11 @@ bool Node::is_nil() const
     return children_.empty();
 }
 
+Node *Node::get_parent() const
+{
+    return parent_;
+}
+
 Node *Node::get_child(int child_index) const
 {
     return children_.at(child_index);
@@ -37,6 +42,12 @@ Node *Node::get_child(int child_index) const
 int Node::get_number_of_children() const
 {
     return children_.size();
+}
+
+bool Node::set_parent(Node *parent)
+{
+    parent_ = parent;
+    return true;
 }
 
 bool Node::set_child(Node *child, int child_index)
@@ -71,7 +82,7 @@ Node *Node::alloc(std::string node_type)
     }
     else
     {
-        //node = new NodeOperation();
+        node = NodeOperation::make_operation(node_type);
     }
 
     return node;

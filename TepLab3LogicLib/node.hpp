@@ -52,10 +52,12 @@ public:
 	bool is_nil() const;
 
 	virtual int get_value() = 0;
-
+	
+	Node *get_parent() const;
 	Node *get_child(int child_index) const;
 	int get_number_of_children() const;
 
+	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
 	bool set_child(Node *child);
 
