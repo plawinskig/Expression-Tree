@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "node.hpp"
 
+#include <cctype>
+
 Error Node::load(const std::vector<std::string> &nodes, int off_start, int &off_end)
 {
     if (is_nil())
@@ -52,11 +54,11 @@ Node *Node::alloc(std::string node_type)
     return nullptr;
 }
 
-bool Node::is_constant(std::string node_type)
+bool Node::is_value(std::string node_type)
 {
-    for (std::string::size_type i = 0; i < node_type.length(); i++)
+    for (std::string::iterator it = node_type.begin(); it != node_type.end(); it++)
     {
-        if (node_type[i] < MIN_DIGIT || node_type[i] > MAX_DIGIT)
+        if (*it < MIN_DIGIT || *it > MAX_DIGIT)
         {
             return false;
         }
@@ -67,14 +69,29 @@ bool Node::is_constant(std::string node_type)
 
 bool Node::is_variable(std::string node_type)
 {
-    return false;
+    bool has_only_digits = true;
+
+    for (std::string::iterator it = node_type.begin(); it != node_type.end(); it++)
+    {
+        if (!std::isalnum(*it))
+        {
+            return false;
+        }
+        
+        if (!std::isdigit(*it))
+        {
+            has_only_digits = false;
+        }
+    }
+
+    return !has_only_digits;
 }
 
 std::string Node::skip_invalid_characters(std::string node_type)
 {
     for (std::string::iterator it = node_type.begin(); it != node_type.end();)
     {
-        if (!is_variable_character(*it))
+        if (!std::isalnum(*it))
         {
             LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
 
@@ -87,13 +104,4 @@ std::string Node::skip_invalid_characters(std::string node_type)
     }
 
     return node_type;
-}
-
-bool Node::is_variable_character(char chr, bool is_first)
-{
-    bool is_lower_case_letter = MIN_VARIABLE_LOWER <= chr && chr <= MAX_VARIABLE_LOWER;
-    bool is_upper_case_letter = MIN_VARIABLE_UPPER <= chr && chr <= MAX_VARIABLE_UPPER;
-    bool is_digit = MIN_DIGIT <= chr && chr <= MAX_DIGIT;
-
-    return is_lower_case_letter || is_upper_case_letter || (is_digit && !is_first);
 }

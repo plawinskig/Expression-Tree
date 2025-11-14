@@ -61,10 +61,9 @@ public:
 
 private:
 
-	static bool is_constant(std::string node_type);
+	static bool is_value(std::string node_type);
 	static bool is_variable(std::string node_type);
 	static std::string skip_invalid_characters(std::string node_type);
-	static bool is_variable_character(char chr, bool is_first = false);
 
 	Node *parent;
 	std::vector<Node *> children_;
