@@ -58,8 +58,7 @@ public:
 	Error load(const std::vector<std::string> nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
-	virtual int get_value() = 0;
-	
+	virtual int get_value() const = 0;
 	Node *get_parent() const;
 	Node *get_child(int child_index) const;
 	int get_number_of_children() const;
@@ -85,7 +84,8 @@ class NodeOperation : public Node
 public:
 	NodeOperation(int number_of_children);
 
-	virtual std::string get_type() = 0;
+	virtual std::string get_type() const = 0;
+	virtual int get_value() const = 0;
 
 	static NodeOperation *make_operation(std::string operation);
 };
@@ -95,8 +95,8 @@ class NodeOperationAddition : public NodeOperation
 public:
 	NodeOperationAddition(int number_of_children = OP_NUM_OF_ARGS[OP_ADDITION_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeOperationSubtraction : public NodeOperation
@@ -104,8 +104,8 @@ class NodeOperationSubtraction : public NodeOperation
 public:
 	NodeOperationSubtraction(int number_of_children = OP_NUM_OF_ARGS[OP_SUBTRACTION_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeOperationMultiplication : public NodeOperation
@@ -113,8 +113,8 @@ class NodeOperationMultiplication : public NodeOperation
 public:
 	NodeOperationMultiplication(int number_of_children = OP_NUM_OF_ARGS[OP_MULTIPLICATION_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeOperationDivision : public NodeOperation
@@ -122,8 +122,8 @@ class NodeOperationDivision : public NodeOperation
 public:
 	NodeOperationDivision(int number_of_children = OP_NUM_OF_ARGS[OP_DIVISION_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeOperationSin : public NodeOperation
@@ -131,8 +131,8 @@ class NodeOperationSin : public NodeOperation
 public:
 	NodeOperationSin(int number_of_children = OP_NUM_OF_ARGS[OP_SIN_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeOperationCos : public NodeOperation
@@ -140,8 +140,8 @@ class NodeOperationCos : public NodeOperation
 public:
 	NodeOperationCos(int number_of_children = OP_NUM_OF_ARGS[OP_COS_INDEX]);
 
-	virtual std::string get_type();
-	virtual int get_value();
+	virtual std::string get_type() const;
+	virtual int get_value() const;
 };
 
 class NodeVariable : public Node
@@ -151,8 +151,8 @@ public:
 
 	void set_value(int value);
 	
-	virtual int get_value();
-	std::string get_name();
+	virtual int get_value() const;
+	std::string get_name() const;
 
 private:
 	std::string name_;
@@ -165,11 +165,12 @@ public:
 	NodeValue(std::string value);
 	NodeValue(int value = DEFAULT_VALUE);
 
-	virtual int get_value();
+	virtual int get_value() const;
 
 private:
 	int value_;
 };
 
-std::ostream &operator<<(std::ostream &os, const Node *node);
-std::ostream &operator<<(std::ostream &os, const Node &node);
+std::ostream &operator<<(std::ostream &os, const NodeOperation &node);
+std::ostream &operator<<(std::ostream &os, const NodeVariable &node);
+std::ostream &operator<<(std::ostream &os, const NodeValue &node);

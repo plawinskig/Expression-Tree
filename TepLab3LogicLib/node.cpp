@@ -3,6 +3,7 @@
 
 #include <cctype>
 #include <cmath>
+#include <iostream>
 
 Node::Node(int number_of_children)
     :parent_(nullptr),
@@ -27,18 +28,16 @@ Error Node::load(const std::vector<std::string> nodes, int off_start, int &off_e
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
-        Node *child = alloc(nodes.at(off_start));
+        Node *child = alloc(nodes.at(off_start + i));
 
         if (child == nullptr)
         {
             return Error("eeeeeeeeeeeeeeeeee"); // TODO
         }
 
-        for (int j = 0; j < child->get_number_of_children(); j++)
-        {
-            // TODO
-        }
+        off_end++;
 
+        child->load(nodes, off_end, off_end);
     }
 
     return Error();
@@ -195,7 +194,7 @@ NodeOperationAddition::NodeOperationAddition(int number_of_children)
 {
 }
 
-std::string NodeOperationAddition::get_type()
+std::string NodeOperationAddition::get_type() const
 {
     return OP_SYMBOLS[OP_ADDITION_INDEX];
 }
@@ -205,7 +204,7 @@ NodeOperationSubtraction::NodeOperationSubtraction(int number_of_children)
 {
 }
 
-std::string NodeOperationSubtraction::get_type()
+std::string NodeOperationSubtraction::get_type() const
 {
     return OP_SYMBOLS[OP_SUBTRACTION_INDEX];
 }
@@ -215,7 +214,7 @@ NodeOperationMultiplication::NodeOperationMultiplication(int number_of_children)
 {
 }
 
-std::string NodeOperationMultiplication::get_type()
+std::string NodeOperationMultiplication::get_type() const
 {
     return OP_SYMBOLS[OP_MULTIPLICATION_INDEX];
 }
@@ -225,7 +224,7 @@ NodeOperationDivision::NodeOperationDivision(int number_of_children)
 {
 }
 
-std::string NodeOperationDivision::get_type()
+std::string NodeOperationDivision::get_type() const
 {
     return OP_SYMBOLS[OP_DIVISION_INDEX];
 }
@@ -235,7 +234,7 @@ NodeOperationSin::NodeOperationSin(int number_of_children)
 {
 }
 
-std::string NodeOperationSin::get_type()
+std::string NodeOperationSin::get_type() const
 {
     return OP_SYMBOLS[OP_SIN_INDEX];
 }
@@ -245,12 +244,12 @@ NodeOperationCos::NodeOperationCos(int number_of_children)
 {
 }
 
-std::string NodeOperationCos::get_type()
+std::string NodeOperationCos::get_type() const
 {
     return OP_SYMBOLS[OP_COS_INDEX];
 }
 
-int NodeOperationAddition::get_value()
+int NodeOperationAddition::get_value() const
 {
     int result = 0;
 
@@ -262,7 +261,7 @@ int NodeOperationAddition::get_value()
     return result;
 }
 
-int NodeOperationSubtraction::get_value()
+int NodeOperationSubtraction::get_value() const
 {
     int result = get_child(0)->get_value();
 
@@ -274,7 +273,7 @@ int NodeOperationSubtraction::get_value()
     return result;
 }
 
-int NodeOperationMultiplication::get_value()
+int NodeOperationMultiplication::get_value() const
 {
     int result = 1;
 
@@ -286,7 +285,7 @@ int NodeOperationMultiplication::get_value()
     return result;
 }
 
-int NodeOperationDivision::get_value()
+int NodeOperationDivision::get_value() const
 {
     int result = get_child(0)->get_value();
 
@@ -298,22 +297,22 @@ int NodeOperationDivision::get_value()
     return result;
 }
 
-int NodeOperationSin::get_value()
+int NodeOperationSin::get_value() const
 {
     return std::sin(get_child(0)->get_value());
 }
 
-int NodeOperationCos::get_value()
+int NodeOperationCos::get_value() const
 {
     return std::cos(get_child(0)->get_value());
 }
 
-int NodeVariable::get_value()
+int NodeVariable::get_value() const
 {
     return value_;
 }
 
-std::string NodeVariable::get_name()
+std::string NodeVariable::get_name() const
 {
     return name_;
 }
@@ -330,7 +329,7 @@ NodeValue::NodeValue(int value)
 {
 }
 
-int NodeValue::get_value()
+int NodeValue::get_value() const
 {
     return value_;
 }
@@ -369,4 +368,19 @@ NodeOperation *NodeOperation::make_operation(std::string operation)
     }
 
     return nullptr;
+}
+
+std::ostream &operator<<(std::ostream &os, const NodeOperation &node)
+{
+    return os << node.get_type();
+}
+
+std::ostream &operator<<(std::ostream &os, const NodeVariable &node)
+{
+    return os << node.get_name();
+}
+
+std::ostream &operator<<(std::ostream &os, const NodeValue &node)
+{
+    return os << node.get_value();
 }
