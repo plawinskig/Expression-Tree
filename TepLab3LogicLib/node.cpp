@@ -28,11 +28,16 @@ Error Node::load(const std::vector<std::string> nodes, int off_start, int &off_e
     for (int i = 0; i < get_number_of_children(); i++)
     {
         Node *child = alloc(nodes.at(off_start));
-        // nie, zrob num of child
-        //if (dynamic_cast<NodeOperation *> (child))
-        //{
-        //    for(int j = 0; j < DEFAULT_OPERATIONS.at(child->))
-        //}
+
+        if (child == nullptr)
+        {
+            return Error("eeeeeeeeeeeeeeeeee"); // TODO
+        }
+
+        for (int j = 0; j < child->get_number_of_children(); j++)
+        {
+            // TODO
+        }
 
     }
 
