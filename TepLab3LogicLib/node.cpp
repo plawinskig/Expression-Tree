@@ -329,33 +329,33 @@ int NodeValue::get_value()
 
 NodeOperation *NodeOperation::make_operation(std::string operation)
 {
-    if (operation == "+")
+    if (operation == OP_SYMBOLS[OP_ADDITION_INDEX])
     {
         NodeOperation *node = new NodeOperationAddition();
         return node;
     }
 
-    else if (operation == "-")
+    else if (operation == OP_SYMBOLS[OP_SUBTRACTION_INDEX])
     {
         return new NodeOperationSubtraction();
     }
 
-    else if (operation == "*")
+    else if (operation == OP_SYMBOLS[OP_MULTIPLICATION_INDEX])
     {
         return new NodeOperationMultiplication();
     }
 
-    else if (operation == "/")
+    else if (operation == OP_SYMBOLS[OP_DIVISION_INDEX])
     {
         return new NodeOperationDivision();
     }
 
-    else if (operation == "sin")
+    else if (operation == OP_SYMBOLS[OP_SIN_INDEX])
     {
         return new NodeOperationSin();
     }
 
-    else if (operation == "cos")
+    else if (operation == OP_SYMBOLS[OP_COS_INDEX])
     {
         return new NodeOperationCos();
     }
