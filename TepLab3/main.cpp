@@ -3,24 +3,24 @@
 #include <iostream>
 #include <vector>
 
-void print(Node &node)
-{
-    std::cout << node << " ";
-    for (int i = 0; i < node.get_number_of_children(); i++)
-    {
-        print(*(node.get_child(i)));
-    }
-}
-
 int main() 
 {
-    std::string formula = "+ * a sin / 5 6 + c dup";
-    std::vector<std::string> form_vec = Tree::split(formula, " ");
-    Node *root = Node::alloc(form_vec.at(0));
-    int n = 1;
-    root->load(form_vec, n);
+    std::string formula1 = "+ * a sin / 5 6 + c dup";
+    std::string formula2 = "+ * 5 sin x * + a b 8";
+    std::string formula3 = "+ * A sin B + A A";
 
-    print(*root);
+    Tree tree1(formula1);
+    Tree tree2(formula2);
+    Tree tree3(formula3);
+
+    std::cout << "-----------------------------\n";
+
+    std::cout << tree1.get_formula() << "\n";
+    std::cout << tree2.get_formula() << "\n";
+    std::cout << tree3.get_formula() << "\n";
+
+
+
 
     return 0;
 }

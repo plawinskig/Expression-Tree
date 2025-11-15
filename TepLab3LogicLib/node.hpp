@@ -33,6 +33,7 @@ namespace
 
 	const std::string NO_DATA_STRING = "[no data]";
 	const std::string DEFAULT_VARIABLE_NAME = "X";
+	const std::string DEFAULT_VALUE_STRING = "1";
 	const int DEFAULT_VALUE = 1;
 	const int VALUE_BASE = 10;
 
@@ -69,7 +70,7 @@ public:
 	bool set_child(Node *child, int child_index);
 	bool set_child(Node *child);
 
-	virtual void print(std::ostream &os) const = 0;
+	virtual std::string to_string() const = 0;
 
 	static Node *alloc(std::string node_type);
 
@@ -91,7 +92,7 @@ public:
 	virtual std::string get_type() const = 0;
 	virtual int get_value() const = 0;
 
-	virtual void print(std::ostream &os) const;
+	virtual std::string to_string() const;
 
 	static NodeOperation *make_operation(std::string operation);
 };
@@ -160,7 +161,7 @@ public:
 	virtual int get_value() const;
 	std::string get_name() const;
 
-	virtual void print(std::ostream &os) const;
+	virtual std::string to_string() const;
 
 private:
 	std::string name_;
@@ -170,14 +171,14 @@ private:
 class NodeValue : public Node
 {
 public:
-	NodeValue(std::string value);
-	NodeValue(int value = DEFAULT_VALUE);
+	NodeValue(std::string value = DEFAULT_VALUE_STRING);
 
 	virtual int get_value() const;
 
-	virtual void print(std::ostream &os) const;
+	virtual std::string to_string() const;
 
 private:
+	std::string value_string_;
 	int value_;
 };
 
