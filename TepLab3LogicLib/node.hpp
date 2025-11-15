@@ -25,6 +25,7 @@
 
 namespace
 {
+	const int DEFAULT_NUM_OF_CHILDREN = 0;
 	const std::string NO_DATA_STRING = "[no data]";
 	const std::string DEFAULT_VARIABLE_NAME = "X";
 	const int DEFAULT_VALUE = 1;
@@ -48,6 +49,7 @@ namespace
 class Node
 {
 public:
+	Node(int number_of_children = DEFAULT_NUM_OF_CHILDREN);
 	virtual ~Node();
 
 	Error load(const std::vector<std::string> nodes, int off_start, int &off_end);
@@ -78,7 +80,9 @@ private:
 class NodeOperation : public Node
 {
 public:
-	//virtual std::string get_type() = 0;
+	NodeOperation(int number_of_children);
+
+	virtual std::string get_type() = 0;
 
 	static NodeOperation *make_operation(std::string operation);
 };
@@ -86,36 +90,54 @@ public:
 class NodeOperationAddition : public NodeOperation
 {
 public:
+	NodeOperationAddition(int number_of_children = OP_NUM_OF_ARGS[OP_ADDITION_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 
 class NodeOperationSubtraction : public NodeOperation
 {
 public:
+	NodeOperationSubtraction(int number_of_children = OP_NUM_OF_ARGS[OP_SUBTRACTION_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 
 class NodeOperationMultiplication : public NodeOperation
 {
 public:
+	NodeOperationMultiplication(int number_of_children = OP_NUM_OF_ARGS[OP_MULTIPLICATION_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 
 class NodeOperationDivision : public NodeOperation
 {
 public:
+	NodeOperationDivision(int number_of_children = OP_NUM_OF_ARGS[OP_DIVISION_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 
 class NodeOperationSin : public NodeOperation
 {
 public:
+	NodeOperationSin(int number_of_children = OP_NUM_OF_ARGS[OP_SIN_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 
 class NodeOperationCos : public NodeOperation
 {
 public:
+	NodeOperationCos(int number_of_children = OP_NUM_OF_ARGS[OP_COS_INDEX]);
+
+	virtual std::string get_type();
 	virtual int get_value();
 };
 

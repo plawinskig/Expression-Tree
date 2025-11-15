@@ -4,6 +4,12 @@
 #include <cctype>
 #include <cmath>
 
+Node::Node(int number_of_children)
+    :parent_(nullptr),
+    children_(number_of_children, nullptr)
+{
+}
+
 Node::~Node()
 {
     for (std::vector<Node *>::iterator it = children_.begin(); it != children_.end(); it++)
@@ -173,6 +179,71 @@ void NodeVariable::set_value(int value)
     value_ = value;
 }
 
+NodeOperation::NodeOperation(int number_of_children)
+    :Node(number_of_children)
+{
+}
+
+NodeOperationAddition::NodeOperationAddition(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationAddition::get_type()
+{
+    return OP_SYMBOLS[OP_ADDITION_INDEX];
+}
+
+NodeOperationSubtraction::NodeOperationSubtraction(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationSubtraction::get_type()
+{
+    return OP_SYMBOLS[OP_SUBTRACTION_INDEX];
+}
+
+NodeOperationMultiplication::NodeOperationMultiplication(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationMultiplication::get_type()
+{
+    return OP_SYMBOLS[OP_MULTIPLICATION_INDEX];
+}
+
+NodeOperationDivision::NodeOperationDivision(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationDivision::get_type()
+{
+    return OP_SYMBOLS[OP_DIVISION_INDEX];
+}
+
+NodeOperationSin::NodeOperationSin(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationSin::get_type()
+{
+    return OP_SYMBOLS[OP_SIN_INDEX];
+}
+
+NodeOperationCos::NodeOperationCos(int number_of_children)
+    :NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationCos::get_type()
+{
+    return OP_SYMBOLS[OP_COS_INDEX];
+}
+
 int NodeOperationAddition::get_value()
 {
     int result = 0;
@@ -260,7 +331,8 @@ NodeOperation *NodeOperation::make_operation(std::string operation)
 {
     if (operation == "+")
     {
-        return new NodeOperationAddition();
+        NodeOperation *node = new NodeOperationAddition();
+        return node;
     }
 
     else if (operation == "-")

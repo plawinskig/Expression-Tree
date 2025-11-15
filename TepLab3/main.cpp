@@ -5,20 +5,15 @@
 int main() 
 {
 
-    std::vector<int> vec = { 0,1,2,4,5 };
-    vec.insert(vec.begin() + 3, 3);
+    std::vector<int> vec;
+    vec.assign(0, 5);
 
-    // 0 1 2 3 4 5
-
-    //                  0123456789012
-    std::string form = "______abc_def_gh____i_";
-
-    std::vector<std::string> vecstr = Tree::split(form, "_");
-
-    for (auto i : vecstr)
+    for (auto i : vec)
     {
-        std::cout << i << "\n";
+        std::cout << ">>> " << i << "\n";
     }
+
+    std::cout << vec.empty();
 
     return 0;
 }
