@@ -26,6 +26,9 @@
 namespace
 {
 	const int DEFAULT_NUM_OF_CHILDREN = 0;
+	const int VALUE_NUM_OF_CHILDREN = 0;
+	const int VARIABLE_NUM_OF_CHILDREN = 0;
+
 	const std::string NO_DATA_STRING = "[no data]";
 	const std::string DEFAULT_VARIABLE_NAME = "X";
 	const int DEFAULT_VALUE = 1;

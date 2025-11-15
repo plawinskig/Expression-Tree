@@ -169,7 +169,8 @@ std::string Node::skip_invalid_characters(std::string node_type)
 }
 
 NodeVariable::NodeVariable(std::string name, int value)
-    :name_(name),
+    :Node(VARIABLE_NUM_OF_CHILDREN),
+    name_(name),
     value_(value)
 {
 }
@@ -313,12 +314,14 @@ std::string NodeVariable::get_name()
 }
 
 NodeValue::NodeValue(std::string value)
-    :value_(std::atoi(value.c_str()))
+    :Node(VALUE_NUM_OF_CHILDREN),
+    value_(std::atoi(value.c_str()))
 {
 }
 
 NodeValue::NodeValue(int value)
-    :value_(value)
+    :Node(VALUE_NUM_OF_CHILDREN),
+    value_(value)
 {
 }
 
