@@ -19,26 +19,42 @@ Node::~Node()
     }
 }
 
-Error Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
+Error Node::load(const std::vector<std::string> nodes, int &off_end)
 {
+    LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
+
     if (is_nil())
     {
+        LOG_DEBUG("End recursion for nil: " << *this << "\t" << " " << off_end);
+
         return Error();
     }
 
+
     for (int i = 0; i < get_number_of_children(); i++)
     {
-        Node *child = alloc(nodes.at(off_start + i));
+        LOG_DEBUG("Continue load recursion for " << *this << "\t" << " " << off_end);
+        LOG_DEBUG("Alloc child [" << i << "/" << get_number_of_children() << "] for " << *this << "\t" << " " << off_end);
+
+        Node *child = alloc(nodes.at(off_end));
 
         if (child == nullptr)
         {
+            LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
             return Error("eeeeeeeeeeeeeeeeee"); // TODO
         }
 
+        set_child(child, i);
+        child->set_parent(this);
+
+        LOG_DEBUG("connected: " << *this << " ---> " << *child);
+
         off_end++;
 
-        child->load(nodes, off_end, off_end);
+        child->load(nodes, off_end);
     }
+
+    LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
 
     return Error();
 }
@@ -75,8 +91,12 @@ bool Node::set_child(Node *child, int child_index)
     {
         return false;
     }
+    else if (child_index == children_.size())
+    {
+        set_child(child);
+    }
 
-    children_.insert(children_.begin() + child_index, child);
+    children_.at(child_index) = child;
 
     return true;
 }
@@ -94,14 +114,17 @@ Node *Node::alloc(std::string node_type)
     if (is_value(node_type))
     {
         node = new NodeValue(node_type);
-    }
-    else if (is_variable(node_type))
-    {
-        node = new NodeVariable(node_type);
+        LOG_DEBUG("Alloc value: " << *node);
     }
     else if(is_operation(node_type))
     {
         node = NodeOperation::make_operation(node_type);
+        LOG_DEBUG("Alloc operation: " << *node);
+    }
+    else if (is_variable(node_type))
+    {
+        node = new NodeVariable(node_type);
+        LOG_DEBUG("Alloc variable: " << *node);
     }
 
     return node;
@@ -312,9 +335,19 @@ int NodeVariable::get_value() const
     return value_;
 }
 
+std::string NodeOperation::to_string() const
+{
+    return get_type();
+}
+
 std::string NodeVariable::get_name() const
 {
     return name_;
+}
+
+std::string NodeVariable::to_string() const
+{
+    return get_name();
 }
 
 NodeValue::NodeValue(std::string value)
@@ -332,6 +365,11 @@ NodeValue::NodeValue(int value)
 int NodeValue::get_value() const
 {
     return value_;
+}
+
+std::string NodeValue::to_string() const
+{
+    return "1";
 }
 
 NodeOperation *NodeOperation::make_operation(std::string operation)
@@ -370,17 +408,7 @@ NodeOperation *NodeOperation::make_operation(std::string operation)
     return nullptr;
 }
 
-std::ostream &operator<<(std::ostream &os, const NodeOperation &node)
+std::ostream &operator<<(std::ostream &os, const Node &node)
 {
-    return os << node.get_type();
-}
-
-std::ostream &operator<<(std::ostream &os, const NodeVariable &node)
-{
-    return os << node.get_name();
-}
-
-std::ostream &operator<<(std::ostream &os, const NodeValue &node)
-{
-    return os << node.get_value();
+    return os << node.to_string();
 }

@@ -6,7 +6,7 @@
 
 #include "error.hpp"
 
-#define ENABLE_DEBUGGING 0
+#define ENABLE_DEBUGGING 1
 
 #if ENABLE_DEBUGGING
 #define LOG_DEBUG(message) (std::cout << message << "\n")
@@ -28,6 +28,8 @@ namespace
 	const int DEFAULT_NUM_OF_CHILDREN = 0;
 	const int VALUE_NUM_OF_CHILDREN = 0;
 	const int VARIABLE_NUM_OF_CHILDREN = 0;
+
+	const int INT_BUFFER_SIZE = 20;
 
 	const std::string NO_DATA_STRING = "[no data]";
 	const std::string DEFAULT_VARIABLE_NAME = "X";
@@ -55,7 +57,7 @@ public:
 	Node(int number_of_children = DEFAULT_NUM_OF_CHILDREN);
 	virtual ~Node();
 
-	Error load(const std::vector<std::string> nodes, int off_start, int &off_end);
+	Error load(const std::vector<std::string> nodes, int &off_end);
 	bool is_nil() const;
 
 	virtual int get_value() const = 0;
@@ -66,6 +68,8 @@ public:
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
 	bool set_child(Node *child);
+
+	virtual std::string to_string() const = 0;
 
 	static Node *alloc(std::string node_type);
 
@@ -86,6 +90,8 @@ public:
 
 	virtual std::string get_type() const = 0;
 	virtual int get_value() const = 0;
+
+	virtual std::string to_string() const;
 
 	static NodeOperation *make_operation(std::string operation);
 };
@@ -154,6 +160,8 @@ public:
 	virtual int get_value() const;
 	std::string get_name() const;
 
+	virtual std::string to_string() const;
+
 private:
 	std::string name_;
 	int value_;
@@ -167,10 +175,10 @@ public:
 
 	virtual int get_value() const;
 
+	virtual std::string to_string() const;
+
 private:
 	int value_;
 };
 
-std::ostream &operator<<(std::ostream &os, const NodeOperation &node);
-std::ostream &operator<<(std::ostream &os, const NodeVariable &node);
-std::ostream &operator<<(std::ostream &os, const NodeValue &node);
+std::ostream &operator<<(std::ostream &os, const Node &node);
