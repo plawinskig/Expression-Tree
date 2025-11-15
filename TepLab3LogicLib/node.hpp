@@ -69,7 +69,7 @@ public:
 	bool set_child(Node *child, int child_index);
 	bool set_child(Node *child);
 
-	virtual std::string to_string() const = 0;
+	virtual void print(std::ostream &os) const = 0;
 
 	static Node *alloc(std::string node_type);
 
@@ -91,7 +91,7 @@ public:
 	virtual std::string get_type() const = 0;
 	virtual int get_value() const = 0;
 
-	virtual std::string to_string() const;
+	virtual void print(std::ostream &os) const;
 
 	static NodeOperation *make_operation(std::string operation);
 };
@@ -160,7 +160,7 @@ public:
 	virtual int get_value() const;
 	std::string get_name() const;
 
-	virtual std::string to_string() const;
+	virtual void print(std::ostream &os) const;
 
 private:
 	std::string name_;
@@ -175,7 +175,7 @@ public:
 
 	virtual int get_value() const;
 
-	virtual std::string to_string() const;
+	virtual void print(std::ostream &os) const;
 
 private:
 	int value_;

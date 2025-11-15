@@ -335,9 +335,9 @@ int NodeVariable::get_value() const
     return value_;
 }
 
-std::string NodeOperation::to_string() const
+void NodeOperation::print(std::ostream &os) const
 {
-    return get_type();
+    os << get_type();
 }
 
 std::string NodeVariable::get_name() const
@@ -345,9 +345,9 @@ std::string NodeVariable::get_name() const
     return name_;
 }
 
-std::string NodeVariable::to_string() const
+void NodeVariable::print(std::ostream &os) const
 {
-    return get_name();
+    os << get_name();
 }
 
 NodeValue::NodeValue(std::string value)
@@ -367,9 +367,9 @@ int NodeValue::get_value() const
     return value_;
 }
 
-std::string NodeValue::to_string() const
+void NodeValue::print(std::ostream &os) const
 {
-    return "1";
+    os << get_value();
 }
 
 NodeOperation *NodeOperation::make_operation(std::string operation)
@@ -410,5 +410,6 @@ NodeOperation *NodeOperation::make_operation(std::string operation)
 
 std::ostream &operator<<(std::ostream &os, const Node &node)
 {
-    return os << node.to_string();
+    node.print(os);
+    return os;
 }
