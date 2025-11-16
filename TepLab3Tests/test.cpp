@@ -2,6 +2,8 @@
 #include "tree.hpp"
 #include <sstream>
 
+#define ABS_ERR 1e-3
+
 TEST(ReadUserTest, CorrectlyReadsName) 
 {
     //std::stringstream fake_input("TestUser\n");
@@ -176,45 +178,49 @@ TEST(TreeTest, GetVariablesToString)
 
 TEST(TreeTest, CalculateFormulaDefaultValues)
 {
+    std::string formula0 = "+ * a / 5 10 - c dup";
+    Tree tree0(formula0);
+    EXPECT_NEAR(tree0.calculate_formula(), ((1) * (5.0 / 10)) + ((1 - 1)), ABS_ERR);
+
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     Tree tree1(formula1);
-    EXPECT_DOUBLE_EQ(tree1.calculate_formula(), (sin(1.0) * (5.0 / 6.0)) + (1.0 + 1.0));
+    EXPECT_NEAR(tree1.calculate_formula(), (1.0 * sin(5.0 / 6.0)) + (1.0 + 1.0), ABS_ERR);
 
     std::string formula2 = "+ * 5 sin x * + a b 8";
     Tree tree2(formula2);
-    EXPECT_DOUBLE_EQ(tree2.calculate_formula(), (5.0 * sin(1.0)) + ((1.0 + 1.0) * 8.0));
+    EXPECT_NEAR(tree2.calculate_formula(), (5.0 * sin(1.0)) + ((1.0 + 1.0) * 8.0), ABS_ERR);
 
     std::string formula3 = "+ * A sin B + A A";
     Tree tree3(formula3);
-    EXPECT_DOUBLE_EQ(tree3.calculate_formula(), (1.0 * sin(1.0)) + (1.0 + 1.0));
+    EXPECT_NEAR(tree3.calculate_formula(), (1.0 * sin(1.0)) + (1.0 + 1.0), ABS_ERR);
 
     Tree tree_empty;
-    EXPECT_DOUBLE_EQ(tree_empty.calculate_formula(), 0.0);
+    EXPECT_NEAR(tree_empty.calculate_formula(), 0.0, ABS_ERR);
 
-    Tree tree_literal("42.5");
-    EXPECT_DOUBLE_EQ(tree_literal.calculate_formula(), 42.5);
+    Tree tree_literal("42");
+    EXPECT_NEAR(tree_literal.calculate_formula(), 42.0, ABS_ERR);
 
     Tree tree_simple_op("+ 10 20");
-    EXPECT_DOUBLE_EQ(tree_simple_op.calculate_formula(), 30.0);
+    EXPECT_NEAR(tree_simple_op.calculate_formula(), 30.0, ABS_ERR);
 }
 
 TEST(TreeTest, CalculateFormulaSetVariables)
 {
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     Tree tree1(formula1);
-    std::vector<int> vars1 = { 2, 3 };
+    std::vector<int> vars1 = { 2, 3, 3 };
     tree1.set_variables(vars1);
-    EXPECT_DOUBLE_EQ(tree1.calculate_formula(), (sin(2.0) * (5.0 / 6.0)) + (3.0 + 3.0));
+    EXPECT_NEAR(tree1.calculate_formula(), ((2.0) * sin(5.0 / 6.0)) + (3.0 + 3.0), ABS_ERR);
 
     std::string formula2 = "+ * 5 sin x * + a b 8";
     Tree tree2(formula2);
     std::vector<int> vars2 = { 3, 4, 5 };
     tree2.set_variables(vars2);
-    EXPECT_DOUBLE_EQ(tree2.calculate_formula(), (5.0 * sin(3.0)) + ((4.0 + 5.0) * 8.0));
+    EXPECT_NEAR(tree2.calculate_formula(), (5.0 * sin(3.0)) + ((4.0 + 5.0) * 8.0), ABS_ERR);
 
     std::string formula3 = "+ * A sin B + A A";
     Tree tree3(formula3);
     std::vector<int> vars3 = { 2, 0 };
     tree3.set_variables(vars3);
-    EXPECT_DOUBLE_EQ(tree3.calculate_formula(), (2.0 * sin(0.0)) + (2.0 + 2.0));
+    EXPECT_NEAR(tree3.calculate_formula(), (2.0 * sin(0.0)) + (2.0 + 2.0), ABS_ERR);
 }

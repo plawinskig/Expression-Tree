@@ -61,12 +61,17 @@ void Tree::join(Tree &other)
     delete connector;
     other.root_ = nullptr;
 
-    variables_.clear();
-    root_->get_variables(variables_);
+    //variables_.clear();
+    //root_->get_variables(variables_);
 }
 
 float Tree::calculate_formula() const
 {
+    if (is_empty())
+    {
+        return 0.0f;
+    }
+
     return root_->get_value();
 }
 
@@ -122,6 +127,11 @@ std::string Tree::get_level_to_string(int level) const
 
 std::string Tree::get_variables_to_string() const
 {
+    if (variables_.empty())
+    {
+        return std::string();
+    }
+
     std::string result = variables_.front()->get_name();
 
     for (int i = 1; i < variables_.size(); i++)
