@@ -79,6 +79,20 @@ int Node::get_number_of_children() const
     return children_.size();
 }
 
+int Node::get_level() const
+{
+    int level = 0;
+    Node *parent = parent_;
+
+    while (parent)
+    {
+        level++;
+        parent = parent->get_parent();
+    }
+
+    return level;
+}
+
 bool Node::set_parent(Node *parent)
 {
     parent_ = parent;

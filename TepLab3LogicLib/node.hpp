@@ -6,7 +6,7 @@
 
 #include "error.hpp"
 
-#define ENABLE_DEBUGGING 1
+#define ENABLE_DEBUGGING 0
 
 #if ENABLE_DEBUGGING
 #define LOG_DEBUG(message) (std::cout << message << "\n")
@@ -65,6 +65,7 @@ public:
 	Node *get_parent() const;
 	Node *get_child(int child_index) const;
 	int get_number_of_children() const;
+	int get_level() const;
 
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
