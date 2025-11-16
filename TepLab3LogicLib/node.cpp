@@ -125,13 +125,13 @@ int Node::get_depth() const
     return level;
 }
 
-void Node::get_variables(std::vector<NodeVariable *> &variables)
+void Node::get_variables(std::vector<Variable *> &variables)
 {    
     NodeVariable *node_var = dynamic_cast<NodeVariable *> (this);
 
     if (node_var)
     {
-        variables.push_back(node_var);
+        variables.push_back(node_var->get_variable());
     }
 
     for (int i = 0; i < get_number_of_children(); i++)
@@ -258,12 +258,6 @@ std::string Node::skip_invalid_characters(std::string node_type)
 
     return node_type;
 }
-
-//NodeVariable::NodeVariable(std::string name, int value)
-//    :Node(VARIABLE_NUM_OF_CHILDREN),
-//    variable_(new Variable(name, value))
-//{
-//}
 
 void NodeVariable::set_value(int value)
 {
@@ -396,6 +390,11 @@ float NodeOperationCos::get_value() const
 NodeVariable::NodeVariable(Variable *var)
     :variable_(var)
 {
+}
+
+Variable *NodeVariable::get_variable() const
+{
+    return variable_;
 }
 
 float NodeVariable::get_value() const

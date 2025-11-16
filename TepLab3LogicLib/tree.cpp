@@ -3,13 +3,13 @@
 
 Tree::Tree()
     :root_(nullptr),
-    variables_(std::vector<NodeVariable *>())
+    variables_(std::vector<Variable *>())
 {
 }
 
 Tree::Tree(std::string formula)
     :root_(nullptr),
-    variables_(std::vector<NodeVariable *>())
+    variables_(std::vector<Variable *>())
 {
     load_new_formula(formula);
 }
@@ -119,11 +119,11 @@ std::string Tree::get_level_to_string(int level) const
 
 std::string Tree::get_variables_to_string() const
 {
-    std::string result = variables_.front()->to_string();
+    std::string result = variables_.front()->get_name();
 
     for (int i = 1; i < variables_.size(); i++)
     {
-        result += FORMULA_SEPARATOR + variables_.at(i)->to_string();
+        result += FORMULA_SEPARATOR + variables_.at(i)->get_name();
     }
 
     return result;

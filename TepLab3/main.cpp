@@ -31,6 +31,11 @@ int main()
     tree1.set_variables(vars);
     std::cout << tree1.calculate_formula() << "\n";
 
+    std::vector<int> vars3 = { 1, 2, 3, 4 };
+    std::cout << tree3.get_variables_to_string() << "\n";
+    tree3.set_variables(vars3);
+    std::cout << tree3.calculate_formula() << "\n";
+
     return 0;
 }
 

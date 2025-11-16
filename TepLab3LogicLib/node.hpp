@@ -70,7 +70,7 @@ public:
 	int get_number_of_children() const;
 	int get_level() const;
 	int get_depth() const;
-	void get_variables(std::vector<NodeVariable *> &variables);
+	void get_variables(std::vector<Variable *> &variables);
 
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
@@ -94,9 +94,9 @@ private:
 class NodeVariable : public Node
 {
 public:
-	//NodeVariable(std::string name, int value);
 	NodeVariable(Variable *var);
 
+	Variable *get_variable() const;
 	virtual float get_value() const;
 	std::string get_name() const;
 

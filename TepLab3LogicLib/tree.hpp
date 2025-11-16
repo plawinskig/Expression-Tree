@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "node.hpp"
+#include "formula_elements.hpp"
 
 namespace
 {
@@ -41,7 +42,7 @@ private:
 	void get_level_to_string(Node *node, std::string &result, int level) const;
 
 	Node *root_;
-	std::vector<NodeVariable *> variables_;
+	std::vector<Variable *> variables_;
 };
 
 void print_tree_by_levels(Tree &tree);
