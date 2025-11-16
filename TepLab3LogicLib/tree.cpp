@@ -17,6 +17,12 @@ Tree::Tree(std::string formula)
 Tree::~Tree()
 {
     delete root_;
+
+    for (std::vector<Variable *>::iterator it = variables_.begin(); it != variables_.end(); it++)
+    {
+        delete *it;
+    }
+    variables_.clear();
 }
 
 Node *Tree::get_root()
@@ -48,7 +54,10 @@ void Tree::join(Tree &other)
     if (is_empty())
     {
         root_ = other.root_;
+        variables_ = other.variables_;
+
         other.root_ = nullptr;
+        other.variables_.clear();
         return;
     }
 
@@ -58,11 +67,14 @@ void Tree::join(Tree &other)
 
     other_root->set_parent(connector_parent);
     connector_parent->set_last_child(other_root);
-    delete connector;
-    other.root_ = nullptr;
 
-    //variables_.clear();
-    //root_->get_variables(variables_);
+    delete connector;
+
+    other.root_ = nullptr;
+    other.variables_.clear();
+
+    variables_.clear();
+    root_->get_variables(variables_);
 }
 
 float Tree::calculate_formula() const

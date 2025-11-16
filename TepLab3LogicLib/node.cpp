@@ -276,8 +276,11 @@ std::string Node::skip_invalid_characters(std::string node_type)
 
 void NodeVariable::set_variable(Variable *var)
 {
-    delete variable_;
-    variable_ = var;
+    if (variable_ != var)
+    {
+        delete variable_;
+        variable_ = var;
+    }
 }
 
 void NodeVariable::set_value(int value)
