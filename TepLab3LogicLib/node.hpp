@@ -89,6 +89,37 @@ private:
 	std::vector<Node *> children_;
 };
 
+class NodeVariable : public Node
+{
+public:
+	NodeVariable(std::string name, int value = DEFAULT_VALUE);
+
+	void set_value(int value);
+
+	virtual int get_value() const;
+	std::string get_name() const;
+
+	virtual std::string to_string() const;
+
+private:
+	std::string name_;
+	int value_;
+};
+
+class NodeValue : public Node
+{
+public:
+	NodeValue(std::string value = DEFAULT_VALUE_STRING);
+
+	virtual int get_value() const;
+
+	virtual std::string to_string() const;
+
+private:
+	std::string value_string_;
+	int value_;
+};
+
 class NodeOperation : public Node
 {
 public:
@@ -154,37 +185,6 @@ public:
 
 	virtual std::string get_type() const;
 	virtual int get_value() const;
-};
-
-class NodeVariable : public Node
-{
-public:
-	NodeVariable(std::string name, int value = DEFAULT_VALUE);
-
-	void set_value(int value);
-	
-	virtual int get_value() const;
-	std::string get_name() const;
-
-	virtual std::string to_string() const;
-
-private:
-	std::string name_;
-	int value_;
-};
-
-class NodeValue : public Node
-{
-public:
-	NodeValue(std::string value = DEFAULT_VALUE_STRING);
-
-	virtual int get_value() const;
-
-	virtual std::string to_string() const;
-
-private:
-	std::string value_string_;
-	int value_;
 };
 
 std::ostream &operator<<(std::ostream &os, const Node &node);

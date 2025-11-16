@@ -23,8 +23,7 @@ int main()
 
     std::cout << "-----------------------------\n";
 
-    tree0.join(tree3);
-    std::cout << tree0.get_formula_to_string() << "\n";
+    
 
     return 0;
 }
