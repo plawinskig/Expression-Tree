@@ -61,7 +61,7 @@ public:
 	Error load(const std::vector<std::string> nodes, int &off_end);
 	bool is_nil() const;
 
-	virtual int get_value() const = 0;
+	virtual float get_value() const = 0;
 	Node *get_parent() const;
 	Node *get_child(int child_index) const;
 	Node *get_last_child() const;
@@ -96,7 +96,7 @@ public:
 
 	void set_value(int value);
 
-	virtual int get_value() const;
+	virtual float get_value() const;
 	std::string get_name() const;
 
 	virtual std::string to_string() const;
@@ -111,7 +111,7 @@ class NodeValue : public Node
 public:
 	NodeValue(std::string value = DEFAULT_VALUE_STRING);
 
-	virtual int get_value() const;
+	virtual float get_value() const;
 
 	virtual std::string to_string() const;
 
@@ -126,7 +126,7 @@ public:
 	NodeOperation(int number_of_children);
 
 	virtual std::string get_type() const = 0;
-	virtual int get_value() const = 0;
+	virtual float get_value() const = 0;
 
 	virtual std::string to_string() const;
 
@@ -139,7 +139,7 @@ public:
 	NodeOperationAddition(int number_of_children = OP_NUM_OF_ARGS[OP_ADDITION_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 class NodeOperationSubtraction : public NodeOperation
@@ -148,7 +148,7 @@ public:
 	NodeOperationSubtraction(int number_of_children = OP_NUM_OF_ARGS[OP_SUBTRACTION_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 class NodeOperationMultiplication : public NodeOperation
@@ -157,7 +157,7 @@ public:
 	NodeOperationMultiplication(int number_of_children = OP_NUM_OF_ARGS[OP_MULTIPLICATION_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 class NodeOperationDivision : public NodeOperation
@@ -166,7 +166,7 @@ public:
 	NodeOperationDivision(int number_of_children = OP_NUM_OF_ARGS[OP_DIVISION_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 class NodeOperationSin : public NodeOperation
@@ -175,7 +175,7 @@ public:
 	NodeOperationSin(int number_of_children = OP_NUM_OF_ARGS[OP_SIN_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 class NodeOperationCos : public NodeOperation
@@ -184,7 +184,7 @@ public:
 	NodeOperationCos(int number_of_children = OP_NUM_OF_ARGS[OP_COS_INDEX]);
 
 	virtual std::string get_type() const;
-	virtual int get_value() const;
+	virtual float get_value() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Node &node);

@@ -320,9 +320,9 @@ std::string NodeOperationCos::get_type() const
     return OP_SYMBOLS[OP_COS_INDEX];
 }
 
-int NodeOperationAddition::get_value() const
+float NodeOperationAddition::get_value() const
 {
-    int result = 0;
+    float result = 0;
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
@@ -332,9 +332,9 @@ int NodeOperationAddition::get_value() const
     return result;
 }
 
-int NodeOperationSubtraction::get_value() const
+float NodeOperationSubtraction::get_value() const
 {
-    int result = get_child(0)->get_value();
+    float result = get_child(0)->get_value();
 
     for (int i = 1; i < get_number_of_children(); i++)
     {
@@ -344,9 +344,9 @@ int NodeOperationSubtraction::get_value() const
     return result;
 }
 
-int NodeOperationMultiplication::get_value() const
+float NodeOperationMultiplication::get_value() const
 {
-    int result = 1;
+    float result = 1;
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
@@ -356,9 +356,9 @@ int NodeOperationMultiplication::get_value() const
     return result;
 }
 
-int NodeOperationDivision::get_value() const
+float NodeOperationDivision::get_value() const
 {
-    int result = get_child(0)->get_value();
+    float result = get_child(0)->get_value();
 
     for (int i = 1; i < get_number_of_children(); i++)
     {
@@ -368,17 +368,17 @@ int NodeOperationDivision::get_value() const
     return result;
 }
 
-int NodeOperationSin::get_value() const
+float NodeOperationSin::get_value() const
 {
     return std::sin(get_child(0)->get_value());
 }
 
-int NodeOperationCos::get_value() const
+float NodeOperationCos::get_value() const
 {
     return std::cos(get_child(0)->get_value());
 }
 
-int NodeVariable::get_value() const
+float NodeVariable::get_value() const
 {
     return value_;
 }
@@ -405,7 +405,7 @@ NodeValue::NodeValue(std::string value)
 {
 }
 
-int NodeValue::get_value() const
+float NodeValue::get_value() const
 {
     return value_;
 }

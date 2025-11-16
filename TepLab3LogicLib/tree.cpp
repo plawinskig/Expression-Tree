@@ -57,7 +57,7 @@ void Tree::join(Tree &other)
     other.root_ = nullptr;
 }
 
-int Tree::calculate_formula() const
+float Tree::calculate_formula() const
 {
     return root_->get_value();
 }
