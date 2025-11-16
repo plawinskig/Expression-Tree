@@ -7,6 +7,7 @@ Tree::Tree()
 }
 
 Tree::Tree(std::string formula)
+    :root_(nullptr)
 {
     load_new_formula(formula);
 }
