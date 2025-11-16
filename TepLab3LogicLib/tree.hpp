@@ -17,10 +17,12 @@ public:
 	~Tree();
 
 	void load_new_formula(std::string formula);
+	void join(Tree &other);
 
 	bool is_empty() const;
 
 	int get_depth() const;
+	Node *get_last_leaf() const;
 	std::string get_formula_to_string() const;
 	std::string get_level_to_string(int level) const;
 

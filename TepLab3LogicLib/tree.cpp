@@ -28,6 +28,11 @@ void Tree::load_new_formula(std::string formula)
     root_->load(form_vec, offset);
 }
 
+void Tree::join(Tree &other)
+{
+
+}
+
 bool Tree::is_empty() const
 {
     return root_ == nullptr;
@@ -36,6 +41,18 @@ bool Tree::is_empty() const
 int Tree::get_depth() const
 {
     return is_empty() ? 0 : root_->get_depth();
+}
+
+Node *Tree::get_last_leaf() const
+{
+    Node *node = root_;
+
+    while (!node->is_nil())
+    {
+        node = node->get_child(node->get_number_of_children() - 1);
+    }
+
+    return node;
 }
 
 std::string Tree::get_formula_to_string() const
@@ -52,8 +69,6 @@ std::string Tree::get_formula_to_string() const
 
 void Tree::get_formula_to_string(Node *node, std::string &result) const
 {
-    //LOG_DEBUG("isnull? " << (node == nullptr ? "AAAAAAAAAAAAA get_formula_to_string" : ""));
-
     result += node->to_string();
     
     for (int i = 0; i < node->get_number_of_children(); i++)
@@ -82,8 +97,6 @@ std::string Tree::get_level_to_string(int level) const
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const
 {
-    //LOG_DEBUG("isnull? " << (node == nullptr ? "AAAAAAAAAAAAA get_level_to_string" : "get_level_to_string"));
-
     if (node->get_level() == level)
     {
         result += node->to_string() + FORMULA_SEPARATOR;
