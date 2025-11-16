@@ -6,7 +6,7 @@
 
 #include "error.hpp"
 
-#define ENABLE_DEBUGGING 0
+#define ENABLE_DEBUGGING 1
 
 #if ENABLE_DEBUGGING
 #define LOG_DEBUG(message) (std::cout << message << "\n")

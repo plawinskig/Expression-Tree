@@ -18,7 +18,9 @@ public:
 
 	void load_new_formula(std::string formula);
 
-	int get_depth();
+	bool is_empty() const;
+
+	int get_depth() const;
 	std::string get_formula_to_string() const;
 	std::string get_level_to_string(int level) const;
 

@@ -28,24 +28,31 @@ void Tree::load_new_formula(std::string formula)
     root_->load(form_vec, offset);
 }
 
-int Tree::get_depth()
+bool Tree::is_empty() const
 {
-    return root_->get_depth();
+    return root_ == nullptr;
+}
+
+int Tree::get_depth() const
+{
+    return is_empty() ? 0 : root_->get_depth();
 }
 
 std::string Tree::get_formula_to_string() const
 {
     std::string result;
-    get_formula_to_string(root_, result);
+
+    if (!is_empty())
+    {
+        get_formula_to_string(root_, result);
+    }
+     
     return result;
 }
 
 void Tree::get_formula_to_string(Node *node, std::string &result) const
 {
-    if (!node)
-    {
-        return;
-    }
+    //LOG_DEBUG("isnull? " << (node == nullptr ? "AAAAAAAAAAAAA get_formula_to_string" : ""));
 
     result += node->to_string();
     
@@ -59,18 +66,24 @@ void Tree::get_formula_to_string(Node *node, std::string &result) const
 std::string Tree::get_level_to_string(int level) const
 {
     std::string result;
-    get_level_to_string(root_, result, level);
+    
+    if (!is_empty())
+    {
+        get_level_to_string(root_, result, level);
+    }
 
     if (!result.empty())
     {
         result.pop_back();
     }
-    
+
     return result;
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const
 {
+    //LOG_DEBUG("isnull? " << (node == nullptr ? "AAAAAAAAAAAAA get_level_to_string" : "get_level_to_string"));
+
     if (node->get_level() == level)
     {
         result += node->to_string() + FORMULA_SEPARATOR;
