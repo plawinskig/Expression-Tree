@@ -186,7 +186,8 @@ Node *Node::alloc(std::string node_type)
     }
     else if (is_variable(node_type))
     {
-        node = new NodeVariable(node_type);
+        Variable *var = new Variable(node_type);
+        node = new NodeVariable(var);
         //LOG_DEBUG("Alloc variable: " << *node);
     }
 
@@ -258,16 +259,15 @@ std::string Node::skip_invalid_characters(std::string node_type)
     return node_type;
 }
 
-NodeVariable::NodeVariable(std::string name, int value)
-    :Node(VARIABLE_NUM_OF_CHILDREN),
-    name_(name),
-    value_(value)
-{
-}
+//NodeVariable::NodeVariable(std::string name, int value)
+//    :Node(VARIABLE_NUM_OF_CHILDREN),
+//    variable_(new Variable(name, value))
+//{
+//}
 
 void NodeVariable::set_value(int value)
 {
-    value_ = value;
+    variable_->set_value(value);
 }
 
 NodeOperation::NodeOperation(int number_of_children)
@@ -393,9 +393,14 @@ float NodeOperationCos::get_value() const
     return std::cos(get_child(0)->get_value());
 }
 
+NodeVariable::NodeVariable(Variable *var)
+    :variable_(var)
+{
+}
+
 float NodeVariable::get_value() const
 {
-    return value_;
+    return variable_->get_value();
 }
 
 std::string NodeOperation::to_string() const
@@ -405,7 +410,7 @@ std::string NodeOperation::to_string() const
 
 std::string NodeVariable::get_name() const
 {
-    return name_;
+    return variable_->get_name();
 }
 
 std::string NodeVariable::to_string() const

@@ -5,6 +5,7 @@
 #include <map>
 
 #include "error.hpp"
+#include "formula_elements.hpp"
 
 #define ENABLE_DEBUGGING 1
 
@@ -32,9 +33,7 @@ namespace
 	const int INT_BUFFER_SIZE = 20;
 
 	const std::string NO_DATA_STRING = "[no data]";
-	const std::string DEFAULT_VARIABLE_NAME = "X";
 	const std::string DEFAULT_VALUE_STRING = "1";
-	const int DEFAULT_VALUE = 1;
 	const int VALUE_BASE = 10;
 
 	const enum
@@ -95,18 +94,18 @@ private:
 class NodeVariable : public Node
 {
 public:
-	NodeVariable(std::string name, int value = DEFAULT_VALUE);
-
-	void set_value(int value);
+	//NodeVariable(std::string name, int value);
+	NodeVariable(Variable *var);
 
 	virtual float get_value() const;
 	std::string get_name() const;
 
+	void set_value(int value);
+
 	virtual std::string to_string() const;
 
 private:
-	std::string name_;
-	int value_;
+	Variable *variable_;
 };
 
 class NodeValue : public Node
