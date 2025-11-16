@@ -60,6 +60,9 @@ void Tree::join(Tree &other)
     connector_parent->set_last_child(other_root);
     delete connector;
     other.root_ = nullptr;
+
+    variables_.clear();
+    root_->get_variables(variables_);
 }
 
 float Tree::calculate_formula() const

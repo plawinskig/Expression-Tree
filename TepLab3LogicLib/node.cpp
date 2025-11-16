@@ -131,7 +131,22 @@ void Node::get_variables(std::vector<Variable *> &variables)
 
     if (node_var)
     {
-        variables.push_back(node_var->get_variable());
+        std::vector<Variable *>::const_iterator it;
+        bool found = false;
+
+        for (it = variables.begin(); it != variables.end() && !found; it++)
+        {
+            if ((*it)->get_name() == node_var->get_name())
+            {
+                node_var->set_variable(*it);
+                found = true;
+            }
+        }
+
+        if (!found)
+        {
+            variables.push_back(node_var->get_variable());
+        }
     }
 
     for (int i = 0; i < get_number_of_children(); i++)
@@ -257,6 +272,12 @@ std::string Node::skip_invalid_characters(std::string node_type)
     }
 
     return node_type;
+}
+
+void NodeVariable::set_variable(Variable *var)
+{
+    delete variable_;
+    variable_ = var;
 }
 
 void NodeVariable::set_value(int value)

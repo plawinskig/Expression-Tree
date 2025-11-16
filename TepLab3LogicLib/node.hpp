@@ -100,6 +100,7 @@ public:
 	virtual float get_value() const;
 	std::string get_name() const;
 
+	void set_variable(Variable *var);
 	void set_value(int value);
 
 	virtual std::string to_string() const;
