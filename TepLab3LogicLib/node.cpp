@@ -74,6 +74,21 @@ Node *Node::get_child(int child_index) const
     return children_.at(child_index);
 }
 
+Node *Node::get_last_child() const
+{
+    return children_.back();
+}
+
+Node *Node::get_last_leaf()
+{
+    if (is_nil())
+    {
+        return this;
+    }
+
+    return get_last_child()->get_last_leaf();
+}
+
 int Node::get_number_of_children() const
 {
     return children_.size();
@@ -122,17 +137,19 @@ bool Node::set_child(Node *child, int child_index)
     {
         return false;
     }
-    else if (child_index == children_.size())
-    {
-        set_child(child);
-    }
 
     children_.at(child_index) = child;
 
     return true;
 }
 
-bool Node::set_child(Node *child)
+bool Node::set_last_child(Node *child)
+{
+    children_.back() = child;
+    return true;
+}
+
+bool Node::add_last_child(Node *child)
 {
     children_.push_back(child);
     return true;

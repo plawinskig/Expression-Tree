@@ -17,6 +17,11 @@ Tree::~Tree()
     delete root_;
 }
 
+Node *Tree::get_root()
+{
+    return root_;
+}
+
 void Tree::load_new_formula(std::string formula)
 {
     std::vector<std::string> form_vec = split(formula, FORMULA_SEPARATOR);
@@ -30,7 +35,26 @@ void Tree::load_new_formula(std::string formula)
 
 void Tree::join(Tree &other)
 {
+    if (this == &other || other.is_empty())
+    {
+        return;
+    }
 
+    if (is_empty())
+    {
+        root_ = other.root_;
+        other.root_ = nullptr;
+        return;
+    }
+
+    Node *connector = root_->get_last_leaf();
+    Node *connector_parent = connector->get_parent();
+    Node *other_root = other.root_;
+
+    other_root->set_parent(connector_parent);
+    connector_parent->set_last_child(other_root);
+    delete connector;
+    other.root_ = nullptr;
 }
 
 bool Tree::is_empty() const
@@ -41,18 +65,6 @@ bool Tree::is_empty() const
 int Tree::get_depth() const
 {
     return is_empty() ? 0 : root_->get_depth();
-}
-
-Node *Tree::get_last_leaf() const
-{
-    Node *node = root_;
-
-    while (!node->is_nil())
-    {
-        node = node->get_child(node->get_number_of_children() - 1);
-    }
-
-    return node;
 }
 
 std::string Tree::get_formula_to_string() const

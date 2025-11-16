@@ -111,16 +111,41 @@ TEST(TreeTest, GetLevelToString)
     EXPECT_EQ(tree_simple_op.get_level_to_string(2), "");
 }
 
-TEST(TreeTest, GetLastLeaf)
+TEST(TreeTest, Join)
 {
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     std::string formula2 = "+ * 5 sin x * + a b 8";
     std::string formula3 = "+ * A sin B + A A";
+    
+    Tree tree0;
     Tree tree1(formula1);
     Tree tree2(formula2);
     Tree tree3(formula3);
 
-    EXPECT_EQ("dup", tree1.get_last_leaf()->to_string());
-    EXPECT_EQ("8", tree2.get_last_leaf()->to_string());
-    EXPECT_EQ("A", tree3.get_last_leaf()->to_string());
+    tree0.join(tree1); // 0 <- 1
+    ASSERT_EQ(formula1, tree0.get_formula_to_string());
+    ASSERT_EQ("", tree1.get_formula_to_string());
+
+    tree1.join(tree2); // 1 <- 2
+    ASSERT_EQ(formula2, tree1.get_formula_to_string());
+    ASSERT_EQ("", tree2.get_formula_to_string());
+
+    tree2.join(tree3); // 2 <- 3
+    ASSERT_EQ(formula3, tree2.get_formula_to_string());
+    ASSERT_EQ("", tree3.get_formula_to_string());
+
+    tree3.join(tree3); // 3 <- 3
+    ASSERT_EQ("", tree3.get_formula_to_string());
+
+    tree0.join(tree1); // 1 <- 2
+    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b 8", tree0.get_formula_to_string());
+    ASSERT_EQ("", tree1.get_formula_to_string());
+
+    tree0.join(tree1); // 1 <- 0
+    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b 8", tree0.get_formula_to_string());
+    ASSERT_EQ("", tree1.get_formula_to_string());
+
+    tree0.join(tree2); // 1 <- 3
+    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b + * A sin B + A A", tree0.get_formula_to_string());
+    ASSERT_EQ("", tree2.get_formula_to_string());
 }

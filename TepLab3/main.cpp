@@ -21,16 +21,10 @@ int main()
     std::cout << "Tree2: " << tree2.get_formula_to_string() << "\n";
     std::cout << "Tree3: " << tree3.get_formula_to_string() << "\n";
 
-    std::cout << "Tree1:\n";
-    print_tree_by_levels(tree1); 
-    std::cout << "\n";
-    std::cout << "Tree2:\n";
-    print_tree_by_levels(tree2);
-    std::cout << "\n";
-    std::cout << "Tree3:\n";
-    print_tree_by_levels(tree3);
-    std::cout << "\n";
+    std::cout << "-----------------------------\n";
 
+    tree0.join(tree3);
+    std::cout << tree0.get_formula_to_string() << "\n";
 
     return 0;
 }

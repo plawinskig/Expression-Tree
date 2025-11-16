@@ -64,14 +64,17 @@ public:
 	virtual int get_value() const = 0;
 	Node *get_parent() const;
 	Node *get_child(int child_index) const;
+	Node *get_last_child() const;
+	Node *get_last_leaf();
 	int get_number_of_children() const;
 	int get_level() const;
 	int get_depth() const;
 
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
-	bool set_child(Node *child);
-
+	bool set_last_child(Node *child);
+	bool add_last_child(Node *child);
+	
 	virtual std::string to_string() const = 0;
 
 	static Node *alloc(std::string node_type);
