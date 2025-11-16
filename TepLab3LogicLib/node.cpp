@@ -93,6 +93,23 @@ int Node::get_level() const
     return level;
 }
 
+int Node::get_depth() const
+{
+    if (is_nil())
+    {
+        return 0;
+    }
+    
+    int level = 0;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        level = std::max(level, 1 + get_child(i)->get_depth());
+    }
+
+    return level;
+}
+
 bool Node::set_parent(Node *parent)
 {
     parent_ = parent;

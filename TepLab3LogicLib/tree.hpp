@@ -5,8 +5,6 @@
 #include <iostream>
 #include "node.hpp"
 
-
-
 namespace
 {
 	const std::string FORMULA_SEPARATOR = " ";
@@ -21,6 +19,7 @@ public:
 
 	void load_new_formula(std::string formula);
 
+	int get_depth();
 	std::string get_formula_to_string() const;
 	std::string get_level_to_string(int level) const;
 
@@ -32,3 +31,5 @@ private:
 
 	Node *root_;
 };
+
+void print_tree_by_levels(Tree &tree);

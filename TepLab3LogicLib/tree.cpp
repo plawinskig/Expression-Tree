@@ -27,6 +27,11 @@ void Tree::load_new_formula(std::string formula)
     root_->load(form_vec, offset);
 }
 
+int Tree::get_depth()
+{
+    return root_->get_depth();
+}
+
 std::string Tree::get_formula_to_string() const
 {
     std::string result;
@@ -54,6 +59,7 @@ std::string Tree::get_level_to_string(int level) const
 {
     std::string result;
     get_level_to_string(root_, result, level);
+    result.pop_back();
     return result;
 }
 
@@ -66,7 +72,7 @@ void Tree::get_level_to_string(Node *node, std::string &result, int level) const
 
     if (node->get_level() == level)
     {
-        result += node->to_string();
+        result += node->to_string() + " ";
         return;
     }
 
@@ -103,3 +109,14 @@ std::vector<std::string> Tree::split(std::string formula, std::string separator)
     return result;
 }
 
+void print_tree_by_levels(Tree &tree)
+{
+    int level = 0;
+    int max_level = tree.get_depth();
+
+    while (level < 10)
+    {
+        std::cout << tree.get_level_to_string(level) << "\n";
+        level++;
+    }
+}
