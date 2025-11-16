@@ -59,20 +59,25 @@ std::string Tree::get_level_to_string(int level) const
 {
     std::string result;
     get_level_to_string(root_, result, level);
-    result.pop_back();
+
+    if (!result.empty())
+    {
+        result.pop_back();
+    }
+    
     return result;
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const
 {
-    if (node->is_nil())
+    if (node->get_level() == level)
     {
+        result += node->to_string() + FORMULA_SEPARATOR;
         return;
     }
 
-    if (node->get_level() == level)
+    if (node->is_nil())
     {
-        result += node->to_string() + " ";
         return;
     }
 
@@ -114,7 +119,7 @@ void print_tree_by_levels(Tree &tree)
     int level = 0;
     int max_level = tree.get_depth();
 
-    while (level < 10)
+    while (level < max_level)
     {
         std::cout << tree.get_level_to_string(level) << "\n";
         level++;
