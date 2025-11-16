@@ -110,3 +110,17 @@ TEST(TreeTest, GetLevelToString)
     EXPECT_EQ(tree_simple_op.get_level_to_string(1), "1 2");
     EXPECT_EQ(tree_simple_op.get_level_to_string(2), "");
 }
+
+TEST(TreeTest, GetLastLeaf)
+{
+    std::string formula1 = "+ * a sin / 5 6 + c dup";
+    std::string formula2 = "+ * 5 sin x * + a b 8";
+    std::string formula3 = "+ * A sin B + A A";
+    Tree tree1(formula1);
+    Tree tree2(formula2);
+    Tree tree3(formula3);
+
+    EXPECT_EQ("dup", tree1.get_last_leaf()->to_string());
+    EXPECT_EQ("8", tree2.get_last_leaf()->to_string());
+    EXPECT_EQ("A", tree3.get_last_leaf()->to_string());
+}
