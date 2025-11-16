@@ -37,6 +37,7 @@ private:
 	void get_level_to_string(Node *node, std::string &result, int level) const;
 
 	Node *root_;
+	std::vector<NodeVariable *> variables;
 };
 
 void print_tree_by_levels(Tree &tree);

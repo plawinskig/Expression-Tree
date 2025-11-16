@@ -125,6 +125,25 @@ int Node::get_depth() const
     return level;
 }
 
+std::vector<NodeVariable *> Node::get_variables()
+{
+    std::vector<NodeVariable *> variables;
+
+    NodeVariable *node_var = dynamic_cast<NodeVariable *>(this);
+    
+    if (node_var)
+    {
+        variables.push_back(node_var);
+    }
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        // TODO JOIN REST
+    }
+
+    return variables;
+}
+
 bool Node::set_parent(Node *parent)
 {
     parent_ = parent;

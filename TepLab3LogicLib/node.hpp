@@ -69,6 +69,7 @@ public:
 	int get_number_of_children() const;
 	int get_level() const;
 	int get_depth() const;
+	std::vector<NodeVariable *> get_variables();
 
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);
