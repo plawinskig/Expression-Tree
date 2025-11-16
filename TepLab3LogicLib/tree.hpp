@@ -15,7 +15,9 @@ namespace
 class Tree
 {
 public:
+	Tree();
 	Tree(std::string formula);
+	~Tree();
 
 	void load_new_formula(std::string formula);
 

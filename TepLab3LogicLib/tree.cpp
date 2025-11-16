@@ -1,9 +1,19 @@
 #include "pch.h"
 #include "tree.hpp"
 
+Tree::Tree()
+    :root_(nullptr)
+{
+}
+
 Tree::Tree(std::string formula)
 {
     load_new_formula(formula);
+}
+
+Tree::~Tree()
+{
+    delete root_;
 }
 
 void Tree::load_new_formula(std::string formula)
@@ -20,12 +30,7 @@ void Tree::load_new_formula(std::string formula)
 std::string Tree::get_formula() const
 {
     std::string result;
-
-    if (root_)
-    {
-        get_formula(root_, result);
-    }
-    
+    get_formula(root_, result);
     return result;
 }
 
