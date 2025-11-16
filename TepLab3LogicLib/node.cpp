@@ -125,12 +125,10 @@ int Node::get_depth() const
     return level;
 }
 
-std::vector<NodeVariable *> Node::get_variables()
-{
-    std::vector<NodeVariable *> variables;
+void Node::get_variables(std::vector<NodeVariable *> &variables)
+{    
+    NodeVariable *node_var = dynamic_cast<NodeVariable *> (this);
 
-    NodeVariable *node_var = dynamic_cast<NodeVariable *>(this);
-    
     if (node_var)
     {
         variables.push_back(node_var);
@@ -138,10 +136,8 @@ std::vector<NodeVariable *> Node::get_variables()
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
-        // TODO JOIN REST
+        get_child(i)->get_variables(variables);
     }
-
-    return variables;
 }
 
 bool Node::set_parent(Node *parent)

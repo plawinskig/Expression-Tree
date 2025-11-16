@@ -52,6 +52,8 @@ namespace
 	static const int OP_NUM_OF_ARGS[OP_COUNT] = { 2, 2, 2, 2, 1, 1 };
 }
 
+class NodeVariable;
+
 class Node
 {
 public:
@@ -69,7 +71,7 @@ public:
 	int get_number_of_children() const;
 	int get_level() const;
 	int get_depth() const;
-	std::vector<NodeVariable *> get_variables();
+	void get_variables(std::vector<NodeVariable *> &variables);
 
 	bool set_parent(Node *parent);
 	bool set_child(Node *child, int child_index);

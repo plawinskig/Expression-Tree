@@ -2,12 +2,14 @@
 #include "tree.hpp"
 
 Tree::Tree()
-    :root_(nullptr)
+    :root_(nullptr),
+    variables_(std::vector<NodeVariable *>())
 {
 }
 
 Tree::Tree(std::string formula)
-    :root_(nullptr)
+    :root_(nullptr),
+    variables_(std::vector<NodeVariable *>())
 {
     load_new_formula(formula);
 }
@@ -31,6 +33,9 @@ void Tree::load_new_formula(std::string formula)
 
     int offset = 1;
     root_->load(form_vec, offset);
+
+    variables_.clear();
+    root_->get_variables(variables_);
 }
 
 void Tree::join(Tree &other)
@@ -110,6 +115,35 @@ std::string Tree::get_level_to_string(int level) const
     }
 
     return result;
+}
+
+std::string Tree::get_variables_to_string() const
+{
+    std::string result = variables_.front()->to_string();
+
+    for (int i = 1; i < variables_.size(); i++)
+    {
+        result += FORMULA_SEPARATOR + variables_.at(i)->to_string();
+    }
+
+    return result;
+}
+
+bool Tree::set_variables(const std::vector<int> &variables)
+{
+    if (variables_.size() != variables.size())
+    {
+        return false;
+    }
+
+    int size = variables.size();
+
+    for (int i = 0; i < size; i++)
+    {
+        variables_.at(i)->set_value(variables.at(i));
+    }
+
+    return true;
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const

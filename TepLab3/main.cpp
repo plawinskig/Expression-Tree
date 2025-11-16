@@ -26,6 +26,11 @@ int main()
     std::cout << std::sin(5.0 / 6) << "\n";
     std::cout << tree1.calculate_formula() << "\n";
 
+    std::vector<int> vars = {1, 2, 3};
+    std::cout << tree1.get_variables_to_string() << "\n";
+    tree1.set_variables(vars);
+    std::cout << tree1.calculate_formula() << "\n";
+
     return 0;
 }
 
