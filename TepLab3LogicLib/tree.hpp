@@ -21,12 +21,14 @@ public:
 
 	void load_new_formula(std::string formula);
 
-	std::string get_formula() const;
+	std::string get_formula_to_string() const;
+	std::string get_level_to_string(int level) const;
 
 	static std::vector<std::string> split(std::string formula, std::string regex = FORMULA_SEPARATOR);
 
 private:
-	void get_formula(Node *node, std::string &result) const;
+	void get_formula_to_string(Node *node, std::string &result) const;
+	void get_level_to_string(Node *node, std::string &result, int level) const;
 
 	Node *root_;
 };

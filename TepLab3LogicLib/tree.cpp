@@ -27,14 +27,14 @@ void Tree::load_new_formula(std::string formula)
     root_->load(form_vec, offset);
 }
 
-std::string Tree::get_formula() const
+std::string Tree::get_formula_to_string() const
 {
     std::string result;
-    get_formula(root_, result);
+    get_formula_to_string(root_, result);
     return result;
 }
 
-void Tree::get_formula(Node *node, std::string &result) const
+void Tree::get_formula_to_string(Node *node, std::string &result) const
 {
     if (!node)
     {
@@ -46,7 +46,33 @@ void Tree::get_formula(Node *node, std::string &result) const
     for (int i = 0; i < node->get_number_of_children(); i++)
     {
         result += FORMULA_SEPARATOR;
-        get_formula(node->get_child(i), result);
+        get_formula_to_string(node->get_child(i), result);
+    }
+}
+
+std::string Tree::get_level_to_string(int level) const
+{
+    std::string result;
+    get_level_to_string(root_, result, level);
+    return result;
+}
+
+void Tree::get_level_to_string(Node *node, std::string &result, int level) const
+{
+    if (node->is_nil())
+    {
+        return;
+    }
+
+    if (node->get_level() == level)
+    {
+        result += node->to_string();
+        return;
+    }
+
+    for (int i = 0; i < node->get_number_of_children(); i++)
+    {
+        get_level_to_string(node->get_child(i), result, level);
     }
 }
 

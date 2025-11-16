@@ -16,10 +16,10 @@ int main()
 
     std::cout << "-----------------------------\n";
 
-    std::cout << "Tree0: " << tree0.get_formula() << "\n";
-    std::cout << "Tree1: " << tree1.get_formula() << "\n";
-    std::cout << "Tree2: " << tree2.get_formula() << "\n";
-    std::cout << "Tree3: " << tree3.get_formula() << "\n";
+    std::cout << "Tree0: " << tree0.get_formula_to_string() << "\n";
+    std::cout << "Tree1: " << tree1.get_formula_to_string() << "\n";
+    std::cout << "Tree2: " << tree2.get_formula_to_string() << "\n";
+    std::cout << "Tree3: " << tree3.get_formula_to_string() << "\n";
 
 
 
