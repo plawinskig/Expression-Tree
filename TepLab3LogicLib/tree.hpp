@@ -22,6 +22,7 @@ public:
 
 	void load_new_formula(std::string formula);
 	void join(Tree &other);
+	int calculate_formula() const;
 
 	bool is_empty() const;
 

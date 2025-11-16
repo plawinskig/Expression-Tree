@@ -57,6 +57,11 @@ void Tree::join(Tree &other)
     other.root_ = nullptr;
 }
 
+int Tree::calculate_formula() const
+{
+    return root_->get_value();
+}
+
 bool Tree::is_empty() const
 {
     return root_ == nullptr;

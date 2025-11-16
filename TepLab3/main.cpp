@@ -5,7 +5,7 @@
 
 int main() 
 {
-    std::string formula1 = "+ * a sin / 5 6 + c dup";
+    std::string formula1 = "+ * a / 10 2 + c dup";
     std::string formula2 = "+ * 5 sin x * + a b 8";
     std::string formula3 = "+ * A sin B + A A";
 
@@ -23,7 +23,7 @@ int main()
 
     std::cout << "-----------------------------\n";
 
-    
+    std::cout << tree1.calculate_formula() << "\n";
 
     return 0;
 }
