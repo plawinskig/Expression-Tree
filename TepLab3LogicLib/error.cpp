@@ -76,7 +76,7 @@ std::string ErrorInvalidCharacter::get_message() const
 	std::stringstream message;
 	message << "Character: '";
 	message << what_ << "' in '" << where_;
-	message << "' is not permitted. Omitting.\n";
+	message << "' is not permitted - omitting\n";
 
 	return message.str();
 }
@@ -90,11 +90,19 @@ ErrorTooManyArguments::ErrorTooManyArguments(std::string loaded, std::string rem
 std::string ErrorTooManyArguments::get_message() const
 {
 	std::stringstream message;
-	message << "Too many arguments in formula.\n";
+	message << "Too many arguments in formula\n";
 	message << loaded_ << remained_ << "\n";
 	std::string loaded_offset(loaded_.size() + 1, ' ');
 	std::string remained_offset(remained_.size() - 1, '^');
 	message << loaded_offset << remained_offset << "\n";
+
+	return message.str();
+}
+
+std::string ErrorEmptyInput::get_message() const
+{
+	std::stringstream message;
+	message << "Empty input provided\n";
 
 	return message.str();
 }

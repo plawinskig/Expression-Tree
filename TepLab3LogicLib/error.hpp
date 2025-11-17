@@ -70,3 +70,9 @@ private:
 	std::string loaded_;
 	std::string remained_;
 };
+
+class ErrorEmptyInput : public Error
+{
+public:
+	virtual std::string get_message() const;
+};

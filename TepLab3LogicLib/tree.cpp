@@ -63,6 +63,15 @@ Error *Tree::load_new_formula(std::string formula)
 
     std::vector<std::string> nodes = split(formula, FORMULA_SEPARATOR);
 
+    if (nodes.empty())
+    {
+        errors->add(new ErrorEmptyInput());
+        delete root_;
+        root_ = nullptr;
+        clear_variables();
+        return errors;
+    }
+
     std::string root_node_type = nodes.at(0);
 
     if (!Node::is_operation(root_node_type))
@@ -165,6 +174,10 @@ std::string Tree::get_formula_to_string() const
     if (!is_empty())
     {
         get_formula_to_string(root_, result);
+    }
+    else
+    {
+        return EMPTY_FORMULA_STRING;
     }
      
     return result;

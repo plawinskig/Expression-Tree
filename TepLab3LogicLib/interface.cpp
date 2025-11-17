@@ -71,19 +71,12 @@ void Interface::run()
 
 void Interface::handle_enter(const std::string &arg)
 {
-    if (!arg.empty())
-    {
-        Error *err_load = tree_.load_new_formula(arg);
+    Error *err_load = tree_.load_new_formula(arg);
 
-        std::cout << err_load->get_message() << "\n";
-        delete err_load;
+    std::cout << err_load->get_message() << "\n";
+    delete err_load;
 
-        std::cout << "Loaded formula: " << tree_.get_formula_to_string() << "\n";
-    }
-    else
-    {
-        std::cout << "Too few arguments for " << COMMAND_ENTER << " command\n";
-    }
+    std::cout << "Loaded formula: " << tree_.get_formula_to_string() << "\n";
 }
 
 void Interface::handle_vars()

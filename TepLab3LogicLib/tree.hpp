@@ -11,6 +11,7 @@
 namespace
 {
 	const std::string FORMULA_SEPARATOR = " ";
+	const std::string EMPTY_FORMULA_STRING = "[empty]";
 }
 
 class Tree
