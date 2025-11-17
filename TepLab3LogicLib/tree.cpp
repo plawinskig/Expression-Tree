@@ -21,7 +21,8 @@ Tree::Tree(const Tree &other)
 {
     if (!other.is_empty())
     {
-        load_new_formula(other.get_formula_to_string());
+        Error *err = load_new_formula(other.get_formula_to_string());
+        delete err;
     }
 }
 
