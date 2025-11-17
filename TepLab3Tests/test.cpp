@@ -4,7 +4,7 @@
 
 #define ABS_ERR 1e-3
 
-TEST(ReadUserTest, CorrectlyReadsName) 
+TEST(ReadUserTest, CorrectlyReadsName)
 {
     //std::stringstream fake_input("TestUser\n");
     //std::stringstream fake_output;
@@ -113,7 +113,7 @@ TEST(TreeTest, GetLevelToString)
     EXPECT_EQ(tree_simple_op.get_level_to_string(2), "");
 }
 
-TEST(TreeTest, Join)
+TEST(TreeTest, JoinReturnsNewTreeAndDoesNotModifyOriginals)
 {
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     std::string formula2 = "+ * 5 sin x * + a b 8";
@@ -124,32 +124,25 @@ TEST(TreeTest, Join)
     Tree tree2(formula2);
     Tree tree3(formula3);
 
-    tree0.join(tree1); // 0 <- 1
-    ASSERT_EQ(formula1, tree0.get_formula_to_string());
-    ASSERT_EQ("", tree1.get_formula_to_string());
+    // Test: 0 join 1
+    Tree res01 = tree0.join(tree1);
+    ASSERT_EQ(formula1, res01.get_formula_to_string());
+    ASSERT_EQ("", tree0.get_formula_to_string());
+    ASSERT_EQ(formula1, tree1.get_formula_to_string());
 
-    tree1.join(tree2); // 1 <- 2
-    ASSERT_EQ(formula2, tree1.get_formula_to_string());
-    ASSERT_EQ("", tree2.get_formula_to_string());
+    // Test: 1 join 2
+    Tree res12 = tree1.join(tree2);
+    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b 8", res12.get_formula_to_string());
+    ASSERT_EQ(formula1, tree1.get_formula_to_string());
+    ASSERT_EQ(formula2, tree2.get_formula_to_string());
 
-    tree2.join(tree3); // 2 <- 3
-    ASSERT_EQ(formula3, tree2.get_formula_to_string());
-    ASSERT_EQ("", tree3.get_formula_to_string());
+    // tree0 (empty) + tree1 -> tree1
+    Tree sum1 = tree0 + tree1;
+    ASSERT_EQ(formula1, sum1.get_formula_to_string());
 
-    tree3.join(tree3); // 3 <- 3
-    ASSERT_EQ("", tree3.get_formula_to_string());
-
-    tree0.join(tree1); // 1 <- 2
-    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b 8", tree0.get_formula_to_string());
-    ASSERT_EQ("", tree1.get_formula_to_string());
-
-    tree0.join(tree1); // 1 <- 0
-    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b 8", tree0.get_formula_to_string());
-    ASSERT_EQ("", tree1.get_formula_to_string());
-
-    tree0.join(tree2); // 1 <- 3
-    ASSERT_EQ("+ * a sin / 5 6 + c + * 5 sin x * + a b + * A sin B + A A", tree0.get_formula_to_string());
-    ASSERT_EQ("", tree2.get_formula_to_string());
+    // tree1 + tree0 (empty) -> tree1
+    Tree sum2 = tree1 + tree0;
+    ASSERT_EQ(formula1, sum2.get_formula_to_string());
 }
 
 TEST(TreeTest, GetVariablesToString)
@@ -235,12 +228,16 @@ TEST(TreeTest, JoinVariables_Scenario1)
     EXPECT_EQ(t1_1.get_variables_to_string(), "a");
     EXPECT_EQ(t2_1.get_variables_to_string(), "b");
 
-    t1_1.join(t2_1);
+    Tree result = t1_1 + t2_1;
 
-    EXPECT_EQ(t1_1.get_formula_to_string(), "+ a + b 1");
-    EXPECT_EQ(t2_1.get_formula_to_string(), "");
-    EXPECT_EQ(t1_1.get_variables_to_string(), "a b");
-    EXPECT_EQ(t2_1.get_variables_to_string(), "");
+    EXPECT_EQ(result.get_formula_to_string(), "+ a + b 1");
+    EXPECT_EQ(result.get_variables_to_string(), "a b");
+
+    EXPECT_EQ(t1_1.get_formula_to_string(), f1_1);
+    EXPECT_EQ(t1_1.get_variables_to_string(), "a");
+
+    EXPECT_EQ(t2_1.get_formula_to_string(), f2_1);
+    EXPECT_EQ(t2_1.get_variables_to_string(), "b");
 }
 
 TEST(TreeTest, JoinVariables_Scenario2)
@@ -253,12 +250,14 @@ TEST(TreeTest, JoinVariables_Scenario2)
     EXPECT_EQ(t1_2.get_variables_to_string(), "a");
     EXPECT_EQ(t2_2.get_variables_to_string(), "b");
 
-    t1_2.join(t2_2);
+    Tree result = t1_2 + t2_2;
 
-    EXPECT_EQ(t1_2.get_formula_to_string(), "+ 1 + b 1");
-    EXPECT_EQ(t2_2.get_formula_to_string(), "");
-    EXPECT_EQ(t1_2.get_variables_to_string(), "b");
-    EXPECT_EQ(t2_2.get_variables_to_string(), "");
+    EXPECT_EQ(result.get_formula_to_string(), "+ 1 + b 1");
+    EXPECT_EQ(result.get_variables_to_string(), "b");
+
+    EXPECT_EQ(t1_2.get_formula_to_string(), f1_2);
+    EXPECT_EQ(t1_2.get_variables_to_string(), "a");
+    EXPECT_EQ(t2_2.get_formula_to_string(), f2_2);
 }
 
 TEST(TreeTest, JoinVariables_Deduplication)
@@ -271,10 +270,13 @@ TEST(TreeTest, JoinVariables_Deduplication)
     EXPECT_EQ(t1.get_variables_to_string(), "a");
     EXPECT_EQ(t2.get_variables_to_string(), "a b");
 
-    t1.join(t2);
+    Tree result = t1.join(t2);
 
-    EXPECT_EQ(t1.get_formula_to_string(), "+ 1 + a b");
-    EXPECT_EQ(t2.get_formula_to_string(), "");
-    EXPECT_EQ(t1.get_variables_to_string(), "a b");
-    EXPECT_EQ(t2.get_variables_to_string(), "");
+    EXPECT_EQ(result.get_formula_to_string(), "+ 1 + a b");
+    EXPECT_EQ(result.get_variables_to_string(), "a b");
+
+    EXPECT_EQ(t1.get_formula_to_string(), f1);
+    EXPECT_EQ(t1.get_variables_to_string(), "a");
+    EXPECT_EQ(t2.get_formula_to_string(), f2);
+    EXPECT_EQ(t2.get_variables_to_string(), "a b");
 }
