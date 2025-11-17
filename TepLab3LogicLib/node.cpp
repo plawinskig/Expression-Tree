@@ -11,19 +11,6 @@ Node::Node(int number_of_children)
 {
 }
 
-Node::Node(const Node &other)
-    : parent_(nullptr),
-    children_(other.get_number_of_children(), nullptr)
-{
-    for (int i = 0; i < other.get_number_of_children(); i++)
-    {
-        children_.at(i) = alloc(other.get_child(i)->to_string());
-        children_.at(i);
-    }
-
-    
-}
-
 Node::~Node()
 {
     for (std::vector<Node *>::iterator it = children_.begin(); it != children_.end(); it++)
