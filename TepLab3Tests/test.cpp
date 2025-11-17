@@ -27,7 +27,7 @@ TEST(SplitTest, SplitFunctionality)
 TEST(TreeTest, GetFormulaToString)
 {
     Tree tree0;
-    EXPECT_EQ(tree0.get_formula_to_string(), "");
+    EXPECT_EQ(tree0.get_formula_to_string(), "[empty]");
 
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     Tree tree1(formula1);
@@ -119,7 +119,7 @@ TEST(TreeTest, JoinReturnsNewTreeAndDoesNotModifyOriginals)
     // Test: 0 join 1
     Tree res01 = tree0.join(tree1);
     ASSERT_EQ(formula1, res01.get_formula_to_string());
-    ASSERT_EQ("", tree0.get_formula_to_string());
+    ASSERT_EQ("[empty]", tree0.get_formula_to_string());
     ASSERT_EQ(formula1, tree1.get_formula_to_string());
 
     // Test: 1 join 2
