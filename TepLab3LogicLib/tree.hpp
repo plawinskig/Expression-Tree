@@ -36,6 +36,7 @@ public:
 	bool is_empty() const;
 
 	int get_depth() const;
+	int get_number_of_variables() const;
 	std::string get_formula_to_string() const;
 	std::string get_level_to_string(int level) const;
 	std::string get_variables_to_string() const;

@@ -157,6 +157,11 @@ int Tree::get_depth() const
     return is_empty() ? 0 : root_->get_depth();
 }
 
+int Tree::get_number_of_variables() const
+{
+    return variables_.size();
+}
+
 std::string Tree::get_formula_to_string() const
 {
     std::string result;

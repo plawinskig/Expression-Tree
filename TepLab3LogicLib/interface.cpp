@@ -112,7 +112,8 @@ void Interface::handle_comp(const std::string &arg)
     }
     else
     {
-        std::cout << "Error: Number of values provided does not match number of variables.\n";
+        std::cout << "Error: Number of values provided (" << vars.size();
+        std::cout << ") does not match formula number of variables (" << tree_.get_number_of_variables() << ")\n";
     }
 }
 
