@@ -28,3 +28,15 @@ private:
 	int required_; 
 	int given_;
 };
+
+class ErrorInvalidArgument : public Error
+{
+public:
+	ErrorInvalidArgument(std::string where, std::string what);
+
+	virtual std::string get_message() const;
+
+private:
+	std::string where_;
+	std::string what_;
+};

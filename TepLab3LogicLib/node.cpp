@@ -20,7 +20,7 @@ Node::~Node()
     }
 }
 
-Error *Node::load(const std::vector<std::string> nodes, int &off_end)
+Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
 {
     LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
 
@@ -39,15 +39,14 @@ Error *Node::load(const std::vector<std::string> nodes, int &off_end)
 
         if (off_end >= nodes.size())
         {
-            return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
+            return new ErrorIncorrectNumberOfArguments(nodes.at(off_start), get_number_of_children(), i);
         }
 
         Node *child = alloc(nodes.at(off_end));
 
-        if (child == nullptr)
+        if (!child)
         {
-            LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return NULL;  // TODO
+            return new ErrorInvalidArgument(nodes.at(off_start), nodes.at(off_end));
         }
 
         set_child(child, i);
@@ -57,7 +56,7 @@ Error *Node::load(const std::vector<std::string> nodes, int &off_end)
 
         off_end++;
 
-        child->load(nodes, off_end);
+        child->load(nodes, off_end, off_end);
     }
 
     LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);

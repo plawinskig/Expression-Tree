@@ -69,7 +69,7 @@ Error *Tree::load_new_formula(std::string formula)
     root_ = Node::alloc(form_vec.at(0));
 
     int offset = 1;
-    Error *err = root_->load(form_vec, offset);
+    Error *err = root_->load(form_vec, offset, offset);
 
     if (err)
     {
