@@ -86,6 +86,11 @@ Error *Tree::load_new_formula(std::string formula)
         Error *err_load = root_->load(nodes, offset, offset);
         errors->add(err_load);
 
+        if (offset < nodes.size())
+        {
+            errors->add(new ErrorTooManyArguments(formula.substr(0, offset), formula.substr(offset)));
+        }
+
         root_->get_variables(variables_);
     }
     

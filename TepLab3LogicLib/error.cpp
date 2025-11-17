@@ -80,3 +80,21 @@ std::string ErrorInvalidCharacter::get_message() const
 
 	return message.str();
 }
+
+ErrorTooManyArguments::ErrorTooManyArguments(std::string loaded, std::string remained)
+	: loaded_(loaded),
+	remained_(remained)
+{
+}
+
+std::string ErrorTooManyArguments::get_message() const
+{
+	std::stringstream message;
+	message << "Too many arguments in formula.\n";
+	message << loaded_ << remained_ << "\n";
+	std::string loaded_offset(loaded_.size() + 1, ' ');
+	std::string remained_offset(remained_.size() - 1, '^');
+	message << loaded_offset << remained_offset << "\n";
+
+	return message.str();
+}

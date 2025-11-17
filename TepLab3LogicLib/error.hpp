@@ -58,3 +58,15 @@ private:
 	std::string where_;
 	char what_;
 };
+
+class ErrorTooManyArguments : public Error
+{
+public:
+	ErrorTooManyArguments(std::string loaded, std::string remained);
+
+	virtual std::string get_message() const;
+
+private:
+	std::string loaded_;
+	std::string remained_;
+};
