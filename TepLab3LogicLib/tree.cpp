@@ -186,7 +186,7 @@ std::string Tree::get_variables_to_string() const
 
     std::string result = variables_.front()->get_name();
 
-    for (int i = 1; i < variables_.size(); i++)
+    for (size_t i = 1; i < variables_.size(); i++)
     {
         result += FORMULA_SEPARATOR + variables_.at(i)->get_name();
     }
@@ -201,9 +201,7 @@ bool Tree::set_variables(const std::vector<int> &variables)
         return false;
     }
 
-    int size = variables.size();
-
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < variables.size(); i++)
     {
         variables_.at(i)->set_value(variables.at(i));
     }

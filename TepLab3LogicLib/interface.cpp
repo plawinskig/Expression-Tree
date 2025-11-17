@@ -2,7 +2,7 @@
 #include "interface.hpp"
 #include <iostream>
 #include <cctype>
-#include <cstdlib> // dla atoi
+#include <cstdlib>
 
 namespace
 {
@@ -147,17 +147,19 @@ int Interface::find_text(const std::string &text) const
             return i;
         }
     }
+
     return -1;
 }
 
 void Interface::cut_white_beginning(std::string &text) const
 {
-    int pos = find_text(text);
+    std::string::size_type pos = find_text(text);
+
     if (pos > 0)
     {
         text.erase(0, pos);
     }
-    else if (pos == -1 && !text.empty())
+    else if (pos == std::string::npos && !text.empty())
     {
         text.clear();
     }
