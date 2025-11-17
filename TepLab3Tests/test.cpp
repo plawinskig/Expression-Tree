@@ -224,3 +224,57 @@ TEST(TreeTest, CalculateFormulaSetVariables)
     tree3.set_variables(vars3);
     EXPECT_NEAR(tree3.calculate_formula(), (2.0 * sin(0.0)) + (2.0 + 2.0), ABS_ERR);
 }
+
+TEST(TreeTest, JoinVariables_Scenario1)
+{
+    std::string f1_1 = "+ a 1";
+    std::string f2_1 = "+ b 1";
+    Tree t1_1(f1_1);
+    Tree t2_1(f2_1);
+
+    EXPECT_EQ(t1_1.get_variables_to_string(), "a");
+    EXPECT_EQ(t2_1.get_variables_to_string(), "b");
+
+    t1_1.join(t2_1);
+
+    EXPECT_EQ(t1_1.get_formula_to_string(), "+ a + b 1");
+    EXPECT_EQ(t2_1.get_formula_to_string(), "");
+    EXPECT_EQ(t1_1.get_variables_to_string(), "a b");
+    EXPECT_EQ(t2_1.get_variables_to_string(), "");
+}
+
+TEST(TreeTest, JoinVariables_Scenario2)
+{
+    std::string f1_2 = "+ 1 a";
+    std::string f2_2 = "+ b 1";
+    Tree t1_2(f1_2);
+    Tree t2_2(f2_2);
+
+    EXPECT_EQ(t1_2.get_variables_to_string(), "a");
+    EXPECT_EQ(t2_2.get_variables_to_string(), "b");
+
+    t1_2.join(t2_2);
+
+    EXPECT_EQ(t1_2.get_formula_to_string(), "+ 1 + b 1");
+    EXPECT_EQ(t2_2.get_formula_to_string(), "");
+    EXPECT_EQ(t1_2.get_variables_to_string(), "b");
+    EXPECT_EQ(t2_2.get_variables_to_string(), "");
+}
+
+TEST(TreeTest, JoinVariables_Deduplication)
+{
+    std::string f1 = "+ 1 a";
+    std::string f2 = "+ a b";
+    Tree t1(f1);
+    Tree t2(f2);
+
+    EXPECT_EQ(t1.get_variables_to_string(), "a");
+    EXPECT_EQ(t2.get_variables_to_string(), "a b");
+
+    t1.join(t2);
+
+    EXPECT_EQ(t1.get_formula_to_string(), "+ 1 + a b");
+    EXPECT_EQ(t2.get_formula_to_string(), "");
+    EXPECT_EQ(t1.get_variables_to_string(), "a b");
+    EXPECT_EQ(t2.get_variables_to_string(), "");
+}
