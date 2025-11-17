@@ -76,7 +76,7 @@ std::string ErrorInvalidCharacter::get_message() const
 	std::stringstream message;
 	message << "Character: '";
 	message << what_ << "' in '" << where_;
-	message << "' is not permitted in variable names. Omitting.\n";
+	message << "' is not permitted. Omitting.\n";
 
 	return message.str();
 }

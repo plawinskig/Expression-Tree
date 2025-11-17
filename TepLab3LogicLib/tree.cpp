@@ -78,13 +78,17 @@ Error *Tree::load_new_formula(std::string formula)
     delete root_;
     root_ = Node::alloc(root_node_type);
 
-    int offset = 1;
-    Error *err_load = root_->load(nodes, offset, offset);
-    errors->add(err_load);
-    
     clear_variables();
-    root_->get_variables(variables_);
 
+    if (root_)
+    {
+        int offset = 1;
+        Error *err_load = root_->load(nodes, offset, offset);
+        errors->add(err_load);
+
+        root_->get_variables(variables_);
+    }
+    
     return errors;
 }
 
@@ -247,33 +251,6 @@ void Tree::get_level_to_string(Node *node, std::string &result, int level) const
     {
         get_level_to_string(node->get_child(i), result, level);
     }
-}
-
-std::vector<std::string> Tree::split(std::string formula, std::string separator)
-{
-    std::vector<std::string> result;
-
-    std::string::size_type next_regex_index = formula.find(separator);
-    std::string::size_type regex_length = separator.length();
-    std::string::size_type offset = 0;
-
-    while (next_regex_index != std::string::npos)
-    {
-        if (next_regex_index > offset)
-        {
-            result.push_back(formula.substr(offset, next_regex_index - offset));
-        }
-
-        offset = next_regex_index + regex_length;
-        next_regex_index = formula.find(separator, offset);
-    }
-
-    if (offset < formula.length())
-    {
-        result.push_back(formula.substr(offset));
-    }
-
-    return result;
 }
 
 void print_tree_by_levels(Tree &tree)

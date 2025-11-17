@@ -52,7 +52,7 @@ public:
 
 	virtual ~Node();
 
-	Error *load(const std::vector<std::string> nodes, int off_start, int &off_end);
+	Errors *load(const std::vector<std::string> nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
 	virtual float get_value() const = 0;

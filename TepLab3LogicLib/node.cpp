@@ -20,9 +20,10 @@ Node::~Node()
     }
 }
 
-Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
+Errors *Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
 {
     LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
+    Errors *errors = new Errors();
 
     if (is_nil())
     {
@@ -37,30 +38,32 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
         LOG_DEBUG("Continue load recursion for " << *this << "\t" << " " << off_end);
         LOG_DEBUG("Alloc child [" << i << "/" << get_number_of_children() << "] for " << *this << "\t" << " " << off_end);
 
+        Node *child;
+
         if (off_end >= nodes.size())
         {
             LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
-            return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
+            errors->add(new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i));
+            child = new NodeValue(DEFAULT_VALUE_STRING);
         }
-
-        std::string node_type = nodes.at(off_end);
-
-        if (!is_operation(node_type))
+        else
         {
-            Error *err_inv_chars = skip_invalid_characters(node_type);
-            if (err_inv_chars)
+            std::string node_type = nodes.at(off_end);
+
+            if (!is_operation(node_type))
             {
-                // std::cout << err_inv_chars->get_message(); 
-                delete err_inv_chars;
+                Error *err_inv_chars = skip_invalid_characters(node_type);
+                errors->add(err_inv_chars);
             }
-        }
 
-        Node *child = alloc(node_type);
+            child = alloc(node_type);
 
-        if (!child)
-        {
-            LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
-            return new ErrorInvalidArgument(this->to_string(), node_type);
+            if (!child)
+            {
+                LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
+                errors->add(new ErrorInvalidArgument(this->to_string(), node_type));
+                child = new NodeValue(DEFAULT_VALUE_STRING);
+            }
         }
 
         set_child(child, i);
@@ -71,11 +74,12 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
         off_end++;
 
         Error *err_load = child->load(nodes, off_end, off_end);
+        errors->add(err_load);
     }
 
     LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
 
-    return nullptr;
+    return errors;
 }
 
 bool Node::is_nil() const
@@ -206,6 +210,11 @@ bool Node::add_last_child(Node *child)
 
 Node *Node::alloc(std::string node_type)
 {
+    if (node_type.empty())
+    {
+        return nullptr;
+    }
+
     if (is_value(node_type))
     {
         return new NodeValue(node_type);

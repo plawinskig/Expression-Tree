@@ -6,6 +6,7 @@
 #include "node.hpp"
 #include "error.hpp"
 #include "formula_elements.hpp"
+#include "string_helpers.hpp"
 
 namespace
 {
@@ -40,8 +41,6 @@ public:
 	std::string get_variables_to_string() const;
 
 	bool set_variables(const std::vector<int> &variables);
-
-	static std::vector<std::string> split(std::string formula, std::string regex = FORMULA_SEPARATOR);
 
 private:
 	void clear_variables();

@@ -25,7 +25,7 @@ void Interface::run()
         if (input == COMMAND_EXIT)
         {
             running_ = false;
-            continue;
+            input = std::string();
         }
 
         std::string::size_type first_sep = input.find(INPUT_SEPARATOR);
@@ -75,17 +75,14 @@ void Interface::handle_enter(const std::string &arg)
     {
         Error *err = tree_.load_new_formula(arg);
 
-        if (err)
-        {
-            std::cout << err->get_message() << "\n";
-            delete err;
-        }
+        std::cout << err->get_message() << "\n";
+        delete err;
 
-        std::cout << "formula loaded\n";
+        std::cout << "Loaded formula: " << tree_.get_formula_to_string() << "\n";
     }
     else
     {
-        std::cout << "Too few arguments for " << COMMAND_ENTER << " command.\n";
+        std::cout << "Too few arguments for " << COMMAND_ENTER << " command\n";
     }
 }
 
@@ -101,7 +98,7 @@ void Interface::handle_print()
 
 void Interface::handle_comp(const std::string &arg)
 {
-    std::vector<std::string> vars_str = split(arg);
+    std::vector<std::string> vars_str = split(arg, INPUT_SEPARATOR);
     std::vector<int> vars(vars_str.size());
 
     for (int i = 0; i < vars_str.size(); i++)
@@ -131,72 +128,4 @@ void Interface::handle_join(const std::string &arg)
     {
         std::cout << "Too few arguments for " << COMMAND_JOIN << " command.\n";
     }
-}
-
-int Interface::find_text(const std::string &text) const
-{
-    for (int i = 0; i < text.size(); i++)
-    {
-        if (!std::isspace(text.at(i)))
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-void Interface::cut_white_beginning(std::string &text) const
-{
-    std::string::size_type pos = find_text(text);
-
-    if (pos > 0)
-    {
-        text.erase(0, pos);
-    }
-    else if (pos == std::string::npos && !text.empty())
-    {
-        text.clear();
-    }
-}
-
-std::vector<std::string> Interface::split(std::string input)
-{
-    std::vector<std::string> result;
-
-    std::string::size_type next_regex_index = input.find(INPUT_SEPARATOR);
-    std::string::size_type regex_length = INPUT_SEPARATOR.length();
-    std::string::size_type offset = 0;
-
-    std::string element;
-
-    while (next_regex_index != std::string::npos)
-    {
-        if (next_regex_index > offset)
-        {
-            element = input.substr(offset, next_regex_index - offset);
-            cut_white_beginning(element);
-
-            if (!element.empty())
-            {
-                result.push_back(element);
-            }
-        }
-
-        offset = next_regex_index + regex_length;
-        next_regex_index = input.find(INPUT_SEPARATOR, offset);
-    }
-
-    if (offset < input.length())
-    {
-        element = input.substr(offset);
-        cut_white_beginning(element);
-
-        if (!element.empty())
-        {
-            result.push_back(element);
-        }
-    }
-
-    return result;
 }

@@ -28,10 +28,6 @@ private:
     void handle_comp(const std::string &arg);
     void handle_join(const std::string &arg);
 
-    int find_text(const std::string &text) const;
-    void cut_white_beginning(std::string &text) const;
-    std::vector<std::string> split(std::string formula);
-
     Tree tree_;
     bool running_;
 };

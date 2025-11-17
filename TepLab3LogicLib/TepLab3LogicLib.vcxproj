@@ -138,6 +138,7 @@
     <ClInclude Include="error.hpp" />
     <ClInclude Include="interface.hpp" />
     <ClInclude Include="node.hpp" />
+    <ClInclude Include="string_helpers.hpp" />
     <ClInclude Include="tree.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="formula_elements.hpp" />
@@ -152,6 +153,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="string_helpers.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="formula_elements.cpp" />
   </ItemGroup>
