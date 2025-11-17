@@ -21,11 +21,11 @@ Node::~Node()
 
 Error Node::load(const std::vector<std::string> nodes, int &off_end)
 {
-    //LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
+    LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
 
     if (is_nil())
     {
-        //LOG_DEBUG("End recursion for nil: " << *this << "\t" << " " << off_end);
+        LOG_DEBUG("End recursion for nil: " << *this << "\t" << " " << off_end);
 
         return Error();
     }
@@ -33,28 +33,34 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
-        //LOG_DEBUG("Continue load recursion for " << *this << "\t" << " " << off_end);
-        //LOG_DEBUG("Alloc child [" << i << "/" << get_number_of_children() << "] for " << *this << "\t" << " " << off_end);
+        LOG_DEBUG("Continue load recursion for " << *this << "\t" << " " << off_end);
+        LOG_DEBUG("Alloc child [" << i << "/" << get_number_of_children() << "] for " << *this << "\t" << " " << off_end);
+
+        if (off_end >= nodes.size())
+        {
+            LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
+            return Error(code::INCORRECT_NUM_OF_ARGS);
+        }
 
         Node *child = alloc(nodes.at(off_end));
 
         if (child == nullptr)
         {
-            //LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return Error("eeeeeeeeeeeeeeeeee"); // TODO
+            LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
+            return Error(code::INCORRECT_ARG); 
         }
 
         set_child(child, i);
         child->set_parent(this);
 
-        //LOG_DEBUG("connected: " << *this << " ---> " << *child);
+        LOG_DEBUG("connected: " << *this << " ---> " << *child);
 
         off_end++;
 
         child->load(nodes, off_end);
     }
 
-    //LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
+    LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
 
     return Error();
 }

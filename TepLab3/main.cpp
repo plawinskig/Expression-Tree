@@ -2,8 +2,8 @@
 
 int main()
 {
-    Interface cli;
-    cli.run();
+    Interface app;
+    app.run();
 
     return 0;
 }

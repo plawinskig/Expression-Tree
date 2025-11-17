@@ -2,21 +2,21 @@
 #include "error.hpp"
 
 Error::Error()
-	:message_(std::string())
+	: code_(code::NO_ERROR)
 {
 }
 
-Error::Error(std::string message)
-	:message_(message)
+Error::Error(code code)
+	: code_(code)
 {
 }
 
 bool Error::has_occured() const
 {
-	return !message_.empty();
+	return code_ != code::NO_ERROR;
 }
 
 std::string Error::get_message() const
 {
-	return message_;
+	return MESSAGES.at(code_);
 }

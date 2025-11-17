@@ -85,8 +85,16 @@ void Interface::handle_enter(const std::string &arg)
     if (!arg.empty())
     {
         // TODO Tutaj mo¿na dodaæ try-catch jeœli obs³ugiwaæ naprawianie formu³y
-        tree_.load_new_formula(arg);
-        std::cout << "formula loaded\n";
+        Error err = tree_.load_new_formula(arg);
+
+        if (err.has_occured())
+        {
+            std::cout << err.get_message() << "\n";
+        }
+        else
+        {
+            std::cout << "formula loaded\n";
+        }
     }
     else
     {

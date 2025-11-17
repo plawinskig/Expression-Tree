@@ -7,7 +7,7 @@
 #include "error.hpp"
 #include "formula_elements.hpp"
 
-#define ENABLE_DEBUGGING 1
+#define ENABLE_DEBUGGING 0
 
 #if ENABLE_DEBUGGING
 #define LOG_DEBUG(message) (std::cout << message << "\n")
