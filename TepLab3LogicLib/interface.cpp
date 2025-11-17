@@ -128,11 +128,11 @@ void Interface::handle_join(const std::string &arg)
         delete err_load;
 
         tree_ = tree_ + to_join;
-        std::cout << "Formula joined succesfully.\n";
+        std::cout << "Formula joined succesfully\n";
         std::cout << "New formula: " << tree_.get_formula_to_string() << "\n";
     }
     else
     {
-        std::cout << "Too few arguments for " << COMMAND_JOIN << " command.\n";
+        std::cout << "Too few arguments for " << COMMAND_JOIN << " command\n";
     }
 }

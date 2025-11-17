@@ -97,12 +97,12 @@ Tree Tree::join(const Tree &other) const
 {
     if (other.is_empty())
     {
-        return *this;
+        return Tree(*this);
     }
     
     if (is_empty())
     {
-        return other;
+        return Tree(other);
     }
 
     Tree result(*this);
