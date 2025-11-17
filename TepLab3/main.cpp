@@ -2,6 +2,7 @@
 #include "node.hpp"
 #include <iostream>
 #include <vector>
+#include <cctype>
 
 namespace
 {
@@ -19,7 +20,7 @@ int find_text(const std::string &text)
 {
     for (int i = 0; i < text.size(); i++)
     {
-        if (text.at(i) != WHITE_MARK)
+        if (!std::isspace(text.at(i)))
         {
             return i;
         }
@@ -47,7 +48,7 @@ int main()
         std::getline(std::cin, input);
 
         cut_white_begining(input);
-        std::cout << input << "\n";
+        //std::cout << input << "\n";
 
         std::string::size_type first_sep = input.find(COMMAND_SEPARATOR);
 
@@ -100,7 +101,7 @@ int main()
         else if (command == COMMAND_JOIN)
         {
             Tree to_join(input.substr(command.size()));
-            tree.join(to_join);
+            tree = tree + to_join;
             std::cout << "Formula joined succesfully.\n";
         }
 
