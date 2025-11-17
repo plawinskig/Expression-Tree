@@ -25,6 +25,11 @@ Tree::~Tree()
     variables_.clear();
 }
 
+Tree Tree::operator+(const Tree &other) const
+{
+    return;
+}
+
 Node *Tree::get_root()
 {
     return root_;
@@ -44,37 +49,36 @@ void Tree::load_new_formula(std::string formula)
     root_->get_variables(variables_);
 }
 
-void Tree::join(Tree &other)
+Tree Tree::join(const Tree &other) const
 {
-    if (this == &other || other.is_empty())
+    if (other.is_empty())
     {
-        return;
+        return *this;
     }
-
+    
     if (is_empty())
     {
-        root_ = other.root_;
-        variables_ = other.variables_;
-
-        other.root_ = nullptr;
-        other.variables_.clear();
-        return;
+        return other;
     }
 
-    Node *connector = root_->get_last_leaf();
-    Node *connector_parent = connector->get_parent();
-    Node *other_root = other.root_;
+    Tree result(*this);
+    Tree other_cpy(other);
 
-    other_root->set_parent(connector_parent);
-    connector_parent->set_last_child(other_root);
+    Node *connector = result.root_->get_last_leaf();
+    Node *connector_parent = connector->get_parent();
+
+    other_cpy.root_->set_parent(connector_parent);
+    connector_parent->set_last_child(other_cpy.root_);
 
     delete connector;
 
-    other.root_ = nullptr;
-    other.variables_.clear();
+    other_cpy.root_ = nullptr;
+    other_cpy.variables_.clear();
 
-    variables_.clear();
-    root_->get_variables(variables_);
+    result.variables_.clear();
+    result.root_->get_variables(result.variables_);
+
+    return result;
 }
 
 float Tree::calculate_formula() const

@@ -18,12 +18,14 @@ public:
 	Tree(std::string formula);
 	~Tree();
 
+	Tree operator+(const Tree &other) const;
+
 	// TO DELETE
 	Node *get_root();
 	// 
 
 	void load_new_formula(std::string formula);
-	void join(Tree &other);
+	Tree join(const Tree &other) const;
 	float calculate_formula() const;
 
 	bool is_empty() const;
