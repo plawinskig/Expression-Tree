@@ -74,14 +74,13 @@ public:
 
 	static Node *alloc(std::string node_type);
 	static Errors *skip_invalid_characters(std::string &node_type);
+	static bool is_value(std::string node_type);
+	static bool is_variable(std::string node_type);
+	static bool is_operation(std::string node_type);
 
 private:
 	Node(const Node &);
 	Node &operator=(const Node &);
-
-	static bool is_value(std::string node_type);
-	static bool is_variable(std::string node_type);
-	static bool is_operation(std::string node_type);
 
 	Node *parent_;
 	std::vector<Node *> children_;

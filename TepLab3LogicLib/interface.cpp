@@ -4,17 +4,6 @@
 #include <cctype>
 #include <cstdlib>
 
-namespace
-{
-    const std::string COMMAND_SEPARATOR = " ";
-    const std::string COMMAND_ENTER = "enter";
-    const std::string COMMAND_VARS = "vars";
-    const std::string COMMAND_PRINT = "print";
-    const std::string COMMAND_COMP = "comp";
-    const std::string COMMAND_JOIN = "join";
-    const std::string COMMAND_EXIT = "exit";
-}
-
 Interface::Interface()
     : running_(true)
 {
@@ -39,7 +28,7 @@ void Interface::run()
             continue;
         }
 
-        std::string::size_type first_sep = input.find(COMMAND_SEPARATOR);
+        std::string::size_type first_sep = input.find(INPUT_SEPARATOR);
 
         if (first_sep == std::string::npos)
         {
@@ -112,10 +101,10 @@ void Interface::handle_print()
 
 void Interface::handle_comp(const std::string &arg)
 {
-    std::vector<std::string> vars_str = Tree::split(arg);
+    std::vector<std::string> vars_str = split(arg);
     std::vector<int> vars(vars_str.size());
 
-    for (size_t i = 0; i < vars_str.size(); i++)
+    for (int i = 0; i < vars_str.size(); i++)
     {
         vars.at(i) = std::atoi(vars_str.at(i).c_str());
     }
@@ -146,7 +135,7 @@ void Interface::handle_join(const std::string &arg)
 
 int Interface::find_text(const std::string &text) const
 {
-    for (size_t i = 0; i < text.size(); i++)
+    for (int i = 0; i < text.size(); i++)
     {
         if (!std::isspace(text.at(i)))
         {
@@ -169,4 +158,45 @@ void Interface::cut_white_beginning(std::string &text) const
     {
         text.clear();
     }
+}
+
+std::vector<std::string> Interface::split(std::string input)
+{
+    std::vector<std::string> result;
+
+    std::string::size_type next_regex_index = input.find(INPUT_SEPARATOR);
+    std::string::size_type regex_length = INPUT_SEPARATOR.length();
+    std::string::size_type offset = 0;
+
+    std::string element;
+
+    while (next_regex_index != std::string::npos)
+    {
+        if (next_regex_index > offset)
+        {
+            element = input.substr(offset, next_regex_index - offset);
+            cut_white_beginning(element);
+
+            if (!element.empty())
+            {
+                result.push_back(element);
+            }
+        }
+
+        offset = next_regex_index + regex_length;
+        next_regex_index = input.find(INPUT_SEPARATOR, offset);
+    }
+
+    if (offset < input.length())
+    {
+        element = input.substr(offset);
+        cut_white_beginning(element);
+
+        if (!element.empty())
+        {
+            result.push_back(element);
+        }
+    }
+
+    return result;
 }

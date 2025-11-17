@@ -69,11 +69,14 @@ Error *Tree::load_new_formula(std::string formula)
 
     std::string root_node_type = nodes.at(0);
 
-    Errors *err_invalid_characters = Node::skip_invalid_characters(root_node_type);
-    errors->add(err_invalid_characters);
+    if (!Node::is_operation(root_node_type))
+    {
+        Error *err_inv_chars = Node::skip_invalid_characters(root_node_type);
+        errors->add(err_inv_chars);
+    }
 
     delete root_;
-    root_ = Node::alloc(nodes.at(0));
+    root_ = Node::alloc(root_node_type);
 
     int offset = 1;
     Error *err_load = root_->load(nodes, offset, offset);
@@ -104,9 +107,17 @@ Tree Tree::join(const Tree &other) const
     Node *connector_parent = connector->get_parent();
 
     other_cpy.root_->set_parent(connector_parent);
-    connector_parent->set_last_child(other_cpy.root_);
 
-    delete connector;
+    if (connector_parent != nullptr)
+    {
+        connector_parent->set_last_child(other_cpy.root_);
+        delete connector;
+    }
+    else
+    {
+        delete result.root_;
+        result.root_ = other_cpy.root_;
+    }
 
     other_cpy.root_ = nullptr;
     other_cpy.variables_.clear();
@@ -196,7 +207,7 @@ std::string Tree::get_variables_to_string() const
 
     std::string result = variables_.front()->get_name();
 
-    for (size_t i = 1; i < variables_.size(); i++)
+    for (int i = 1; i < variables_.size(); i++)
     {
         result += FORMULA_SEPARATOR + variables_.at(i)->get_name();
     }
@@ -211,7 +222,7 @@ bool Tree::set_variables(const std::vector<int> &variables)
         return false;
     }
 
-    for (size_t i = 0; i < variables.size(); i++)
+    for (int i = 0; i < variables.size(); i++)
     {
         variables_.at(i)->set_value(variables.at(i));
     }

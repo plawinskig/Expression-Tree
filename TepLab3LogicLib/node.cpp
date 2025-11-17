@@ -39,17 +39,27 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
 
         if (off_end >= nodes.size())
         {
+            LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
             return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
         }
 
         std::string node_type = nodes.at(off_end);
 
-        Error *err_inv_chars = skip_invalid_characters(node_type);
+        if (!is_operation(node_type))
+        {
+            Error *err_inv_chars = skip_invalid_characters(node_type);
+            if (err_inv_chars)
+            {
+                // std::cout << err_inv_chars->get_message(); 
+                delete err_inv_chars;
+            }
+        }
 
         Node *child = alloc(node_type);
 
         if (!child)
         {
+            LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
             return new ErrorInvalidArgument(this->to_string(), node_type);
         }
 
