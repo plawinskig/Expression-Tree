@@ -43,8 +43,6 @@ namespace
 	static const int OP_NUM_OF_ARGS[OP_COUNT] = { 2, 2, 2, 2, 1, 1 };
 }
 
-class NodeVariable;
-
 class Node
 {
 public:
