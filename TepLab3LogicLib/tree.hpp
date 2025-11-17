@@ -16,7 +16,10 @@ class Tree
 public:
 	Tree();
 	Tree(std::string formula);
+
+	Tree(const Tree &other);
 	~Tree();
+	Tree &operator=(const Tree &other);
 
 	Tree operator+(const Tree &other) const;
 
@@ -40,6 +43,8 @@ public:
 	static std::vector<std::string> split(std::string formula, std::string regex = FORMULA_SEPARATOR);
 
 private:
+	void clear_variables();
+
 	void get_formula_to_string(Node *node, std::string &result) const;
 	void get_level_to_string(Node *node, std::string &result, int level) const;
 

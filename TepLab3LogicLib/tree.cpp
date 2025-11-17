@@ -2,32 +2,58 @@
 #include "tree.hpp"
 
 Tree::Tree()
-    :root_(nullptr),
+    : root_(nullptr),
     variables_(std::vector<Variable *>())
 {
 }
 
 Tree::Tree(std::string formula)
-    :root_(nullptr),
+    : root_(nullptr),
     variables_(std::vector<Variable *>())
 {
     load_new_formula(formula);
 }
 
+Tree::Tree(const Tree &other)
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
+{
+    if (!other.is_empty())
+    {
+        load_new_formula(other.get_formula_to_string());
+    }
+}
+
+Tree &Tree::operator=(const Tree &other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    if (other.is_empty())
+    {
+        delete root_;
+        root_ = nullptr;
+        clear_variables();
+    }
+    else
+    {
+        load_new_formula(other.get_formula_to_string());
+    }
+
+    return *this;
+}
+
 Tree::~Tree()
 {
     delete root_;
-
-    for (std::vector<Variable *>::iterator it = variables_.begin(); it != variables_.end(); it++)
-    {
-        delete *it;
-    }
-    variables_.clear();
+    clear_variables();
 }
 
 Tree Tree::operator+(const Tree &other) const
 {
-    return;
+    return this->join(other);
 }
 
 Node *Tree::get_root()
@@ -44,8 +70,8 @@ void Tree::load_new_formula(std::string formula)
 
     int offset = 1;
     root_->load(form_vec, offset);
-
-    variables_.clear();
+    
+    clear_variables();
     root_->get_variables(variables_);
 }
 
@@ -111,6 +137,16 @@ std::string Tree::get_formula_to_string() const
     }
      
     return result;
+}
+
+void Tree::clear_variables()
+{
+    for (std::vector<Variable *>::iterator it = variables_.begin(); it != variables_.end(); it++)
+    {
+        delete *it;
+    }
+
+    variables_.clear();
 }
 
 void Tree::get_formula_to_string(Node *node, std::string &result) const

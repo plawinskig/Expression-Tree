@@ -6,9 +6,22 @@
 #include <iostream>
 
 Node::Node(int number_of_children)
-    :parent_(nullptr),
+    : parent_(nullptr),
     children_(number_of_children, nullptr)
 {
+}
+
+Node::Node(const Node &other)
+    : parent_(nullptr),
+    children_(other.get_number_of_children(), nullptr)
+{
+    for (int i = 0; i < other.get_number_of_children(); i++)
+    {
+        children_.at(i) = alloc(other.get_child(i)->to_string());
+        children_.at(i);
+    }
+
+    
 }
 
 Node::~Node()
@@ -289,12 +302,12 @@ void NodeVariable::set_value(int value)
 }
 
 NodeOperation::NodeOperation(int number_of_children)
-    :Node(number_of_children)
+    : Node(number_of_children)
 {
 }
 
 NodeOperationAddition::NodeOperationAddition(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -304,7 +317,7 @@ std::string NodeOperationAddition::get_type() const
 }
 
 NodeOperationSubtraction::NodeOperationSubtraction(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -314,7 +327,7 @@ std::string NodeOperationSubtraction::get_type() const
 }
 
 NodeOperationMultiplication::NodeOperationMultiplication(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -324,7 +337,7 @@ std::string NodeOperationMultiplication::get_type() const
 }
 
 NodeOperationDivision::NodeOperationDivision(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -334,7 +347,7 @@ std::string NodeOperationDivision::get_type() const
 }
 
 NodeOperationSin::NodeOperationSin(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -344,7 +357,7 @@ std::string NodeOperationSin::get_type() const
 }
 
 NodeOperationCos::NodeOperationCos(int number_of_children)
-    :NodeOperation(number_of_children)
+    : NodeOperation(number_of_children)
 {
 }
 
@@ -412,7 +425,8 @@ float NodeOperationCos::get_value() const
 }
 
 NodeVariable::NodeVariable(Variable *var)
-    :variable_(var)
+    : Node(VARIABLE_NUM_OF_CHILDREN),
+    variable_(var)
 {
 }
 
@@ -442,7 +456,7 @@ std::string NodeVariable::to_string() const
 }
 
 NodeValue::NodeValue(std::string value)
-    :Node(VALUE_NUM_OF_CHILDREN),
+    : Node(VALUE_NUM_OF_CHILDREN),
     value_(std::atoi(value.c_str())),
     value_string_(value)
 {
