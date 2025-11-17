@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "node.hpp"
-#include "info.hpp"
+#include "error.hpp"
 #include "formula_elements.hpp"
 
 namespace

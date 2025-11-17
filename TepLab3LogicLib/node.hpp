@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include "info.hpp"
+#include "error.hpp"
 #include "formula_elements.hpp"
 
 #define ENABLE_DEBUGGING 0

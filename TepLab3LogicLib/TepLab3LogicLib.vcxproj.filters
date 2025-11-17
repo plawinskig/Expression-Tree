@@ -24,7 +24,7 @@
     <ClInclude Include="node.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="info.hpp">
+    <ClInclude Include="error.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="formula_elements.hpp">
@@ -44,7 +44,7 @@
     <ClCompile Include="node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="info.cpp">
+    <ClCompile Include="error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="formula_elements.cpp">
