@@ -39,14 +39,14 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
 
         if (off_end >= nodes.size())
         {
-            return new ErrorIncorrectNumberOfArguments(nodes.at(off_start), get_number_of_children(), i);
+            return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
         }
 
         Node *child = alloc(nodes.at(off_end));
 
         if (!child)
         {
-            return new ErrorInvalidArgument(nodes.at(off_start), nodes.at(off_end));
+            return new ErrorInvalidArgument(this->to_string(), nodes.at(off_end));
         }
 
         set_child(child, i);
@@ -56,7 +56,12 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
 
         off_end++;
 
-        child->load(nodes, off_end, off_end);
+        Error *err = child->load(nodes, off_end, off_end);
+
+        if (err)
+        {
+            return err;
+        }
     }
 
     LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
@@ -260,15 +265,15 @@ bool Node::is_operation(std::string node_type)
     return false;
 }
 
-Warning *Node::skip_invalid_characters(std::string &node_type)
+Error *Node::skip_invalid_characters(std::string &node_type)
 {
-    Warning *warn = nullptr;
+    Error *warn = nullptr;
 
     for (std::string::iterator it = node_type.begin(); it != node_type.end();)
     {
         if (!std::isalnum(*it))
         {
-            LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
+            //LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
 
             it = node_type.erase(it);
         }

@@ -16,14 +16,6 @@
 #endif
 
 
-#define ENABLE_WARNINGS 0
-
-#if ENABLE_WARNINGS
-#define LOG_WARN(message) (std::cout << "[WARNING] " << message << "\n")
-#else
-#define LOG_WARN(message) ((void)0)
-#endif
-
 namespace
 {
 	const int DEFAULT_NUM_OF_CHILDREN = 0;
@@ -89,7 +81,7 @@ private:
 	static bool is_value(std::string node_type);
 	static bool is_variable(std::string node_type);
 	static bool is_operation(std::string node_type);
-	static Warning *skip_invalid_characters(std::string &node_type);
+	static Error *skip_invalid_characters(std::string &node_type);
 
 	Node *parent_;
 	std::vector<Node *> children_;

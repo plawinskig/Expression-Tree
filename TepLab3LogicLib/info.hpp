@@ -2,18 +2,10 @@
 
 #include <string>
 
-class Info
+class Error
 {
 public:
 	virtual std::string get_message() const = 0;
-};
-
-class Error : public Info
-{
-};
-
-class Warning : public Info
-{
 };
 
 class ErrorIncorrectNumberOfArguments : public Error
