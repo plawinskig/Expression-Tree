@@ -63,23 +63,26 @@ Node *Tree::get_root()
 
 Error *Tree::load_new_formula(std::string formula)
 {
-    std::vector<std::string> form_vec = split(formula, FORMULA_SEPARATOR);
+    Errors *errors = new Errors();
+
+    std::vector<std::string> nodes = split(formula, FORMULA_SEPARATOR);
+
+    std::string root_node_type = nodes.at(0);
+
+    Errors *err_invalid_characters = Node::skip_invalid_characters(root_node_type);
+    errors->add(err_invalid_characters);
 
     delete root_;
-    root_ = Node::alloc(form_vec.at(0));
+    root_ = Node::alloc(nodes.at(0));
 
     int offset = 1;
-    Error *err = root_->load(form_vec, offset, offset);
-
-    if (err)
-    {
-        return err;
-    }
+    Error *err_load = root_->load(nodes, offset, offset);
+    errors->add(err_load);
     
     clear_variables();
     root_->get_variables(variables_);
 
-    return nullptr;
+    return errors;
 }
 
 Tree Tree::join(const Tree &other) const

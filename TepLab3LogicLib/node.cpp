@@ -42,11 +42,15 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
             return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
         }
 
-        Node *child = alloc(nodes.at(off_end));
+        std::string node_type = nodes.at(off_end);
+
+        Error *err_inv_chars = skip_invalid_characters(node_type);
+
+        Node *child = alloc(node_type);
 
         if (!child)
         {
-            return new ErrorInvalidArgument(this->to_string(), nodes.at(off_end));
+            return new ErrorInvalidArgument(this->to_string(), node_type);
         }
 
         set_child(child, i);
@@ -56,12 +60,7 @@ Error *Node::load(const std::vector<std::string> nodes, int off_start, int &off_
 
         off_end++;
 
-        Error *err = child->load(nodes, off_end, off_end);
-
-        if (err)
-        {
-            return err;
-        }
+        Error *err_load = child->load(nodes, off_end, off_end);
     }
 
     LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
@@ -197,26 +196,23 @@ bool Node::add_last_child(Node *child)
 
 Node *Node::alloc(std::string node_type)
 {
-    Node *node = nullptr;
-
     if (is_value(node_type))
     {
-        node = new NodeValue(node_type);
-        //LOG_DEBUG("Alloc value: " << *node);
-    }
-    else if(is_operation(node_type))
-    {
-        node = NodeOperation::make_operation(node_type);
-        //LOG_DEBUG("Alloc operation: " << *node);
-    }
-    else if (is_variable(node_type))
-    {
-        Variable *var = new Variable(node_type);
-        node = new NodeVariable(var);
-        //LOG_DEBUG("Alloc variable: " << *node);
+        return new NodeValue(node_type);
     }
 
-    return node;
+    if(is_operation(node_type))
+    {
+        return NodeOperation::make_operation(node_type);
+    }
+
+    if (is_variable(node_type))
+    {
+        Variable *var = new Variable(node_type);
+        return new NodeVariable(var);
+    }
+
+    return nullptr;
 }
 
 bool Node::is_value(std::string node_type)
@@ -265,16 +261,15 @@ bool Node::is_operation(std::string node_type)
     return false;
 }
 
-Error *Node::skip_invalid_characters(std::string &node_type)
+Errors *Node::skip_invalid_characters(std::string &node_type)
 {
-    Error *warn = nullptr;
+    Errors *errs_inv_char = new Errors();
 
     for (std::string::iterator it = node_type.begin(); it != node_type.end();)
     {
         if (!std::isalnum(*it))
         {
-            //LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
-
+            errs_inv_char->add(new ErrorInvalidCharacter(node_type, *it));
             it = node_type.erase(it);
         }
         else
@@ -283,7 +278,13 @@ Error *Node::skip_invalid_characters(std::string &node_type)
         }
     }
 
-    return warn;
+    if (errs_inv_char->is_empty())
+    {
+        delete errs_inv_char;
+        return nullptr;
+    }
+
+    return errs_inv_char;
 }
 
 void NodeVariable::set_variable(Variable *var)

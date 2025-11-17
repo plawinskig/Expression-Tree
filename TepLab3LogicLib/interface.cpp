@@ -89,11 +89,10 @@ void Interface::handle_enter(const std::string &arg)
         if (err)
         {
             std::cout << err->get_message() << "\n";
+            delete err;
         }
-        else
-        {
-            std::cout << "formula loaded\n";
-        }
+
+        std::cout << "formula loaded\n";
     }
     else
     {

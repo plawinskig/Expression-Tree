@@ -10,12 +10,6 @@ ErrorIncorrectNumberOfArguments::ErrorIncorrectNumberOfArguments(std::string whe
 {
 }
 
-ErrorInvalidArgument::ErrorInvalidArgument(std::string where, std::string what)
-	: where_(where),
-	what_(what)
-{
-}
-
 std::string ErrorIncorrectNumberOfArguments::get_message() const
 {
 	std::stringstream message;
@@ -25,9 +19,64 @@ std::string ErrorIncorrectNumberOfArguments::get_message() const
 	return message.str();
 }
 
+ErrorInvalidArgument::ErrorInvalidArgument(std::string where, std::string what)
+	: where_(where),
+	what_(what)
+{
+}
+
+Errors::~Errors()
+{
+	for (std::vector<Error *>::const_iterator it = errors_.begin(); it != errors_.end(); it++)
+	{
+		delete *it;
+	}
+}
+
+void Errors::add(Error *err)
+{
+	if (err)
+	{
+		errors_.push_back(err);
+	}
+}
+
+bool Errors::is_empty()
+{
+	return errors_.empty();
+}
+
+std::string Errors::get_message() const
+{
+	std::string messages;
+
+	for (std::vector<Error *>::const_iterator it = errors_.begin(); it != errors_.end(); it++)
+	{
+		messages += (*it)->get_message();
+	}
+
+	return messages;
+}
+
 std::string ErrorInvalidArgument::get_message() const
 {
 	std::stringstream message;
 	message << "Invalid argument '" << what_ << "' in '" << where_ << "'\n";
+	return message.str();
+}
+
+ErrorInvalidCharacter::ErrorInvalidCharacter(std::string where, char what)
+	: where_(where),
+	what_(what)
+{
+}
+
+std::string ErrorInvalidCharacter::get_message() const
+{
+	std::stringstream message;
+	message << "Character: '";
+	message << what_ << "' in '" << where_;
+	message << "' is not permitted in variable names. Omitting.\n";
+
 	return message.str();
 }
