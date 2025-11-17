@@ -21,8 +21,8 @@ Tree::Tree(const Tree &other)
 {
     if (!other.is_empty())
     {
-        Error *err = load_new_formula(other.get_formula_to_string());
-        delete err;
+        root_ = other.root_->clone();
+        root_->get_variables(variables_);
     }
 }
 

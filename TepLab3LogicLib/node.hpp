@@ -50,6 +50,8 @@ public:
 
 	virtual ~Node();
 
+	virtual Node *clone() const = 0;
+
 	Errors *load(const std::vector<std::string> nodes, int off_start, int &off_end);
 	bool is_nil() const;
 
@@ -89,6 +91,8 @@ class NodeVariable : public Node
 public:
 	NodeVariable(Variable *var);
 
+	virtual Node *clone() const;
+
 	Variable *get_variable() const;
 	virtual float get_value() const;
 	std::string get_name() const;
@@ -107,6 +111,8 @@ class NodeValue : public Node
 public:
 	NodeValue(std::string value = DEFAULT_VALUE_STRING);
 
+	virtual Node *clone() const;
+
 	virtual float get_value() const;
 
 	virtual std::string to_string() const;
@@ -121,6 +127,8 @@ class NodeOperation : public Node
 public:
 	NodeOperation(int number_of_children);
 
+	virtual Node *clone() const = 0;
+
 	virtual std::string get_type() const = 0;
 	virtual float get_value() const = 0;
 
@@ -134,6 +142,8 @@ class NodeOperationAddition : public NodeOperation
 public:
 	NodeOperationAddition(int number_of_children = OP_NUM_OF_ARGS[OP_ADDITION_INDEX]);
 
+	virtual Node *clone() const;
+
 	virtual std::string get_type() const;
 	virtual float get_value() const;
 };
@@ -142,6 +152,8 @@ class NodeOperationSubtraction : public NodeOperation
 {
 public:
 	NodeOperationSubtraction(int number_of_children = OP_NUM_OF_ARGS[OP_SUBTRACTION_INDEX]);
+
+	virtual Node *clone() const;
 
 	virtual std::string get_type() const;
 	virtual float get_value() const;
@@ -152,6 +164,8 @@ class NodeOperationMultiplication : public NodeOperation
 public:
 	NodeOperationMultiplication(int number_of_children = OP_NUM_OF_ARGS[OP_MULTIPLICATION_INDEX]);
 
+	virtual Node *clone() const;
+
 	virtual std::string get_type() const;
 	virtual float get_value() const;
 };
@@ -160,6 +174,8 @@ class NodeOperationDivision : public NodeOperation
 {
 public:
 	NodeOperationDivision(int number_of_children = OP_NUM_OF_ARGS[OP_DIVISION_INDEX]);
+
+	virtual Node *clone() const;
 
 	virtual std::string get_type() const;
 	virtual float get_value() const;
@@ -170,6 +186,8 @@ class NodeOperationSin : public NodeOperation
 public:
 	NodeOperationSin(int number_of_children = OP_NUM_OF_ARGS[OP_SIN_INDEX]);
 
+	virtual Node *clone() const;
+
 	virtual std::string get_type() const;
 	virtual float get_value() const;
 };
@@ -178,6 +196,8 @@ class NodeOperationCos : public NodeOperation
 {
 public:
 	NodeOperationCos(int number_of_children = OP_NUM_OF_ARGS[OP_COS_INDEX]);
+
+	virtual Node *clone() const;
 
 	virtual std::string get_type() const;
 	virtual float get_value() const;

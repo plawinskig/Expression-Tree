@@ -12,6 +12,7 @@ Node::Node(int number_of_children)
 {
 }
 
+
 Node::~Node()
 {
     for (std::vector<Node *>::iterator it = children_.begin(); it != children_.end(); it++)
@@ -530,4 +531,67 @@ NodeOperation *NodeOperation::make_operation(std::string operation)
 std::ostream &operator<<(std::ostream &os, const Node &node)
 {
     return os << node.to_string();
+}
+
+Node *NodeVariable::clone() const
+{
+    Variable *new_var = new Variable(variable_->get_name(), variable_->get_value());
+    return new NodeVariable(new_var);
+}
+
+Node *NodeValue::clone() const
+{
+    return new NodeValue(value_string_);
+}
+
+static void copy_children(const Node *source, Node *dest)
+{
+    for (int i = 0; i < source->get_number_of_children(); i++)
+    {
+        Node *child_copy = source->get_child(i)->clone();
+        dest->set_child(child_copy, i);
+        child_copy->set_parent(dest);
+    }
+}
+
+Node *NodeOperationAddition::clone() const
+{
+    NodeOperationAddition *copy = new NodeOperationAddition();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationSubtraction::clone() const
+{
+    NodeOperationSubtraction *copy = new NodeOperationSubtraction();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationMultiplication::clone() const
+{
+    NodeOperationMultiplication *copy = new NodeOperationMultiplication();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationDivision::clone() const
+{
+    NodeOperationDivision *copy = new NodeOperationDivision();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationSin::clone() const
+{
+    NodeOperationSin *copy = new NodeOperationSin();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationCos::clone() const
+{
+    NodeOperationCos *copy = new NodeOperationCos();
+    copy_children(this, copy);
+    return copy;
 }
