@@ -39,7 +39,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
         if (off_end >= nodes.size())
         {
             LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return Error(code::INCORRECT_NUM_OF_ARGS);
+            return Error(error_code::INCORRECT_NUM_OF_ARGS);
         }
 
         Node *child = alloc(nodes.at(off_end));
@@ -47,7 +47,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
         if (child == nullptr)
         {
             LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return Error(code::INCORRECT_ARG); 
+            return Error(error_code::INCORRECT_ARG); 
         }
 
         set_child(child, i);
