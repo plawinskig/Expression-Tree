@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include "error.hpp"
+#include "info.hpp"
 #include "formula_elements.hpp"
 
 #define ENABLE_DEBUGGING 0
@@ -60,7 +60,7 @@ public:
 
 	virtual ~Node();
 
-	Error load(const std::vector<std::string> nodes, int &off_end);
+	Error *load(const std::vector<std::string> nodes, int &off_end);
 	bool is_nil() const;
 
 	virtual float get_value() const = 0;
@@ -89,7 +89,7 @@ private:
 	static bool is_value(std::string node_type);
 	static bool is_variable(std::string node_type);
 	static bool is_operation(std::string node_type);
-	static std::string skip_invalid_characters(std::string node_type);
+	static Warning *skip_invalid_characters(std::string &node_type);
 
 	Node *parent_;
 	std::vector<Node *> children_;

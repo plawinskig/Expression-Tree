@@ -4,6 +4,7 @@
 #include <cctype>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 Node::Node(int number_of_children)
     : parent_(nullptr),
@@ -19,7 +20,7 @@ Node::~Node()
     }
 }
 
-Error Node::load(const std::vector<std::string> nodes, int &off_end)
+Error *Node::load(const std::vector<std::string> nodes, int &off_end)
 {
     LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
 
@@ -27,7 +28,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
     {
         LOG_DEBUG("End recursion for nil: " << *this << "\t" << " " << off_end);
 
-        return Error();
+        return nullptr;
     }
 
 
@@ -38,8 +39,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
 
         if (off_end >= nodes.size())
         {
-            LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return Error(error_code::INCORRECT_NUM_OF_ARGS);
+            return new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i);
         }
 
         Node *child = alloc(nodes.at(off_end));
@@ -47,7 +47,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
         if (child == nullptr)
         {
             LOG_DEBUG("Error in child " << i << " for " << *this << "\t" << " " << off_end);
-            return Error(error_code::INCORRECT_ARG); 
+            return NULL;  // TODO
         }
 
         set_child(child, i);
@@ -62,7 +62,7 @@ Error Node::load(const std::vector<std::string> nodes, int &off_end)
 
     LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
 
-    return Error();
+    return nullptr;
 }
 
 bool Node::is_nil() const
@@ -261,8 +261,10 @@ bool Node::is_operation(std::string node_type)
     return false;
 }
 
-std::string Node::skip_invalid_characters(std::string node_type)
+Warning *Node::skip_invalid_characters(std::string &node_type)
 {
+    Warning *warn = nullptr;
+
     for (std::string::iterator it = node_type.begin(); it != node_type.end();)
     {
         if (!std::isalnum(*it))
@@ -277,7 +279,7 @@ std::string Node::skip_invalid_characters(std::string node_type)
         }
     }
 
-    return node_type;
+    return warn;
 }
 
 void NodeVariable::set_variable(Variable *var)

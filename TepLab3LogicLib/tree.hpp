@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "node.hpp"
-#include "error.hpp"
+#include "info.hpp"
 #include "formula_elements.hpp"
 
 namespace
@@ -28,7 +28,7 @@ public:
 	Node *get_root();
 	// 
 
-	Error load_new_formula(std::string formula);
+	Error *load_new_formula(std::string formula);
 	Tree join(const Tree &other) const;
 	float calculate_formula() const;
 
