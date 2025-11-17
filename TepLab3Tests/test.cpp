@@ -1,35 +1,27 @@
 #include "pch.h"
 #include "tree.hpp"
+#include "string_helpers.hpp"
 #include <sstream>
 
 #define ABS_ERR 1e-3
-
-TEST(ReadUserTest, CorrectlyReadsName)
-{
-    //std::stringstream fake_input("TestUser\n");
-    //std::stringstream fake_output;
-    //std::string name = readUserName(fake_input, fake_output);
-    //EXPECT_EQ("TestUser", name);
-    //EXPECT_EQ("Podaj nazwe: ", fake_output.str());
-}
 
 TEST(SplitTest, SplitFunctionality)
 {
     std::string formula1 = "+ * a sin / 5 6 + c dup";
     std::vector<std::string> expected1 = { "+", "*", "a", "sin", "/", "5", "6", "+", "c", "dup" };
-    EXPECT_EQ(Tree::split(formula1, " "), expected1);
+    EXPECT_EQ(split(formula1, " "), expected1);
 
     std::string formula2 = "a,b,c";
     std::vector<std::string> expected2 = { "a", "b", "c" };
-    EXPECT_EQ(Tree::split(formula2, ","), expected2);
+    EXPECT_EQ(split(formula2, ","), expected2);
 
     std::string formula3 = "";
     std::vector<std::string> expected3 = { };
-    EXPECT_EQ(Tree::split(formula3, " "), expected3);
+    EXPECT_EQ(split(formula3, " "), expected3);
 
     std::string formula4 = "hello";
     std::vector<std::string> expected4 = { "hello" };
-    EXPECT_EQ(Tree::split(formula4, " "), expected4);
+    EXPECT_EQ(split(formula4, " "), expected4);
 }
 
 TEST(TreeTest, GetFormulaToString)

@@ -25,10 +25,6 @@ public:
 
 	Tree operator+(const Tree &other) const;
 
-	// TO DELETE
-	Node *get_root();
-	// 
-
 	Error *load_new_formula(std::string formula);
 	Tree join(const Tree &other) const;
 	float calculate_formula() const;

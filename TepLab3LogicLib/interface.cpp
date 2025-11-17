@@ -73,10 +73,10 @@ void Interface::handle_enter(const std::string &arg)
 {
     if (!arg.empty())
     {
-        Error *err = tree_.load_new_formula(arg);
+        Error *err_load = tree_.load_new_formula(arg);
 
-        std::cout << err->get_message() << "\n";
-        delete err;
+        std::cout << err_load->get_message() << "\n";
+        delete err_load;
 
         std::cout << "Loaded formula: " << tree_.get_formula_to_string() << "\n";
     }
@@ -112,7 +112,7 @@ void Interface::handle_comp(const std::string &arg)
     }
     else
     {
-        std::cout << "Error: Number of values provided (" << vars.size();
+        std::cout << "Number of values provided (" << vars.size();
         std::cout << ") does not match formula number of variables (" << tree_.get_number_of_variables() << ")\n";
     }
 }
@@ -121,9 +121,15 @@ void Interface::handle_join(const std::string &arg)
 {
     if (!arg.empty())
     {
-        Tree to_join(arg);
+        Tree to_join;
+        Error *err_load = to_join.load_new_formula(arg);
+
+        std::cout << err_load->get_message() << "\n";
+        delete err_load;
+
         tree_ = tree_ + to_join;
         std::cout << "Formula joined succesfully.\n";
+        std::cout << "New formula: " << tree_.get_formula_to_string() << "\n";
     }
     else
     {

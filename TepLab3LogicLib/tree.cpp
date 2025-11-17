@@ -11,7 +11,8 @@ Tree::Tree(std::string formula)
     : root_(nullptr),
     variables_(std::vector<Variable *>())
 {
-    load_new_formula(formula);
+    Error *err = load_new_formula(formula);
+    delete err;
 }
 
 Tree::Tree(const Tree &other)
@@ -54,11 +55,6 @@ Tree::~Tree()
 Tree Tree::operator+(const Tree &other) const
 {
     return this->join(other);
-}
-
-Node *Tree::get_root()
-{
-    return root_;
 }
 
 Error *Tree::load_new_formula(std::string formula)
