@@ -12,6 +12,7 @@ namespace
 {
 	const std::string FORMULA_SEPARATOR = " ";
 	const std::string EMPTY_FORMULA_STRING = "[empty]";
+	const std::string SET_VARIABLES_COMMAND = "comp";
 }
 
 class Tree
@@ -38,7 +39,7 @@ public:
 	std::string get_level_to_string(int level) const;
 	std::string get_variables_to_string() const;
 
-	bool set_variables(const std::vector<int> &variables);
+	Error *set_variables(const std::vector<int> &variables);
 
 private:
 	void clear_variables();

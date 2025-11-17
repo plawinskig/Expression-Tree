@@ -238,11 +238,11 @@ std::string Tree::get_variables_to_string() const
     return result;
 }
 
-bool Tree::set_variables(const std::vector<int> &variables)
+Error *Tree::set_variables(const std::vector<int> &variables)
 {
     if (variables_.size() != variables.size())
     {
-        return false;
+        return new ErrorIncorrectNumberOfArguments(SET_VARIABLES_COMMAND, variables_.size(), variables.size());
     }
 
     for (int i = 0; i < variables.size(); i++)
@@ -250,7 +250,7 @@ bool Tree::set_variables(const std::vector<int> &variables)
         variables_.at(i)->set_value(variables.at(i));
     }
 
-    return true;
+    return nullptr;
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const

@@ -99,33 +99,28 @@ void Interface::handle_comp(const std::string &arg)
         vars.at(i) = std::atoi(vars_str.at(i).c_str());
     }
 
-    if (tree_.set_variables(vars))
+    Error *err_set = tree_.set_variables(vars);
+
+    if (err_set)
     {
-        std::cout << tree_.calculate_formula() << "\n";
+        std::cout << err_set->get_message() << "\n";
+        delete err_set;
     }
     else
     {
-        std::cout << "Number of values provided (" << vars.size();
-        std::cout << ") does not match formula number of variables (" << tree_.get_number_of_variables() << ")\n";
+        std::cout << tree_.calculate_formula() << "\n";
     }
 }
 
 void Interface::handle_join(const std::string &arg)
 {
-    if (!arg.empty())
-    {
-        Tree to_join;
-        Error *err_load = to_join.load_new_formula(arg);
+    Tree to_join;
+    Error *err_load = to_join.load_new_formula(arg);
 
-        std::cout << err_load->get_message() << "\n";
-        delete err_load;
+    std::cout << err_load->get_message() << "\n";
+    delete err_load;
 
-        tree_ = tree_ + to_join;
-        std::cout << "Formula joined succesfully\n";
-        std::cout << "New formula: " << tree_.get_formula_to_string() << "\n";
-    }
-    else
-    {
-        std::cout << "Too few arguments for " << COMMAND_JOIN << " command\n";
-    }
+    tree_ = tree_ + to_join;
+    std::cout << "Formula joined succesfully\n";
+    std::cout << "New formula: " << tree_.get_formula_to_string() << "\n";
 }
