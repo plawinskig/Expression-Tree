@@ -1,202 +1,286 @@
 #include "pch.h"
 #include "tree.hpp"
 
-std::string readUserName(std::istream &input, std::ostream &output) 
+Tree::Tree()
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
 {
-    std::string name;
-    output << "Podaj nazwe: ";
-    input >> name;
-    return name;
 }
 
 Tree::Tree(std::string formula)
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
 {
-    load_new_formula(formula);
+    Error *err = load_new_formula(formula);
+    delete err;
 }
 
-Tree::Tree(Node *root, int number_of_nodes)
-    :root_(root),
-    number_of_nodes_(number_of_nodes)
+Tree::Tree(const Tree &other)
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
 {
-}
-
-void Tree::load_new_formula(std::string formula)
-{
-    delete root_;
-    root_ = new Node(ROOT_DATA, ROOT_NUMBER_OF_CHILDREN);
-        
-    load_new_formula_helper(formula, root_);
-}
-
-void Tree::load_new_formula_helper(std::string &formula, Node *parent_node)
-{
-    LOG_DEBUG("\nNew recursion for (" << formula << ") and (" << *parent_node << ")");
-
-    if (parent_node->is_nil())
+    if (!other.is_empty())
     {
-        LOG_DEBUG("End recursion for (" << formula << ") and (" << *parent_node << "): [" << *parent_node << " is nil]");
-        return;
-    }
-
-    for (int i = 0; i < parent_node->get_number_of_children(); i++)
-    {
-        int regex_idx = formula.find(FORMULA_REGEX);
-
-        std::string formula_head;
-        std::string formula_tail;
-
-        if (regex_idx == -1)
-        {
-            formula_head = formula;
-        }
-        else
-        {
-            formula_head = formula.substr(0, regex_idx);
-            formula_tail = formula.substr(regex_idx + FORMULA_REGEX.length());
-        }
-
-        LOG_DEBUG("\nChild: " << i);
-        LOG_DEBUG("Head: (" << formula_head << ")\tTail: (" << formula_tail << ")");
-
-        Node *child_node = load_formula_elem_into_node(formula_head);
-
-        // invalid formula element
-        if (child_node == nullptr)
-        {
-            child_node = new Node(DEFAULT_VARIABLE_NAME, 0);
-        }
-        
-        parent_node->set_child(child_node, i);
-        LOG_DEBUG("Connected: " << *parent_node << " ---> " << *child_node);
-
-        if (!formula_tail.empty())
-        {
-            load_new_formula_helper(formula_tail, child_node);
-        }
-
-        formula = formula_tail;
+        root_ = other.root_->clone();
+        root_->get_variables(variables_);
     }
 }
 
-Node *Tree::load_formula_elem_into_node(std::string &formula_elem)
+Tree &Tree::operator=(const Tree &other)
 {
-    Node *node = nullptr;
-
-    // constant
-    if (is_constant(formula_elem))
+    if (this == &other)
     {
-        node = new Node(formula_elem, 0);
-        LOG_DEBUG("Created node: " << node);
-        return node;
+        return *this;
     }
 
-    operation operation = load_operation(formula_elem);
-
-    // variable
-    if (operation == NOT_OPERATION)
+    if (other.is_empty())
     {
-        std::string variable = load_variable(formula_elem);
-        if (!variable.empty())
-        {
-            node = new Node(variable, 0);
-        }
+        delete root_;
+        root_ = nullptr;
+        clear_variables();
     }
-    // operation
     else
     {
-        node = new Node(operation.type, operation.number_of_arguments);
+        load_new_formula(other.get_formula_to_string());
     }
 
-    if (node != nullptr)
+    return *this;
+}
+
+Tree::~Tree()
+{
+    delete root_;
+    clear_variables();
+}
+
+Tree Tree::operator+(const Tree &other) const
+{
+    return this->join(other);
+}
+
+Error *Tree::load_new_formula(std::string formula)
+{
+    Errors *errors = new Errors();
+
+    std::vector<std::string> nodes = split(formula, FORMULA_SEPARATOR);
+
+    if (nodes.empty())
     {
-        LOG_DEBUG("Created node: " << node);
+        errors->add(new ErrorEmptyInput());
+        delete root_;
+        root_ = nullptr;
+        clear_variables();
+        return errors;
+    }
+
+    std::string root_node_type = nodes.at(0);
+
+    if (!Node::is_operation(root_node_type))
+    {
+        Error *err_inv_chars = Node::skip_invalid_characters(root_node_type);
+        errors->add(err_inv_chars);
+    }
+
+    delete root_;
+    root_ = Node::alloc(root_node_type);
+
+    clear_variables();
+
+    if (root_)
+    {
+        int offset = 1;
+        Error *err_load = root_->load(nodes, offset, offset);
+        errors->add(err_load);
+
+        if (offset < nodes.size())
+        {
+            errors->add(new ErrorTooManyArguments(formula.substr(0, offset), formula.substr(offset)));
+        }
+
+        root_->get_variables(variables_);
     }
     
-    return node;
+    return errors;
 }
 
-operation Tree::load_operation(std::string &formula_elem)
+Tree Tree::join(const Tree &other) const
 {
-    for (int i = 0; i < SIZE_OF_OPR_ARR; i++)
+    if (other.is_empty())
     {
-        operation operation = DEFAULT_OPERATIONS_ARRAY[i];
-
-        if (formula_elem == operation.type)
-        {
-            return operation;
-        }
-    }
-
-    return NOT_OPERATION;
-}
-
-std::string Tree::load_variable(std::string &formula_elem)
-{
-    for (std::string::iterator it = formula_elem.begin(); it != formula_elem.end();)
-    {
-        if (!is_variable_character(*it))
-        {
-            LOG_WARN("Character '" << *it << "' is not permitted in variable names. Omitting.");
-
-            it = formula_elem.erase(it);
-        }
-        else
-        {
-            it++;
-        }
-    }
-
-    return formula_elem;
-}
-
-bool Tree::is_constant(std::string &formula_elem)
-{
-    for (int i = 0; i < formula_elem.length(); i++)
-    {
-        if (formula_elem[i] < MIN_DIGIT || formula_elem[i] > MAX_DIGIT)
-        {
-            return false;
-        }
+        return Tree(*this);
     }
     
-    return true;
+    if (is_empty())
+    {
+        return Tree(other);
+    }
+
+    Tree result(*this);
+    Tree other_cpy(other);
+
+    Node *connector = result.root_->get_last_leaf();
+    Node *connector_parent = connector->get_parent();
+
+    other_cpy.root_->set_parent(connector_parent);
+
+    if (connector_parent != nullptr)
+    {
+        connector_parent->set_last_child(other_cpy.root_);
+        delete connector;
+    }
+    else
+    {
+        delete result.root_;
+        result.root_ = other_cpy.root_;
+    }
+
+    other_cpy.root_ = nullptr;
+    other_cpy.variables_.clear();
+
+    result.variables_.clear();
+    result.root_->get_variables(result.variables_);
+
+    return result;
 }
 
-std::string Tree::get_formula()
+float Tree::calculate_formula() const
 {
-    std::string formula;
-    get_formula_helper(root_->get_child(0), formula);
-    return formula;
+    if (is_empty())
+    {
+        return 0.0f;
+    }
+
+    return root_->get_value();
 }
 
-void Tree::get_formula_helper(Node *node, std::string &formula)
+bool Tree::is_empty() const
 {
-    if (node == nullptr)
+    return root_ == nullptr;
+}
+
+int Tree::get_depth() const
+{
+    return is_empty() ? 0 : root_->get_depth();
+}
+
+int Tree::get_number_of_variables() const
+{
+    return variables_.size();
+}
+
+std::string Tree::get_formula_to_string() const
+{
+    std::string result;
+
+    if (!is_empty())
+    {
+        get_formula_to_string(root_, result);
+    }
+    else
+    {
+        return EMPTY_FORMULA_STRING;
+    }
+     
+    return result;
+}
+
+void Tree::clear_variables()
+{
+    for (std::vector<Variable *>::iterator it = variables_.begin(); it != variables_.end(); it++)
+    {
+        delete *it;
+    }
+
+    variables_.clear();
+}
+
+void Tree::get_formula_to_string(Node *node, std::string &result) const
+{
+    result += node->to_string();
+    
+    for (int i = 0; i < node->get_number_of_children(); i++)
+    {
+        result += FORMULA_SEPARATOR;
+        get_formula_to_string(node->get_child(i), result);
+    }
+}
+
+std::string Tree::get_level_to_string(int level) const
+{
+    std::string result;
+    
+    if (!is_empty())
+    {
+        get_level_to_string(root_, result, level);
+    }
+
+    if (!result.empty())
+    {
+        result.pop_back();
+    }
+
+    return result;
+}
+
+std::string Tree::get_variables_to_string() const
+{
+    if (variables_.empty())
+    {
+        return std::string();
+    }
+
+    std::string result = variables_.front()->get_name();
+
+    for (int i = 1; i < variables_.size(); i++)
+    {
+        result += FORMULA_SEPARATOR + variables_.at(i)->get_name();
+    }
+
+    return result;
+}
+
+Error *Tree::set_variables(const std::vector<int> &variables)
+{
+    if (variables_.size() != variables.size())
+    {
+        return new ErrorIncorrectNumberOfArguments(SET_VARIABLES_COMMAND, variables_.size(), variables.size());
+    }
+
+    for (int i = 0; i < variables.size(); i++)
+    {
+        variables_.at(i)->set_value(variables.at(i));
+    }
+
+    return nullptr;
+}
+
+void Tree::get_level_to_string(Node *node, std::string &result, int level) const
+{
+    if (node->get_level() == level)
+    {
+        result += node->to_string() + FORMULA_SEPARATOR;
+        return;
+    }
+
+    if (node->is_nil())
     {
         return;
     }
 
-    if (!formula.empty())
+    for (int i = 0; i < node->get_number_of_children(); i++)
     {
-        formula += FORMULA_REGEX;
-    }
-
-    // preorder adding
-    formula += node->get_data();
-
-    int num_of_children = node->get_number_of_children();
-
-    for (int i = 0; i < num_of_children; i++)
-    {
-        get_formula_helper(node->get_child(i), formula);
+        get_level_to_string(node->get_child(i), result, level);
     }
 }
 
-bool Tree::is_variable_character(char chr)
+void print_tree_by_levels(Tree &tree)
 {
-    bool is_lower_case_letter = MIN_VARIABLE_LOWER <= chr && chr <= MAX_VARIABLE_LOWER;
-    bool is_upper_case_letter = MIN_VARIABLE_UPPER <= chr && chr <= MAX_VARIABLE_UPPER;
-    bool is_digit = MIN_DIGIT <= chr && chr <= MAX_DIGIT;
+    int level = 0;
+    int max_level = tree.get_depth();
 
-    return is_lower_case_letter || is_upper_case_letter || is_digit;
+    while (level < max_level)
+    {
+        std::cout << tree.get_level_to_string(level) << "\n";
+        level++;
+    }
 }
