@@ -13,6 +13,7 @@ namespace
     const std::string COMMAND_COMP = "comp";
     const std::string COMMAND_JOIN = "join";
     const std::string COMMAND_EXIT = "exit";
+    const std::string COMMAND_LEVELS = "levels";
 }
 
 class Interface
@@ -27,6 +28,7 @@ private:
     void handle_print();
     void handle_comp(const std::string &arg);
     void handle_join(const std::string &arg);
+    void handle_levels();
 
     Tree tree_;
     bool running_;

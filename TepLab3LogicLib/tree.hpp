@@ -50,5 +50,3 @@ private:
 	Node *root_;
 	std::vector<Variable *> variables_;
 };
-
-void print_tree_by_levels(Tree &tree);

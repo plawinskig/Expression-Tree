@@ -272,15 +272,3 @@ void Tree::get_level_to_string(Node *node, std::string &result, int level) const
         get_level_to_string(node->get_child(i), result, level);
     }
 }
-
-void print_tree_by_levels(Tree &tree)
-{
-    int level = 0;
-    int max_level = tree.get_depth();
-
-    while (level < max_level)
-    {
-        std::cout << tree.get_level_to_string(level) << "\n";
-        level++;
-    }
-}
