@@ -23,27 +23,20 @@ Node::~Node()
 
 Errors *Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
 {
-    LOG_DEBUG("\nStart load recursion for " << *this << "\t"<<" "<<off_end);
     Errors *errors = new Errors();
 
     if (is_nil())
     {
-        LOG_DEBUG("End recursion for nil: " << *this << "\t" << " " << off_end);
-
         return nullptr;
     }
 
 
     for (int i = 0; i < get_number_of_children(); i++)
     {
-        LOG_DEBUG("Continue load recursion for " << *this << "\t" << " " << off_end);
-        LOG_DEBUG("Alloc child [" << i << "/" << get_number_of_children() << "] for " << *this << "\t" << " " << off_end);
-
         Node *child;
 
         if (off_end >= nodes.size())
         {
-            LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
             errors->add(new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i));
             child = new NodeValue(DEFAULT_VALUE_STRING);
         }
@@ -61,7 +54,6 @@ Errors *Node::load(const std::vector<std::string> nodes, int off_start, int &off
 
             if (!child)
             {
-                LOG_DEBUG("\nEnd load recursion for " << *this << "\t" << " " << off_end);
                 errors->add(new ErrorInvalidArgument(this->to_string(), node_type));
                 child = new NodeValue(DEFAULT_VALUE_STRING);
             }
@@ -70,15 +62,11 @@ Errors *Node::load(const std::vector<std::string> nodes, int off_start, int &off
         set_child(child, i);
         child->set_parent(this);
 
-        LOG_DEBUG("connected: " << *this << " ---> " << *child);
-
         off_end++;
 
         Error *err_load = child->load(nodes, off_end, off_end);
         errors->add(err_load);
     }
-
-    LOG_DEBUG("End recursion for " << *this << "\t" << " " << off_end);
 
     return errors;
 }
