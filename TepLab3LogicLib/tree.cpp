@@ -231,34 +231,48 @@ std::string Tree::get_levels_to_string() const
         return EMPTY_FORMULA_STRING;
     }
 
-    std::queue<Node *> queue;
-    queue.push(root_);
-
     std::string result;
 
     int level = 0;
+    int max_level = get_depth();
 
-    while (!queue.empty())
+    while (level <= max_level)
     {
-        Node *current = queue.front();
-
-        if (level != current->get_level())
-        {
-            result += "\n";
-            level++;
-        }
-
-        result += current->to_string() + FORMULA_SEPARATOR;
-
-        for (int i = 0; i < current->get_number_of_children(); i++)
-        {
-            queue.push(current->get_child(i));
-        }
-
-        queue.pop();
+        result += get_level_to_string(level) + "\n";
+        level++;
     }
 
     return result;
+
+    // second version
+    //std::queue<Node *> queue;
+    //queue.push(root_);
+
+    //std::string result;
+
+    //int level = 0;
+
+    //while (!queue.empty())
+    //{
+    //    Node *current = queue.front();
+
+    //    if (level != current->get_level())
+    //    {
+    //        result += "\n";
+    //        level++;
+    //    }
+
+    //    result += current->to_string() + FORMULA_SEPARATOR;
+
+    //    for (int i = 0; i < current->get_number_of_children(); i++)
+    //    {
+    //        queue.push(current->get_child(i));
+    //    }
+
+    //    queue.pop();
+    //}
+
+    //return result;
 }
 
 std::string Tree::get_variables_to_string() const
