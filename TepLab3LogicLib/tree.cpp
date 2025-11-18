@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "tree.hpp"
 
+#include <queue>
+
 Tree::Tree()
     : root_(nullptr),
     variables_(std::vector<Variable *>())
@@ -222,6 +224,43 @@ std::string Tree::get_level_to_string(int level) const
     return result;
 }
 
+std::string Tree::get_levels_to_string() const
+{
+    if (is_empty())
+    {
+        return EMPTY_FORMULA_STRING;
+    }
+
+    std::queue<Node *> queue;
+    queue.push(root_);
+
+    std::string result;
+
+    int level = 0;
+
+    while (!queue.empty())
+    {
+        Node *current = queue.front();
+
+        if (level != current->get_level())
+        {
+            result += "\n";
+            level++;
+        }
+
+        result += current->to_string() + FORMULA_SEPARATOR;
+
+        for (int i = 0; i < current->get_number_of_children(); i++)
+        {
+            queue.push(current->get_child(i));
+        }
+
+        queue.pop();
+    }
+
+    return result;
+}
+
 std::string Tree::get_variables_to_string() const
 {
     if (variables_.empty())
@@ -270,17 +309,5 @@ void Tree::get_level_to_string(Node *node, std::string &result, int level) const
     for (int i = 0; i < node->get_number_of_children(); i++)
     {
         get_level_to_string(node->get_child(i), result, level);
-    }
-}
-
-void print_tree_by_levels(Tree &tree)
-{
-    int level = 0;
-    int max_level = tree.get_depth();
-
-    while (level < max_level)
-    {
-        std::cout << tree.get_level_to_string(level) << "\n";
-        level++;
     }
 }

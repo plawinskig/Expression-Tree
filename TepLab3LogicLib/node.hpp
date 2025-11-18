@@ -7,15 +7,6 @@
 #include "error.hpp"
 #include "formula_elements.hpp"
 
-#define ENABLE_DEBUGGING 0
-
-#if ENABLE_DEBUGGING
-#define LOG_DEBUG(message) (std::cout << message << "\n")
-#else
-#define LOG_DEBUG(message) ((void)0)
-#endif
-
-
 namespace
 {
 	const int DEFAULT_NUM_OF_CHILDREN = 0;

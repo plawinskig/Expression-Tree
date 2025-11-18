@@ -62,6 +62,10 @@ void Interface::run()
         {
             handle_join(arg);
         }
+        else if (command == COMMAND_LEVELS)
+        {
+            handle_levels();
+        }
         else if (!command.empty())
         {
             std::cout << "Unknown command: '" << command << "'\n";
@@ -123,4 +127,18 @@ void Interface::handle_join(const std::string &arg)
     tree_ = tree_ + to_join;
     std::cout << "Formula joined succesfully\n";
     std::cout << "New formula: " << tree_.get_formula_to_string() << "\n";
+}
+
+void Interface::handle_levels()
+{
+    std::cout << tree_.get_levels_to_string() << "\n";
+
+    //int level = 0;
+    //int max_level = tree_.get_depth();
+
+    //while (level <= max_level)
+    //{
+    //    std::cout << tree_.get_level_to_string(level) << "\n";
+    //    level++;
+    //}
 }
