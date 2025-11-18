@@ -37,6 +37,7 @@ public:
 	int get_number_of_variables() const;
 	std::string get_formula_to_string() const;
 	std::string get_level_to_string(int level) const;
+	std::string get_levels_to_string() const;
 	std::string get_variables_to_string() const;
 
 	Error *set_variables(const std::vector<int> &variables);
