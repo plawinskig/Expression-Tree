@@ -131,14 +131,5 @@ void Interface::handle_join(const std::string &arg)
 
 void Interface::handle_levels()
 {
-    //std::cout << tree_.get_levels_to_string() << "\n";
-
-    int level = 0;
-    int max_level = tree_.get_depth();
-
-    while (level <= max_level)
-    {
-        std::cout << tree_.get_level_to_string(level) << "\n";
-        level++;
-    }
+    std::cout << tree_.get_levels_to_string() << "\n";
 }
