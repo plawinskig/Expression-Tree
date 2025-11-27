@@ -49,15 +49,20 @@ inline Result<T, E>::Result(E *error)
 template<typename T, typename E>
 inline Result<T, E>::Result(std::vector<E *> &errors)
 	: value_(nullptr),
-	errors_(std::vector<E *>(errors))
+	errors_(std::vector<E *>())
 {
+	copy_errors(errors);
 }
 
 template<typename T, typename E>
 inline Result<T, E>::Result(const Result<T, E> &other)
-	: value_(new T(*(other.value_))),
+	: value_(nullptr),
 	errors_(std::vector<E *>())
 {
+	if (other.value_) 
+	{
+		value_ = new T(*(other.value_));
+	}
 	copy_errors(other.errors_);
 }
 
@@ -74,18 +79,20 @@ inline Result<T, E>::~Result()
 template<typename T, typename E>
 inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 {
+	if (this == &other)
+	{
+		return *this;
+	}
+
 	if (value_)
 	{
 		delete value_;
+		value_ = nullptr;
 	}
 	
 	if (other.value_)
 	{
 		value_ = new T(*other.value_);
-	}
-	else
-	{
-		value_ = nullptr;
 	}
 	
 	copy_errors(other.errors_);
