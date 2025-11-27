@@ -1,4 +1,5 @@
 #include "interface.hpp"
+#include "result.hpp"
 
 int main()
 {
