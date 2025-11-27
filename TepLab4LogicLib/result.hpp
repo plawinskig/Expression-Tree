@@ -137,7 +137,7 @@ inline Result<T, E> Result<T, E>::fail(std::vector<E *> &errors)
 }
 
 template<typename T, typename E>
-void Result<T, E>::copy_errors(const std::vector<E *> &errors)
+inline void Result<T, E>::copy_errors(const std::vector<E *> &errors)
 {
 	for (typename std::vector<E *>::const_iterator it = errors_.begin(); it != errors_.end(); it++)
 	{

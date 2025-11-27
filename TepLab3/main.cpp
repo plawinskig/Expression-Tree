@@ -10,6 +10,15 @@ Result<double, ErrorMessage> divide_two(double dividend, double divisor)
     return dividend / divisor;
 }
 
+Result<double, ErrorMessage> divide_two_static(double dividend, double divisor)
+{
+    if (divisor == 0)
+    {
+        return Result<double, ErrorMessage>::fail(new ErrorMessage("Cannot divide by zero."));
+    }
+    return Result<double, ErrorMessage>::ok(dividend / divisor);;
+}
+
 void print_result_two(Result<double, ErrorMessage> &res)
 {
     if (res.is_success())
