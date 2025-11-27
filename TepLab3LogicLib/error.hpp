@@ -76,3 +76,9 @@ class ErrorEmptyInput : public Error
 public:
 	virtual std::string get_message() const;
 };
+
+class ErrorDivisionByZero : public Error
+{
+public:
+	virtual std::string get_message() const;
+};

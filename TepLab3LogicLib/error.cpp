@@ -106,3 +106,11 @@ std::string ErrorEmptyInput::get_message() const
 
 	return message.str();
 }
+
+std::string ErrorDivisionByZero::get_message() const
+{
+	std::stringstream message;
+	message << "Cannot divide by zero\n";
+
+	return message.str();
+}
