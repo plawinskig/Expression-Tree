@@ -1,120 +1,585 @@
 #include "pch.h"
 #include "node.hpp"
 
-Node::Node()
-	:number_of_children_(0),
-	children_array_(nullptr),
-	data_(NO_DATA_STRING)
+#include <cctype>
+#include <cmath>
+#include <iostream>
+#include <sstream>
+
+Node::Node(int number_of_children)
+    : parent_(nullptr),
+    children_(number_of_children, nullptr)
 {
 }
 
-Node::Node(std::string data, int number_of_children)
-	:number_of_children_(number_of_children),
-	data_(data)
-{
-	if (number_of_children > 0)
-	{
-		children_array_ = new Node *[number_of_children];
-	}
-	else
-	{
-		children_array_ = nullptr;
-	}
-}
 
 Node::~Node()
 {
-	delete[] children_array_;
+    for (std::vector<Node *>::iterator it = children_.begin(); it != children_.end(); it++)
+    {
+        delete *it;
+    }
+}
+
+Errors *Node::load(const std::vector<std::string> nodes, int off_start, int &off_end)
+{
+    Errors *errors = new Errors();
+
+    if (is_nil())
+    {
+        return nullptr;
+    }
+
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        Node *child;
+
+        if (off_end >= nodes.size())
+        {
+            errors->add(new ErrorIncorrectNumberOfArguments(this->to_string(), get_number_of_children(), i));
+            child = new NodeValue(DEFAULT_VALUE_STRING);
+        }
+        else
+        {
+            std::string node_type = nodes.at(off_end);
+
+            if (!is_operation(node_type))
+            {
+                Error *err_inv_chars = skip_invalid_characters(node_type);
+                errors->add(err_inv_chars);
+            }
+
+            child = alloc(node_type);
+
+            if (!child)
+            {
+                errors->add(new ErrorInvalidArgument(this->to_string(), node_type));
+                child = new NodeValue(DEFAULT_VALUE_STRING);
+            }
+        }
+
+        set_child(child, i);
+        child->set_parent(this);
+
+        off_end++;
+
+        Error *err_load = child->load(nodes, off_end, off_end);
+        errors->add(err_load);
+    }
+
+    return errors;
 }
 
 bool Node::is_nil() const
 {
-	return children_array_ == nullptr;
+    return children_.empty();
 }
 
-Node **Node::get_children() const
+Node *Node::get_parent() const
 {
-	return children_array_;
+    return parent_;
 }
 
 Node *Node::get_child(int child_index) const
 {
-	if (child_index < 0 || child_index >= number_of_children_)
-	{
-		std::cerr << "Node " << data_ << " child index " << child_index << " out of bounds of " << number_of_children_ << "\n";
-		return nullptr;
-	}
+    return children_.at(child_index);
+}
 
-	return children_array_[child_index];
+Node *Node::get_last_child() const
+{
+    return children_.back();
+}
+
+Node *Node::get_last_leaf()
+{
+    if (is_nil())
+    {
+        return this;
+    }
+
+    return get_last_child()->get_last_leaf();
 }
 
 int Node::get_number_of_children() const
 {
-	return number_of_children_;
+    return children_.size();
 }
 
-std::string Node::get_data() const
+int Node::get_level() const
 {
-	return data_;
+    int level = 0;
+    Node *parent = parent_;
+
+    while (parent)
+    {
+        level++;
+        parent = parent->get_parent();
+    }
+
+    return level;
+}
+
+int Node::get_depth() const
+{
+    if (is_nil())
+    {
+        return 0;
+    }
+    
+    int level = 0;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        level = std::max(level, 1 + get_child(i)->get_depth());
+    }
+
+    return level;
+}
+
+void Node::get_variables(std::vector<Variable *> &variables)
+{    
+    NodeVariable *node_var = dynamic_cast<NodeVariable *> (this);
+
+    if (node_var)
+    {
+        std::vector<Variable *>::const_iterator it;
+        bool found = false;
+
+        for (it = variables.begin(); it != variables.end() && !found; it++)
+        {
+            if ((*it)->get_name() == node_var->get_name())
+            {
+                node_var->set_variable(*it);
+                found = true;
+            }
+        }
+
+        if (!found)
+        {
+            variables.push_back(node_var->get_variable());
+        }
+    }
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        get_child(i)->get_variables(variables);
+    }
+}
+
+bool Node::set_parent(Node *parent)
+{
+    parent_ = parent;
+    return true;
 }
 
 bool Node::set_child(Node *child, int child_index)
 {
-	if (child_index < 0 || child_index > number_of_children_)
-	{
-		return false;
-	}
+    if (child_index < 0 || child_index > children_.size())
+    {
+        return false;
+    }
 
-	if (child_index == number_of_children_)
-	{
-		if (children_array_ == nullptr)
-		{
-			if (number_of_children_ != 0)
-			{
-				std::cerr << "Node " << data_ << " children array is nullptr and number of children is not zero\n";
-				return false;
-			}
+    children_.at(child_index) = child;
 
-			number_of_children_ = 1;
-			children_array_ = new Node * [number_of_children_];
-			children_array_[child_index] = child;
-
-			return true;
-		}
-
-		Node **new_children_ = new Node * [number_of_children_ + 1];
-
-		for (int i = 0; i < number_of_children_; i++)
-		{
-			new_children_[i] = children_array_[i];
-		}
-
-		new_children_[child_index] = child;
-		number_of_children_++;
-		
-		delete[] children_array_;
-		children_array_ = new_children_;
-
-		return true;
-	}
-
-	children_array_[child_index] = child;
-
-	return true;
+    return true;
 }
 
-bool Node::set_data(std::string data)
+bool Node::set_last_child(Node *child)
 {
-	data_ = data;
-	return true;
+    children_.back() = child;
+    return true;
 }
 
-std::ostream &operator<<(std::ostream &os, const Node *node)
+bool Node::add_last_child(Node *child)
 {
-	return os << node->get_data();
+    children_.push_back(child);
+    return true;
+}
+
+Node *Node::alloc(std::string node_type)
+{
+    if (node_type.empty())
+    {
+        return nullptr;
+    }
+
+    if (is_value(node_type))
+    {
+        return new NodeValue(node_type);
+    }
+
+    if(is_operation(node_type))
+    {
+        return NodeOperation::make_operation(node_type);
+    }
+
+    if (is_variable(node_type))
+    {
+        Variable *var = new Variable(node_type);
+        return new NodeVariable(var);
+    }
+
+    return nullptr;
+}
+
+bool Node::is_value(std::string node_type)
+{
+    for (std::string::iterator it = node_type.begin(); it != node_type.end(); it++)
+    {
+        if (!std::isdigit(*it))
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+bool Node::is_variable(std::string node_type)
+{
+    bool has_only_digits = true;
+
+    for (std::string::iterator it = node_type.begin(); it != node_type.end(); it++)
+    {
+        if (!std::isalnum(*it))
+        {
+            return false;
+        }
+        
+        if (!std::isdigit(*it))
+        {
+            has_only_digits = false;
+        }
+    }
+
+    return !has_only_digits;
+}
+
+bool Node::is_operation(std::string node_type)
+{
+    for (int i = 0; i < OP_COUNT; i++)
+    {
+        if (node_type == OP_SYMBOLS[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+Errors *Node::skip_invalid_characters(std::string &node_type)
+{
+    Errors *errs_inv_char = new Errors();
+
+    for (std::string::iterator it = node_type.begin(); it != node_type.end();)
+    {
+        if (!std::isalnum(*it))
+        {
+            errs_inv_char->add(new ErrorInvalidCharacter(node_type, *it));
+            it = node_type.erase(it);
+        }
+        else
+        {
+            it++;
+        }
+    }
+
+    if (errs_inv_char->is_empty())
+    {
+        delete errs_inv_char;
+        return nullptr;
+    }
+
+    return errs_inv_char;
+}
+
+void NodeVariable::set_variable(Variable *var)
+{
+    if (variable_ != var)
+    {
+        delete variable_;
+        variable_ = var;
+    }
+}
+
+void NodeVariable::set_value(int value)
+{
+    variable_->set_value(value);
+}
+
+NodeOperation::NodeOperation(int number_of_children)
+    : Node(number_of_children)
+{
+}
+
+NodeOperationAddition::NodeOperationAddition(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationAddition::get_type() const
+{
+    return OP_SYMBOLS[OP_ADDITION_INDEX];
+}
+
+NodeOperationSubtraction::NodeOperationSubtraction(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationSubtraction::get_type() const
+{
+    return OP_SYMBOLS[OP_SUBTRACTION_INDEX];
+}
+
+NodeOperationMultiplication::NodeOperationMultiplication(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationMultiplication::get_type() const
+{
+    return OP_SYMBOLS[OP_MULTIPLICATION_INDEX];
+}
+
+NodeOperationDivision::NodeOperationDivision(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationDivision::get_type() const
+{
+    return OP_SYMBOLS[OP_DIVISION_INDEX];
+}
+
+NodeOperationSin::NodeOperationSin(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationSin::get_type() const
+{
+    return OP_SYMBOLS[OP_SIN_INDEX];
+}
+
+NodeOperationCos::NodeOperationCos(int number_of_children)
+    : NodeOperation(number_of_children)
+{
+}
+
+std::string NodeOperationCos::get_type() const
+{
+    return OP_SYMBOLS[OP_COS_INDEX];
+}
+
+float NodeOperationAddition::get_value() const
+{
+    float result = 0;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        result += get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+float NodeOperationSubtraction::get_value() const
+{
+    float result = get_child(0)->get_value();
+
+    for (int i = 1; i < get_number_of_children(); i++)
+    {
+        result -= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+float NodeOperationMultiplication::get_value() const
+{
+    float result = 1;
+
+    for (int i = 0; i < get_number_of_children(); i++)
+    {
+        result *= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+float NodeOperationDivision::get_value() const
+{
+    float result = get_child(0)->get_value();
+
+    for (int i = 1; i < get_number_of_children(); i++)
+    {
+        result /= get_child(i)->get_value();
+    }
+
+    return result;
+}
+
+float NodeOperationSin::get_value() const
+{
+    return std::sin(get_child(0)->get_value());
+}
+
+float NodeOperationCos::get_value() const
+{
+    return std::cos(get_child(0)->get_value());
+}
+
+NodeVariable::NodeVariable(Variable *var)
+    : Node(VARIABLE_NUM_OF_CHILDREN),
+    variable_(var)
+{
+}
+
+Variable *NodeVariable::get_variable() const
+{
+    return variable_;
+}
+
+float NodeVariable::get_value() const
+{
+    return variable_->get_value();
+}
+
+std::string NodeOperation::to_string() const
+{
+    return get_type();
+}
+
+std::string NodeVariable::get_name() const
+{
+    return variable_->get_name();
+}
+
+std::string NodeVariable::to_string() const
+{
+    return get_name();
+}
+
+NodeValue::NodeValue(std::string value)
+    : Node(VALUE_NUM_OF_CHILDREN),
+    value_(std::atoi(value.c_str())),
+    value_string_(value)
+{
+}
+
+float NodeValue::get_value() const
+{
+    return value_;
+}
+
+std::string NodeValue::to_string() const
+{
+    return value_string_;
+}
+
+NodeOperation *NodeOperation::make_operation(std::string operation)
+{
+    if (operation == OP_SYMBOLS[OP_ADDITION_INDEX])
+    {
+        NodeOperation *node = new NodeOperationAddition();
+        return node;
+    }
+
+    else if (operation == OP_SYMBOLS[OP_SUBTRACTION_INDEX])
+    {
+        return new NodeOperationSubtraction();
+    }
+
+    else if (operation == OP_SYMBOLS[OP_MULTIPLICATION_INDEX])
+    {
+        return new NodeOperationMultiplication();
+    }
+
+    else if (operation == OP_SYMBOLS[OP_DIVISION_INDEX])
+    {
+        return new NodeOperationDivision();
+    }
+
+    else if (operation == OP_SYMBOLS[OP_SIN_INDEX])
+    {
+        return new NodeOperationSin();
+    }
+
+    else if (operation == OP_SYMBOLS[OP_COS_INDEX])
+    {
+        return new NodeOperationCos();
+    }
+
+    return nullptr;
 }
 
 std::ostream &operator<<(std::ostream &os, const Node &node)
 {
-	return os << node.get_data();
+    return os << node.to_string();
+}
+
+Node *NodeVariable::clone() const
+{
+    Variable *new_var = new Variable(variable_->get_name(), variable_->get_value());
+    return new NodeVariable(new_var);
+}
+
+Node *NodeValue::clone() const
+{
+    return new NodeValue(value_string_);
+}
+
+static void copy_children(const Node *source, Node *dest)
+{
+    for (int i = 0; i < source->get_number_of_children(); i++)
+    {
+        Node *child_copy = source->get_child(i)->clone();
+        dest->set_child(child_copy, i);
+        child_copy->set_parent(dest);
+    }
+}
+
+Node *NodeOperationAddition::clone() const
+{
+    NodeOperationAddition *copy = new NodeOperationAddition();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationSubtraction::clone() const
+{
+    NodeOperationSubtraction *copy = new NodeOperationSubtraction();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationMultiplication::clone() const
+{
+    NodeOperationMultiplication *copy = new NodeOperationMultiplication();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationDivision::clone() const
+{
+    NodeOperationDivision *copy = new NodeOperationDivision();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationSin::clone() const
+{
+    NodeOperationSin *copy = new NodeOperationSin();
+    copy_children(this, copy);
+    return copy;
+}
+
+Node *NodeOperationCos::clone() const
+{
+    NodeOperationCos *copy = new NodeOperationCos();
+    copy_children(this, copy);
+    return copy;
 }

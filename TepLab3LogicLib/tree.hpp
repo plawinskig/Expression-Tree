@@ -2,91 +2,52 @@
 
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 #include "node.hpp"
-
-#define ENABLE_DEBUGGING 0
-
-#if ENABLE_DEBUGGING
-#define LOG_DEBUG(message) (std::cout << message << "\n")
-#else
-#define LOG_DEBUG(message) ((void)0)
-#endif
-
-
-#define ENABLE_WARNINGS 0
-
-#if ENABLE_WARNINGS
-#define LOG_WARN(message) (std::cout << "[WARNING] " << message << "\n")
-#else
-#define LOG_WARN(message) ((void)0)
-#endif
+#include "error.hpp"
+#include "formula_elements.hpp"
+#include "string_helpers.hpp"
 
 namespace
 {
-	const std::string FORMULA_REGEX = " ";
-
-	const struct operation
-	{
-		std::string type;
-		int number_of_arguments;
-
-		bool operator==(operation other)
-		{
-			return type == other.type;
-		}
-	};
-
-	const operation DEFAULT_OPERATIONS_ARRAY[] =
-	{
-		{"+", 2},
-		{"-", 2},
-		{"*", 2},
-		{"/", 2},
-		{"sin", 1},
-		{"cos", 1},
-		{"avg3", 3}
-	};
-	const int SIZE_OF_OPR_ARR = sizeof(DEFAULT_OPERATIONS_ARRAY) / sizeof(*DEFAULT_OPERATIONS_ARRAY);
-
-	const operation NOT_OPERATION = { "_", 0 };
-
-	const std::string ROOT_DATA = "[root]";
-	const int ROOT_NUMBER_OF_CHILDREN = 1;
-
-	const char MIN_DIGIT = '0';
-	const char MAX_DIGIT = '9';
-
-	const char MIN_VARIABLE_LOWER = 'a';
-	const char MAX_VARIABLE_LOWER = 'z';
-	const char MIN_VARIABLE_UPPER = 'A';
-	const char MAX_VARIABLE_UPPER = 'Z';
-
-	const std::string DEFAULT_VARIABLE_NAME = "X";
-	const std::string DEFAULT_CONSTANT = "1";
+	const std::string FORMULA_SEPARATOR = " ";
+	const std::string EMPTY_FORMULA_STRING = "[empty]";
+	const std::string SET_VARIABLES_COMMAND = "comp";
 }
-
-std::string readUserName(std::istream &input, std::ostream &output);
 
 class Tree
 {
 public:
+	Tree();
 	Tree(std::string formula);
-	Tree(Node *root, int number_of_nodes);
 
-	void load_new_formula(std::string formula);
+	Tree(const Tree &other);
+	~Tree();
+	Tree &operator=(const Tree &other);
 
-	std::string get_formula();
+	Tree operator+(const Tree &other) const;
+
+	Error *load_new_formula(std::string formula);
+	Tree join(const Tree &other) const;
+	float calculate_formula() const;
+
+	bool is_empty() const;
+
+	int get_depth() const;
+	int get_number_of_variables() const;
+	std::string get_formula_to_string() const;
+	std::string get_level_to_string(int level) const;
+	std::string get_levels_to_string() const;
+	std::string get_variables_to_string() const;
+
+	Error *set_variables(const std::vector<int> &variables);
 
 private:
-	static void load_new_formula_helper(std::string &formula, Node *parent_node);
-	static Node *load_formula_elem_into_node(std::string &formula_elem);
-	static operation load_operation(std::string &formula_elem);
-	static bool is_constant(std::string &formula_elem);
-	static void get_formula_helper(Node *node, std::string &formula);
-	static std::string load_variable(std::string &formula_elem);
-	static bool is_variable_character(char chr);
+	void clear_variables();
+
+	void get_formula_to_string(Node *node, std::string &result) const;
+	void get_level_to_string(Node *node, std::string &result, int level) const;
 
 	Node *root_;
-	int number_of_nodes_;
+	std::vector<Variable *> variables_;
 };
