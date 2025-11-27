@@ -19,20 +19,22 @@ public:
 	bool is_success() const;
 
 	T get_value() const;
-	std::vector<E *> &get_errors() const;
+	std::vector<E *> &get_errors();
 
 	static Result<T, E> ok(const T &value);
 	static Result<T, E> fail(E *error);
 	static Result<T, E> fail(std::vector<E *> &errors);
 
 private:
+	void copy_errors(const std::vector<E *> &errors);
+
 	T *value_;
 	std::vector<E *> errors_;
 };
 
 template<typename T, typename E>
 inline Result<T, E>::Result(const T &value)
-	: value_(&value),
+	: value_(new T(value)),
 	errors_(std::vector<E *>())
 {
 }
@@ -53,9 +55,10 @@ inline Result<T, E>::Result(std::vector<E *> &errors)
 
 template<typename T, typename E>
 inline Result<T, E>::Result(const Result<T, E> &other)
-	: value_(other.value_),
-	errors_(other.errors_)
+	: value_(new T(*(other.value_))),
+	errors_(std::vector<E *>())
 {
+	copy_errors(other.errors_);
 }
 
 template<typename T, typename E>
@@ -71,23 +74,39 @@ inline Result<T, E>::~Result()
 template<typename T, typename E>
 inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 {
-	return Result<T, E>(other);
+	if (value_)
+	{
+		delete value_;
+	}
+	
+	if (other.value_)
+	{
+		value_ = new T(*other.value_);
+	}
+	else
+	{
+		value_ = nullptr;
+	}
+	
+	copy_errors(other.errors_);
+
+	return *this;
 }
 
 template<typename T, typename E>
 inline bool Result<T, E>::is_success() const
 {
-	return !errors_.empty();
+	return errors_.empty();
 }
 
 template<typename T, typename E>
 inline T Result<T, E>::get_value() const
 {
-	return value_;
+	return *value_;
 }
 
 template<typename T, typename E>
-inline std::vector<E *> &Result<T, E>::get_errors() const
+inline std::vector<E *> &Result<T, E>::get_errors()
 {
 	return errors_;
 }
@@ -108,4 +127,20 @@ template<typename T, typename E>
 inline Result<T, E> Result<T, E>::fail(std::vector<E *> &errors)
 {
 	return Result<T, E>(errors);
+}
+
+template<typename T, typename E>
+void Result<T, E>::copy_errors(const std::vector<E *> &errors)
+{
+	for (typename std::vector<E *>::const_iterator it = errors_.begin(); it != errors_.end(); it++)
+	{
+		delete *it;
+	}
+
+	errors_.clear();
+
+	for (typename std::vector<E *>::const_iterator it = errors.begin(); it != errors.end(); it++)
+	{
+		errors_.push_back(new E(*(*it)));
+	}
 }
