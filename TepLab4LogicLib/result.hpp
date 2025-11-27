@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+#include <string>
 
 template <typename T, typename E>
 class Result
@@ -14,10 +16,10 @@ public:
 	~Result();
 	Result<T, E> &operator=(const Result<T, E> &other);
 
-	bool is_success();
+	bool is_success() const;
 
-	T get_value();
-	std::vector<E *> &get_errors();
+	T get_value() const;
+	std::vector<E *> &get_errors() const;
 
 	static Result<T, E> ok(const T &value);
 	static Result<T, E> fail(E *error);
@@ -73,19 +75,19 @@ inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 }
 
 template<typename T, typename E>
-inline bool Result<T, E>::is_success()
+inline bool Result<T, E>::is_success() const
 {
 	return !errors_.empty();
 }
 
 template<typename T, typename E>
-inline T Result<T, E>::get_value()
+inline T Result<T, E>::get_value() const
 {
 	return value_;
 }
 
 template<typename T, typename E>
-inline std::vector<E *> &Result<T, E>::get_errors()
+inline std::vector<E *> &Result<T, E>::get_errors() const
 {
 	return errors_;
 }
