@@ -392,23 +392,24 @@ TEST(ResultTest, WorksWithStrings)
     EXPECT_EQ("Hello World", res.get_value());
 }
 
-TEST(ResultVoidTest, CreateSuccess) {
-    // Result<void> zazwyczaj oznacza operacjê typu "wykonaj i powiedz czy siê uda³o"
+TEST(ResultVoidTest, CreateSuccess) 
+{
     auto res = Result<void, TestError>::ok();
 
     EXPECT_TRUE(res.is_success());
     EXPECT_TRUE(res.get_errors().empty());
 }
 
-TEST(ResultVoidTest, DefaultConstructorIsSuccess) {
-    // Specjalizacja void czêsto ma domyœlny konstruktor, który oznacza sukces
+TEST(ResultVoidTest, DefaultConstructorIsSuccess) 
+{
     Result<void, TestError> res;
 
     EXPECT_TRUE(res.is_success());
     EXPECT_TRUE(res.get_errors().empty());
 }
 
-TEST(ResultVoidTest, CreateFailureSingle) {
+TEST(ResultVoidTest, CreateFailureSingle) 
+{
     auto res = Result<void, TestError>::fail(new TestError("Void failed"));
 
     EXPECT_FALSE(res.is_success());
@@ -416,15 +417,18 @@ TEST(ResultVoidTest, CreateFailureSingle) {
     EXPECT_EQ("Void failed", res.get_errors()[0]->get_message());
 }
 
-TEST(ResultVoidTest, CreateFailureMultiple) {
+TEST(ResultVoidTest, CreateFailureMultiple) 
+{
     std::vector<TestError *> errors;
     errors.push_back(new TestError("Err 1"));
     errors.push_back(new TestError("Err 2"));
 
     auto res = Result<void, TestError>::fail(errors);
 
-    // Sprz¹tamy wektor wejœciowy (bo Result zrobi³ kopie)
-    for (auto e : errors) delete e;
+    for (auto e : errors)
+    {
+        delete e;
+    }
 
     EXPECT_FALSE(res.is_success());
     ASSERT_EQ(2, res.get_errors().size());
@@ -432,48 +436,81 @@ TEST(ResultVoidTest, CreateFailureMultiple) {
     EXPECT_EQ("Err 2", res.get_errors()[1]->get_message());
 }
 
-// --- TESTY PAMIÊCI I KOPIOWANIA DLA VOID ---
-
-TEST(ResultVoidTest, CopyConstructorDeepCopy) {
-    // 1. Tworzymy b³¹d
+TEST(ResultVoidTest, CopyConstructorDeepCopy) 
+{
     auto original = Result<void, TestError>::fail(new TestError("Original Void Error"));
 
-    // 2. Kopiujemy
     Result<void, TestError> copy = original;
 
-    // 3. Sprawdzamy czy treœæ jest ta sama
     ASSERT_EQ(1, copy.get_errors().size());
     EXPECT_EQ("Original Void Error", copy.get_errors()[0]->get_message());
 
-    // 4. KLUCZOWE: Sprawdzamy czy adresy w pamiêci s¹ RÓ¯NE (Deep Copy)
     EXPECT_NE(original.get_errors()[0], copy.get_errors()[0]);
 }
 
-TEST(ResultVoidTest, AssignmentOperator) {
+TEST(ResultVoidTest, AssignmentOperator) 
+{
     auto success = Result<void, TestError>::ok();
     auto failure = Result<void, TestError>::fail(new TestError("Fatal Error"));
 
-    // Przypisanie b³êdu do sukcesu
     success = failure;
 
     EXPECT_FALSE(success.is_success());
     ASSERT_FALSE(success.get_errors().empty());
     EXPECT_EQ("Fatal Error", success.get_errors()[0]->get_message());
 
-    // Upewniamy siê, ¿e to kopia, a nie ten sam wskaŸnik
     EXPECT_NE(success.get_errors()[0], failure.get_errors()[0]);
 }
 
-TEST(ResultVoidTest, SelfAssignment) {
+TEST(ResultVoidTest, SelfAssignment) 
+{
     auto res = Result<void, TestError>::fail(new TestError("Self Assign"));
 
-    // Kopiujemy wskaŸnik do b³êdu przed przypisaniem, ¿eby sprawdziæ czy nie zosta³ usuniêty
     TestError *raw_ptr = res.get_errors()[0];
 
-    res = res; // x = x
+    res = res;
 
     EXPECT_FALSE(res.is_success());
-    // WskaŸnik powinien byæ ten sam (lub nowy, ale o tej samej wartoœci, zale¿nie od implementacji operator=)
-    // W dobrej implementacji self-assignment po prostu nic nie robi:
     EXPECT_EQ("Self Assign", res.get_errors()[0]->get_message());
+}
+
+TEST(ResultTest, InverseValueModifiesVariable)
+{
+    double val = 4.0;
+    Result<void, Error> res = inverse_value(val);
+
+    EXPECT_TRUE(res.is_success());
+    EXPECT_DOUBLE_EQ(0.25, val);
+}
+
+TEST(ResultTest, InverseValueFailure)
+{
+    double val = 0.0;
+    Result<void, Error> res = inverse_value(val);
+
+    EXPECT_FALSE(res.is_success());
+    ASSERT_EQ(1, res.get_errors().size());
+    EXPECT_EQ(ErrorDivisionByZero().get_message(), res.get_errors()[0]->get_message());
+
+    EXPECT_DOUBLE_EQ(0.0, val);
+}
+
+TEST(ResultTest, InverseValueStaticModifiesVariable)
+{
+    double val = 2.0;
+    Result<void, Error> res = inverse_value_static(val);
+
+    EXPECT_TRUE(res.is_success());
+    EXPECT_DOUBLE_EQ(0.5, val);
+}
+
+TEST(ResultTest, InverseValueStaticFailure)
+{
+    double val = 0.0;
+    Result<void, Error> res = inverse_value_static(val);
+
+    EXPECT_FALSE(res.is_success());
+
+    ASSERT_FALSE(res.get_errors().empty());
+    EXPECT_EQ(ErrorDivisionByZero().get_message(), res.get_errors()[0]->get_message());
 }

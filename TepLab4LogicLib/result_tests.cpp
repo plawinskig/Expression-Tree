@@ -21,6 +21,28 @@ Result<double, Error> divide_two_static(double dividend, double divisor)
     return Result<double, Error>::ok(dividend / divisor);;
 }
 
+Result<void, Error> inverse_value(double &value)
+{
+    if (value == 0)
+    {
+        return new ErrorDivisionByZero();
+    }
+
+    value = 1 / value;
+    return Result<void, Error>();
+}
+
+Result<void, Error> inverse_value_static(double &value)
+{
+    if (value == 0)
+    {
+        return Result<void, Error>::fail(new ErrorDivisionByZero());
+    }
+
+    value = 1 / value;
+    return Result<void, Error>::ok();
+}
+
 std::string get_result_two_to_string(Result<double, Error> &res)
 {
     std::stringstream sstr;
