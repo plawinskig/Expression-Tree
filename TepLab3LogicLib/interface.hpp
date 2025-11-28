@@ -17,6 +17,7 @@ namespace
     const std::string COMMAND_JOIN = "join";
     const std::string COMMAND_EXIT = "exit";
     const std::string COMMAND_LEVELS = "levels";
+    const std::string TREE_SAVING_FILE_PATH = "trees.txt";
 }
 
 class Interface

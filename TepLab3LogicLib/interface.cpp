@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "interface.hpp"
+#include "result_file_handler.hpp"
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
@@ -79,22 +80,25 @@ void Interface::run()
 
 void Interface::handle_get(const std::string &arg)
 {
-    Result<Tree *, Error> res_load = get_tree(arg);
+    Result<Tree *, Error> result = get_tree(arg);
 
-    if (res_load.is_success())
+    if (result.is_success())
     {
-        std::cout << "Got formula: " << res_load.get_value()->get_formula_to_string() << "\n";
-        tree_ = *res_load.get_value();
+        std::cout << "Got formula: " << result.get_value()->get_formula_to_string() << "\n";
+        tree_ = *result.get_value();
     }
     else
     {
-        std::vector<Error *> errs = res_load.get_errors();
+        std::vector<Error *> errs = result.get_errors();
 
         for (std::vector<Error *>::iterator it = errs.begin(); it != errs.end(); it++)
         {
             std::cout << (*it)->get_message() << "\n";
         }
     }
+
+    ResultFileHandler<Tree *> handler;
+    handler.write(result, TREE_SAVING_FILE_PATH);
 }
 
 Result<Tree *, Error> Interface::get_tree(const std::string &arg)
