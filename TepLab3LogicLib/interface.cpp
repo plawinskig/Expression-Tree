@@ -46,6 +46,10 @@ void Interface::run()
         {
             handle_enter(arg);
         }
+        else if (command == COMMAND_GET)
+        {
+            handle_get(arg);
+        }
         else if (command == COMMAND_VARS)
         {
             handle_vars();
@@ -75,12 +79,37 @@ void Interface::run()
 
 void Interface::handle_get(const std::string &arg)
 {
-    Error *err_load = tree_.load_new_formula(arg);
+    Result<Tree, Error> res_load = get_tree(arg);
 
-    std::cout << err_load->get_message() << "\n";
+    if (res_load.is_success())
+    {
+        std::cout << "Got formula: " << res_load.get_value().get_formula_to_string() << "\n";
+        tree_ = res_load.get_value();
+    }
+    else
+    {
+        std::vector<Error *> errs = res_load.get_errors();
+
+        for (std::vector<Error *>::iterator it = errs.begin(); it != errs.end(); it++)
+        {
+            std::cout << (*it)->get_message() << "\n";
+        }
+    }
+}
+
+Result<Tree, Error> Interface::get_tree(const std::string &arg)
+{
+    Tree tree;
+    Error *err_load = tree.load_new_formula(arg);
+
+    if (!err_load->get_message().empty())
+    {
+        return err_load;
+    }
+
     delete err_load;
 
-    std::cout << "Loaded formula: " << tree_.get_formula_to_string() << "\n";
+    return tree;
 }
 
 void Interface::handle_enter(const std::string &arg)
