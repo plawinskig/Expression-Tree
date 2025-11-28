@@ -161,26 +161,27 @@ inline Result<void, E>::Result()
 
 template<typename T, typename E>
 inline Result<T, E>::Result(E *error)
-	: ResultBase<E>()
+	: ResultBase<E>(error),
+	value_(nullptr)
 {
 }
 
 template<typename E>
 inline Result<void, E>::Result(E *error)
-	: ResultBase<E>()
+	: ResultBase<E>(error)
 {
 }
 
 template<typename T, typename E>
 inline Result<T, E>::Result(std::vector<E *> &errors)
-	: ResultBase<E>(),
+	: ResultBase<E>(errors),
 	value_(nullptr)
 {
 }
 
 template<typename E>
 inline Result<void, E>::Result(std::vector<E *> &errors)
-	: ResultBase<E>()
+	: ResultBase<E>(errors)
 {
 }
 
@@ -215,6 +216,11 @@ inline Result<void, E>::~Result()
 template<typename T, typename E>
 inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 {
+	if (this == &other)
+	{
+		return *this;
+	}
+
 	ResultBase<E>::operator=(other);
 
 	if (value_)
@@ -234,6 +240,11 @@ inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 template<typename E>
 inline Result<void, E> &Result<void, E>::operator=(const Result<void, E> &other)
 {
+	if (this == &other)
+	{
+		return *this;
+	}
+
 	ResultBase<E>::operator=(other);
 
 	return *this;
