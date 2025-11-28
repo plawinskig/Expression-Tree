@@ -3,11 +3,6 @@
 #include <string>
 #include <vector>
 
-namespace
-{
-	//std::string 
-}
-
 class Error
 {
 public:

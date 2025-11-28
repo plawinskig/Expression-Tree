@@ -298,7 +298,7 @@ struct TestError
     TestError(std::string m) : message(m) {}
     TestError(const TestError &other) : message(other.message) {}
 
-    std::string get_message() const { return message; }
+    std::string get_message() const { return message; }    
 };
 
 TEST(ResultTest, CreateSuccess) 
