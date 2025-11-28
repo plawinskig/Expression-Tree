@@ -24,15 +24,9 @@
     <ClInclude Include="result.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="error_message.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="error_message.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

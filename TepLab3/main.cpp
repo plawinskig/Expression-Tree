@@ -38,15 +38,15 @@ void print_result_two(Result<double, Error> &res)
 
 int main()
 {
-    Interface app;
-    app.run();
+    //Interface app;
+    //app.run();
 
-    //Result<double, Error> res = divide_two(10, 5);
-    //print_result_two(res);
-    //res = divide_two(10, 4);
-    //print_result_two(res);
-    //res = divide_two(10, 0);
-    //print_result_two(res);
+    Result<double, Error> res = divide_two(10, 5);
+    print_result_two(res);
+    res = divide_two(10, 4);
+    print_result_two(res);
+    res = divide_two(10, 0);
+    print_result_two(res);
 
     return 0;
 }
