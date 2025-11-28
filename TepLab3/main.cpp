@@ -1,25 +1,26 @@
-#include "error_message.hpp"
+#include "error.hpp"
 #include "result.hpp"
+#include "interface.hpp"
 
-Result<double, ErrorMessage> divide_two(double dividend, double divisor)
+Result<double, Error> divide_two(double dividend, double divisor)
 {
     if (divisor == 0)
     {
-        return new ErrorMessage("Cannot divide by zero.");
+        return new Error("Cannot divide by zero.");
     }
     return dividend / divisor;
 }
 
-Result<double, ErrorMessage> divide_two_static(double dividend, double divisor)
+Result<double, Error> divide_two_static(double dividend, double divisor)
 {
     if (divisor == 0)
     {
-        return Result<double, ErrorMessage>::fail(new ErrorMessage("Cannot divide by zero."));
+        return Result<double, Error>::fail(new ErrorDivisionByZero());
     }
-    return Result<double, ErrorMessage>::ok(dividend / divisor);;
+    return Result<double, Error>::ok(dividend / divisor);;
 }
 
-void print_result_two(Result<double, ErrorMessage> &res)
+void print_result_two(Result<double, Error> &res)
 {
     if (res.is_success())
     {
@@ -27,7 +28,7 @@ void print_result_two(Result<double, ErrorMessage> &res)
     }
     else
     {
-        std::vector<ErrorMessage *> errors = res.get_errors();
+        std::vector<Error *> errors = res.get_errors();
         for (auto i : errors)
         {
             std::cout << (*i).get_message() << "\n";
@@ -37,15 +38,15 @@ void print_result_two(Result<double, ErrorMessage> &res)
 
 int main()
 {
-    //Interface app;
-    //app.run();
+    Interface app;
+    app.run();
 
-    Result<double, ErrorMessage> res = divide_two(10, 5);
-    print_result_two(res);
-    res = divide_two(10, 4);
-    print_result_two(res);
-    res = divide_two(10, 0);
-    print_result_two(res);
+    //Result<double, Error> res = divide_two(10, 5);
+    //print_result_two(res);
+    //res = divide_two(10, 4);
+    //print_result_two(res);
+    //res = divide_two(10, 0);
+    //print_result_two(res);
 
     return 0;
 }

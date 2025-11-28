@@ -3,25 +3,49 @@
 
 #include <sstream>
 
-ErrorIncorrectNumberOfArguments::ErrorIncorrectNumberOfArguments(std::string where, int required, int given)
-	: where_(where),
-	required_(required),
-	given_(given)
+Error::Error(std::string message)
 {
+	set_message(message);
 }
 
-std::string ErrorIncorrectNumberOfArguments::get_message() const
+std::string Error::get_message() const
+{
+	return message_;
+}
+
+void Error::set_message(std::string message)
+{
+	message_ = message;
+}
+
+ErrorIncorrectNumberOfArguments::ErrorIncorrectNumberOfArguments(std::string where, int required, int given)
+	: Error(std::string()),
+	where_(where),
+	required_(required),
+	given_(given)
 {
 	std::stringstream message;
 	message << "Incorrect number of arguments in '" << where_ << "'\n";
 	message << "Required: " << required_ << "\n";
 	message << "Given: " << given_ << "\n";
-	return message.str();
+
+	set_message(message.str());
 }
 
 ErrorInvalidArgument::ErrorInvalidArgument(std::string where, std::string what)
-	: where_(where),
+	: Error(std::string()),
+	where_(where),
 	what_(what)
+{
+	std::stringstream message;
+	message << "Invalid argument '" << what_ << "' in '" << where_ << "'\n";
+
+	set_message(message.str());
+}
+
+Errors::Errors()
+	: Error(std::string()),
+	errors_(std::vector<Error *>())
 {
 }
 
@@ -58,36 +82,23 @@ std::string Errors::get_message() const
 	return messages;
 }
 
-std::string ErrorInvalidArgument::get_message() const
-{
-	std::stringstream message;
-	message << "Invalid argument '" << what_ << "' in '" << where_ << "'\n";
-	return message.str();
-}
-
 ErrorInvalidCharacter::ErrorInvalidCharacter(std::string where, char what)
-	: where_(where),
+	: Error(std::string()),
+	where_(where),
 	what_(what)
-{
-}
-
-std::string ErrorInvalidCharacter::get_message() const
 {
 	std::stringstream message;
 	message << "Character: '";
 	message << what_ << "' in '" << where_;
 	message << "' is not permitted - omitting\n";
 
-	return message.str();
+	set_message(message.str());
 }
 
 ErrorTooManyArguments::ErrorTooManyArguments(std::string loaded, std::string remained)
-	: loaded_(loaded),
+	: Error(std::string()),
+	loaded_(loaded),
 	remained_(remained)
-{
-}
-
-std::string ErrorTooManyArguments::get_message() const
 {
 	std::stringstream message;
 	message << "Too many arguments in formula\n";
@@ -96,21 +107,23 @@ std::string ErrorTooManyArguments::get_message() const
 	std::string remained_offset(remained_.size() - 1, '^');
 	message << loaded_offset << remained_offset << "\n";
 
-	return message.str();
+	set_message(message.str());
 }
 
-std::string ErrorEmptyInput::get_message() const
+ErrorEmptyInput::ErrorEmptyInput()
+	: Error(std::string())
 {
 	std::stringstream message;
 	message << "Empty input provided\n";
 
-	return message.str();
+	set_message(message.str());
 }
 
-std::string ErrorDivisionByZero::get_message() const
+ErrorDivisionByZero::ErrorDivisionByZero()
+	: Error(std::string())
 {
 	std::stringstream message;
 	message << "Cannot divide by zero\n";
 
-	return message.str();
+	set_message(message.str());
 }

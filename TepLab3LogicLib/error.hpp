@@ -3,15 +3,27 @@
 #include <string>
 #include <vector>
 
+namespace
+{
+	//std::string 
+}
+
 class Error
 {
 public:
-	virtual std::string get_message() const = 0;
+	Error(std::string message);
+
+	virtual std::string get_message() const;
+	void set_message(std::string message);
+
+private:
+	std::string message_;
 };
 
 class Errors : public Error
 {
 public:
+	Errors();
 	~Errors();
 
 	void add(Error *err);
@@ -28,8 +40,6 @@ class ErrorIncorrectNumberOfArguments : public Error
 public:
 	ErrorIncorrectNumberOfArguments(std::string where, int required, int given);
 
-	virtual std::string get_message() const;
-
 private:
 	std::string where_; 
 	int required_; 
@@ -41,8 +51,6 @@ class ErrorInvalidArgument : public Error
 public:
 	ErrorInvalidArgument(std::string where, std::string what);
 
-	virtual std::string get_message() const;
-
 private:
 	std::string where_;
 	std::string what_;
@@ -52,8 +60,6 @@ class ErrorInvalidCharacter : public Error
 {
 public:
 	ErrorInvalidCharacter(std::string where, char what);
-
-	virtual std::string get_message() const;
 
 private:
 	std::string where_;
@@ -65,8 +71,6 @@ class ErrorTooManyArguments : public Error
 public:
 	ErrorTooManyArguments(std::string loaded, std::string remained);
 
-	virtual std::string get_message() const;
-
 private:
 	std::string loaded_;
 	std::string remained_;
@@ -75,11 +79,11 @@ private:
 class ErrorEmptyInput : public Error
 {
 public:
-	virtual std::string get_message() const;
+	ErrorEmptyInput();
 };
 
 class ErrorDivisionByZero : public Error
 {
 public:
-	virtual std::string get_message() const;
+	ErrorDivisionByZero();
 };
