@@ -23,6 +23,7 @@ public:
     void run();
 
 private:
+    void handle_get(const std::string &arg);
     void handle_enter(const std::string &arg);
     void handle_vars();
     void handle_print();

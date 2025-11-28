@@ -27,12 +27,18 @@
     <ClInclude Include="result_tests.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="error.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="result_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
