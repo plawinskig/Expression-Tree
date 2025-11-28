@@ -79,12 +79,12 @@ void Interface::run()
 
 void Interface::handle_get(const std::string &arg)
 {
-    Result<Tree, Error> res_load = get_tree(arg);
+    Result<Tree *, Error> res_load = get_tree(arg);
 
     if (res_load.is_success())
     {
-        std::cout << "Got formula: " << res_load.get_value().get_formula_to_string() << "\n";
-        tree_ = res_load.get_value();
+        std::cout << "Got formula: " << res_load.get_value()->get_formula_to_string() << "\n";
+        tree_ = *res_load.get_value();
     }
     else
     {
@@ -97,10 +97,10 @@ void Interface::handle_get(const std::string &arg)
     }
 }
 
-Result<Tree, Error> Interface::get_tree(const std::string &arg)
+Result<Tree *, Error> Interface::get_tree(const std::string &arg)
 {
-    Tree tree;
-    Error *err_load = tree.load_new_formula(arg);
+    Tree *tree = new Tree();
+    Error *err_load = tree->load_new_formula(arg);
 
     if (!err_load->get_message().empty())
     {
