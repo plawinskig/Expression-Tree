@@ -24,9 +24,15 @@
     <ClInclude Include="result.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="result_tests.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="result_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

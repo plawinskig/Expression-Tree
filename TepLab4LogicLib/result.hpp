@@ -32,10 +32,41 @@ private:
 	std::vector<E *> errors_;
 };
 
+template <typename E>
+class Result<void, E>
+{
+public:
+	Result();
+	Result(E *error);
+	Result(std::vector<E *> &errors);
+
+	Result(const Result<void, E> &other);
+	~Result();
+	Result<void, E> &operator=(const Result<void, E> &other);
+
+	bool is_success() const;
+
+	std::vector<E *> &get_errors();
+
+	static Result<void, E> ok();
+	static Result<void, E> fail(E *error);
+	static Result<void, E> fail(std::vector<E *> &errors);
+
+private:
+	std::vector<E *> errors_;
+};
+
+
 template<typename T, typename E>
 inline Result<T, E>::Result(const T &value)
 	: value_(new T(value)),
 	errors_(std::vector<E *>())
+{
+}
+
+template<typename E>
+inline Result<void, E>::Result()
+	: errors_(std::vector<E *>())
 {
 }
 
@@ -122,6 +153,11 @@ template<typename T, typename E>
 inline Result<T, E> Result<T, E>::ok(const T &value)
 {
 	return Result<T, E>(value);
+}
+
+template<typename E>
+inline Result<void, E> Result<void, E>::ok()
+{
 }
 
 template<typename T, typename E>

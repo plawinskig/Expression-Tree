@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "tree.hpp"
 #include "string_helpers.hpp"
+#include "result.hpp"
+#include "result_tests.hpp"
 #include <sstream>
 
 #define ABS_ERR 1e-3
@@ -271,4 +273,121 @@ TEST(TreeTest, JoinVariables_Deduplication)
     EXPECT_EQ(t1.get_variables_to_string(), "a");
     EXPECT_EQ(t2.get_formula_to_string(), f2);
     EXPECT_EQ(t2.get_variables_to_string(), "a b");
+}
+
+TEST(ResultTest, BasicReturns)
+{
+    Result<double, Error> res = divide_two(10, 5);
+    EXPECT_EQ("2", get_result_two_to_string(res));
+    res = divide_two(10, 4);
+    EXPECT_EQ("2.5", get_result_two_to_string(res));
+    res = divide_two(10, 0);
+    EXPECT_EQ(ErrorDivisionByZero().get_message(), get_result_two_to_string(res));
+
+    Result<double, Error> res_st = divide_two_static(10, 5);
+    EXPECT_EQ("2", get_result_two_to_string(res_st));
+    res_st = divide_two_static(10, 4);
+    EXPECT_EQ("2.5", get_result_two_to_string(res_st));
+    res_st = divide_two_static(10, 0);
+    EXPECT_EQ(ErrorDivisionByZero().get_message(), get_result_two_to_string(res_st));
+}
+
+struct TestError 
+{
+    std::string message;
+    TestError(std::string m) : message(m) {}
+    TestError(const TestError &other) : message(other.message) {}
+
+    std::string get_message() const { return message; }
+};
+
+TEST(ResultTest, CreateSuccess) 
+{
+    auto res = Result<int, TestError>::ok(42);
+
+    EXPECT_TRUE(res.is_success());
+    EXPECT_EQ(42, res.get_value());
+    EXPECT_TRUE(res.get_errors().empty());
+}
+
+TEST(ResultTest, CreateFailureSingle) 
+{
+    TestError *err = new TestError("Critical error");
+    auto res = Result<int, TestError>::fail(err);
+
+    EXPECT_FALSE(res.is_success());
+    ASSERT_EQ(1, res.get_errors().size());
+    EXPECT_EQ("Critical error", res.get_errors()[0]->get_message());
+}
+
+TEST(ResultTest, CreateFailureMultiple) 
+{
+    std::vector<TestError *> errors;
+    errors.push_back(new TestError("B³¹d 1"));
+    errors.push_back(new TestError("B³¹d 2"));
+
+    auto res = Result<int, TestError>::fail(errors);
+
+    for (auto e : errors)
+    {
+        delete e;
+    }
+
+    EXPECT_FALSE(res.is_success());
+    ASSERT_EQ(2, res.get_errors().size());
+    EXPECT_EQ("B³¹d 1", res.get_errors()[0]->get_message());
+    EXPECT_EQ("B³¹d 2", res.get_errors()[1]->get_message());
+}
+
+TEST(ResultTest, CopyConstructorDeepCopyCheck) 
+{
+    auto original = Result<int, TestError>::fail(new TestError("Original"));
+
+    Result<int, TestError> copy = original;
+
+    // same values
+    ASSERT_EQ(1, copy.get_errors().size());
+    EXPECT_EQ("Original", copy.get_errors()[0]->get_message());
+
+    // different addresses
+    EXPECT_NE(original.get_errors()[0], copy.get_errors()[0]);
+}
+
+TEST(ResultTest, AssignmentOperatorSuccessToFail) 
+{
+    auto res = Result<int, TestError>::ok(100);
+    auto failure = Result<int, TestError>::fail(new TestError("Awaria"));
+
+    res = failure;
+
+    EXPECT_FALSE(res.is_success());
+    ASSERT_FALSE(res.get_errors().empty());
+    EXPECT_EQ("Awaria", res.get_errors()[0]->get_message());
+}
+
+TEST(ResultTest, AssignmentOperatorFailToSuccess) 
+{
+    auto res = Result<int, TestError>::fail(new TestError("Z³y start"));
+    auto success = Result<int, TestError>::ok(777);
+
+    res = success;
+
+    EXPECT_TRUE(res.is_success());
+    EXPECT_TRUE(res.get_errors().empty());
+    EXPECT_EQ(777, res.get_value());
+}
+
+TEST(ResultTest, SelfAssignment) 
+{
+    auto res = Result<int, TestError>::ok(5);
+    res = res;
+
+    EXPECT_TRUE(res.is_success());
+    EXPECT_EQ(5, res.get_value());
+}
+
+TEST(ResultTest, WorksWithStrings) 
+{
+    auto res = Result<std::string, TestError>::ok("Hello World");
+    EXPECT_EQ("Hello World", res.get_value());
 }
