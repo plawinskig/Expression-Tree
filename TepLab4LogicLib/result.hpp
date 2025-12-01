@@ -4,31 +4,30 @@
 #include <iostream>
 #include <string>
 
-template <typename E>
-class ResultBase
+template<typename E>
+void delete_errors(const std::vector<E *> &errors)
 {
-public:
-	virtual ~ResultBase();
+	for (typename std::vector<E *>::const_iterator it = errors.begin(); it != errors.end(); it++)
+	{
+		delete *it;
+	}
+}
 
-	bool is_success() const;
-	std::vector<E *> &get_errors();
+template<typename E>
+void copy_errors(const std::vector<E *> &from_errors, std::vector<E *> &to_errors)
+{
+	delete_errors(to_errors);
 
-protected:
-	ResultBase();
-	ResultBase(E *error);
-	ResultBase(std::vector<E *> &errors);
+	to_errors.clear();
 
-	ResultBase(const ResultBase<E> &other);
-	ResultBase<E> &operator=(const ResultBase<E> &other);
-
-	void copy_errors(const std::vector<E *> &errors);
-	void clear_errors();
-
-	std::vector<E *> errors_;
-};
+	for (typename std::vector<E *>::const_iterator it = from_errors.begin(); it != from_errors.end(); it++)
+	{
+		to_errors.push_back(new E(*(*it)));
+	}
+}
 
 template <typename T, typename E>
-class Result : public ResultBase<E>
+class Result
 {
 public:
 	Result(const T &value);
@@ -39,7 +38,10 @@ public:
 	~Result();
 	Result<T, E> &operator=(const Result<T, E> &other);
 
+	bool is_success() const;
+
 	T get_value() const;
+	std::vector<E *> &get_errors();
 
 	static Result<T, E> ok(const T &value);
 	static Result<T, E> fail(E *error);
@@ -47,10 +49,11 @@ public:
 
 private:
 	T *value_;
+	std::vector<E *> errors_;
 };
 
 template <typename E>
-class Result<void, E> : public ResultBase<E>
+class Result<void, E>
 {
 public:
 	Result();
@@ -61,156 +64,90 @@ public:
 	~Result();
 	Result<void, E> &operator=(const Result<void, E> &other);
 
+	bool is_success() const;
+
+	std::vector<E *> &get_errors();
+
 	static Result<void, E> ok();
 	static Result<void, E> fail(E *error);
 	static Result<void, E> fail(std::vector<E *> &errors);
+
+private:
+	std::vector<E *> errors_;
 };
-
-
-template<typename E>
-inline ResultBase<E>::~ResultBase()
-{
-	clear_errors();
-}
-
-template<typename E>
-inline bool ResultBase<E>::is_success() const
-{
-	return errors_.empty();
-}
-
-template<typename E>
-inline std::vector<E *> &ResultBase<E>::get_errors()
-{
-	return errors_;
-}
-
-template<typename E>
-inline ResultBase<E>::ResultBase()
-	: errors_(std::vector<E *>())
-{
-}
-
-template<typename E>
-inline ResultBase<E>::ResultBase(E *error)
-	: errors_(std::vector<E *>(1, error))
-{
-}
-
-template<typename E>
-inline ResultBase<E>::ResultBase(std::vector<E *> &errors)
-	: errors_(std::vector<E *>())
-{
-	copy_errors(errors);
-}
-
-template<typename E>
-inline ResultBase<E>::ResultBase(const ResultBase<E> &other)
-	: errors_(std::vector<E *>())
-{
-	copy_errors(other.errors_);
-}
-
-template<typename E>
-inline ResultBase<E> &ResultBase<E>::operator=(const ResultBase<E> &other)
-{
-	if (this == &other)
-	{
-		return *this;
-	}
-
-	copy_errors(other.errors_);
-
-	return *this;
-}
-
-template<typename E>
-inline void ResultBase<E>::copy_errors(const std::vector<E *> &errors)
-{
-	clear_errors();
-	errors_.clear();
-
-	for (typename std::vector<E *>::const_iterator it = errors.begin(); it != errors.end(); it++)
-	{
-		errors_.push_back(new E(*(*it)));
-	}
-}
-
-template<typename E>
-inline void ResultBase<E>::clear_errors()
-{
-	for (typename std::vector<E *>::const_iterator it = errors_.begin(); it != errors_.end(); it++)
-	{
-		delete *it;
-	}
-}
 
 
 template<typename T, typename E>
 inline Result<T, E>::Result(const T &value)
-	: ResultBase<E>(),
-	value_(new T(value))
+	: value_(new T(value)),
+	errors_(std::vector<E *>())
 {
 }
 
 template<typename E>
 inline Result<void, E>::Result()
-	: ResultBase<E>()
+	: errors_(std::vector<E *>())
 {
 }
 
 template<typename T, typename E>
 inline Result<T, E>::Result(E *error)
-	: ResultBase<E>(error),
-	value_(nullptr)
+	: value_(nullptr),
+	errors_(std::vector<E *>(1, error))
 {
 }
 
 template<typename E>
 inline Result<void, E>::Result(E *error)
-	: ResultBase<E>(error)
+	: errors_(std::vector<E *>(1, error))
 {
 }
 
 template<typename T, typename E>
 inline Result<T, E>::Result(std::vector<E *> &errors)
-	: ResultBase<E>(errors),
-	value_(nullptr)
+	: value_(nullptr),
+	errors_(std::vector<E *>())
 {
+	copy_errors(errors, errors_);
 }
 
 template<typename E>
 inline Result<void, E>::Result(std::vector<E *> &errors)
-	: ResultBase<E>(errors)
+	: errors_(std::vector<E *>())
 {
+	copy_errors(errors, errors_);
 }
 
 template<typename T, typename E>
 inline Result<T, E>::Result(const Result<T, E> &other)
-	: ResultBase<E>(other),
-	value_(nullptr)
+	: value_(nullptr),
+	errors_(std::vector<E *>())
 {
 	if (other.value_)
 	{
 		value_ = new T(*(other.value_));
 	}
+	copy_errors(other.errors_, errors_);
 }
 
 template<typename E>
 inline Result<void, E>::Result(const Result<void, E> &other)
-	: ResultBase<E>(other)
+	: errors_(std::vector<E *>())
 {
+	copy_errors(other.errors_, errors_);
 }
 
 template<typename T, typename E>
 inline Result<T, E>::~Result()
 {
 	delete value_;
+	delete_errors(errors_);
 }
 
 template<typename E>
 inline Result<void, E>::~Result()
 {
+	delete_errors(errors_);
 }
 
 template<typename T, typename E>
@@ -220,8 +157,6 @@ inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 	{
 		return *this;
 	}
-
-	ResultBase<E>::operator=(other);
 
 	if (value_)
 	{
@@ -234,6 +169,8 @@ inline Result<T, E> &Result<T, E>::operator=(const Result<T, E> &other)
 		value_ = new T(*other.value_);
 	}
 
+	copy_errors(other.errors_, errors_);
+
 	return *this;
 }
 
@@ -245,15 +182,39 @@ inline Result<void, E> &Result<void, E>::operator=(const Result<void, E> &other)
 		return *this;
 	}
 
-	ResultBase<E>::operator=(other);
+	copy_errors(other.errors_, errors_);
 
 	return *this;
+}
+
+template<typename T, typename E>
+inline bool Result<T, E>::is_success() const
+{
+	return errors_.empty();
+}
+
+template<typename E>
+inline bool Result<void, E>::is_success() const
+{
+	return errors_.empty();
 }
 
 template<typename T, typename E>
 inline T Result<T, E>::get_value() const
 {
 	return *value_;
+}
+
+template<typename T, typename E>
+inline std::vector<E *> &Result<T, E>::get_errors()
+{
+	return errors_;
+}
+
+template<typename E>
+inline std::vector<E *> &Result<void, E>::get_errors()
+{
+	return errors_;
 }
 
 template<typename T, typename E>
