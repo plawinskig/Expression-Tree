@@ -1,0 +1,26 @@
+
+Tree 1)
++ a b
+
+Tree 2)
+Incorrect number of arguments in '+'
+Required: 2
+Given: 0
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+
+
+Tree 3)
+Too many arguments in formula
++ a a a a a a
+    ^^^^^^^^^
+
+
+Tree 4)
+Character: '&' in '&a' is not permitted - omitting
+
+
+Tree 5)
+Empty input provided
+

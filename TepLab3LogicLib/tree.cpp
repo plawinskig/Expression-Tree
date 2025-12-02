@@ -120,6 +120,8 @@ Tree Tree::join(const Tree &other) const
     Tree result(*this);
     Tree other_cpy(other);
 
+    std::vector<Variable *> candidate_vars_to_delete = other_cpy.variables_;
+
     Node *connector = result.root_->get_last_leaf();
     Node *connector_parent = connector->get_parent();
 
@@ -141,6 +143,26 @@ Tree Tree::join(const Tree &other) const
 
     result.variables_.clear();
     result.root_->get_variables(result.variables_);
+
+    // garbage collector
+    for (std::vector<Variable *>::const_iterator it_candidate = candidate_vars_to_delete.begin(); it_candidate < candidate_vars_to_delete.end(); it_candidate++)
+    {
+        bool still_used = false;
+
+        for (std::vector<Variable *>::const_iterator it_variable = result.variables_.begin(); it_variable < result.variables_.end(); it_variable++)
+        {
+            if (*it_variable == *it_candidate)
+            {
+                still_used = true;
+                break;
+            }
+        }
+
+        if (!still_used)
+        {
+            delete *it_candidate;
+        }
+    }
 
     return result;
 }

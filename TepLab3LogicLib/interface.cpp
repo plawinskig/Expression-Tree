@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "interface.hpp"
+#include "result_file_handler.hpp"
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
@@ -46,6 +47,10 @@ void Interface::run()
         {
             handle_enter(arg);
         }
+        else if (command == COMMAND_GET)
+        {
+            handle_get(arg);
+        }
         else if (command == COMMAND_VARS)
         {
             handle_vars();
@@ -71,6 +76,44 @@ void Interface::run()
             std::cout << "Unknown command: '" << command << "'\n";
         }
     }
+}
+
+void Interface::handle_get(const std::string &arg)
+{
+    Result<Tree *, Error> result = get_tree(arg);
+
+    if (result.is_success())
+    {
+        std::cout << "Got formula: " << result.get_value()->get_formula_to_string() << "\n";
+        tree_ = *result.get_value();
+    }
+    else
+    {
+        std::vector<Error *> errs = result.get_errors();
+
+        for (std::vector<Error *>::iterator it = errs.begin(); it != errs.end(); it++)
+        {
+            std::cout << (*it)->get_message() << "\n";
+        }
+    }
+
+    ResultFileHandler<Tree *> handler;
+    handler.write(result, TREE_SAVING_FILE_PATH);
+}
+
+Result<Tree *, Error> Interface::get_tree(const std::string &arg)
+{
+    Tree *tree = new Tree();
+    Error *err_load = tree->load_new_formula(arg);
+
+    if (!err_load->get_message().empty())
+    {
+        return err_load;
+    }
+
+    delete err_load;
+
+    return tree;
 }
 
 void Interface::handle_enter(const std::string &arg)

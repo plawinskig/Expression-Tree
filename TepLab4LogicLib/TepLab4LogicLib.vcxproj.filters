@@ -15,45 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tree.hpp">
+    <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="node.hpp">
+    <ClInclude Include="result.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="formula_elements.hpp">
+    <ClInclude Include="result_tests.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="interface.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="string_helpers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="result_file_handler.hpp">
+    <ClInclude Include="error.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="node.cpp">
+    <ClCompile Include="result_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="formula_elements.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="string_helpers.cpp">
+    <ClCompile Include="error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
