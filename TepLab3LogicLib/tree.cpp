@@ -365,8 +365,7 @@ void Tree::move_tree(Tree &&other)
     root_ = other.root_;
     other.root_ = nullptr;
 
-    root_->get_variables(variables_);
-    other.variables_.clear();
+    variables_ = std::move(other.variables_);
 }
 
 void Tree::copy_tree(const Tree &other)

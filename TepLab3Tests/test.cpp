@@ -776,3 +776,12 @@ TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers)
 //    int *pointer = &val;
 //    MySmartPointer<int> smart_pointer(pointer);
 //}
+
+TEST(TreeTest, MoveTree)
+{
+    Tree tree;
+    Tree other("+ a b");
+    tree = std::move(other);
+    EXPECT_EQ("+ a b", tree.get_formula_to_string());
+    EXPECT_EQ("[empty]", other.get_formula_to_string());
+}
