@@ -653,7 +653,8 @@ TEST(MySmartPointerTest, ArrayFlagsOfStack)
     }
 }
 
-TEST(MySmartPointerTest, AssignmentOperatorOverwrites) {
+TEST(MySmartPointerTest, AssignmentOperatorOverwrites) 
+{
     bool flagA = false;
     bool flagB = false;
 
@@ -671,7 +672,8 @@ TEST(MySmartPointerTest, AssignmentOperatorOverwrites) {
     EXPECT_TRUE(flagB);
 }
 
-TEST(MySmartPointerTest, SelfAssignmentSafe) {
+TEST(MySmartPointerTest, SelfAssignmentSafe) 
+{
     bool flag = false;
 
     {
@@ -686,7 +688,8 @@ TEST(MySmartPointerTest, SelfAssignmentSafe) {
     EXPECT_TRUE(flag);
 }
 
-TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly) {
+TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly) 
+{
     bool flag = false;
 
     {
@@ -710,4 +713,11 @@ TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly) {
     }
 
     EXPECT_TRUE(flag);
+}
+
+TEST(MySmartPointerTest, ContainsStaticMemory)
+{
+    //int val = 5;
+    //int *pointer = &val;
+    //MySmartPointer<int> smart_pointer(pointer);
 }

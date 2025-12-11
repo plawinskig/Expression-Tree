@@ -48,16 +48,23 @@ inline MySmartPointer<T>::~MySmartPointer()
 template<typename T>
 inline MySmartPointer<T> &MySmartPointer<T>::operator=(const MySmartPointer &other)
 {
-	if (this == &other)
+	if (pointer_ == other.pointer_)
 	{
 		return *this;
 	}
 
-	delete_if_unused();
+	if (counter_)
+	{
+		delete_if_unused();
+	}
 
 	pointer_ = other.pointer_;
-	counter_ = other.counter_;
-	counter_->add();
+
+	if (pointer_)
+	{
+		counter_ = other.counter_;
+		counter_->add();
+	}
 
 	return *this;
 }

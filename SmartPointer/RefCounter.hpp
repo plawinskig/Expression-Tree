@@ -7,6 +7,9 @@ class RefCounter
 public:
 	RefCounter();
 
+	RefCounter(const RefCounter &) = delete;
+	RefCounter &operator=(const RefCounter &) = delete;
+
 	int add();
 	int dec();
 	int get() const;
