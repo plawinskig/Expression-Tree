@@ -745,3 +745,34 @@ TEST(MySmartPointerTest, ContainsStaticMemory)
     //int *pointer = &val;
     //MySmartPointer<int> smart_pointer(pointer);
 }
+
+TEST(MySmartPointerTest, DefaultConstructorIsCopyable) 
+{
+    MySmartPointer<int> empty1;
+    MySmartPointer<int> empty2(empty1);
+
+    EXPECT_EQ(empty1.operator->(), nullptr);
+    EXPECT_EQ(empty2.operator->(), nullptr);
+}
+
+
+TEST(MySmartPointerTest, AssignValueToDefaultConstructed) 
+{
+    MySmartPointer<DestructionTracker> ptr;
+
+    bool destroyed = false;
+    ptr = MySmartPointer<DestructionTracker>(new DestructionTracker(destroyed));
+
+    EXPECT_FALSE(destroyed);
+    EXPECT_EQ(ptr->getValue(), 42);
+}
+
+TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers) 
+{
+    MySmartPointer<int> p1;
+    MySmartPointer<int> p2;
+
+    p1 = p2;
+
+    EXPECT_EQ(p1.operator->(), nullptr);
+}
