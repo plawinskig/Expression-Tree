@@ -63,30 +63,31 @@ Tree &Tree::operator=(const Tree &other)
     return *this;
 }
 
-//Tree &Tree::operator=(Tree &&other) noexcept
-//{
-//    if (this == &other)
-//    {
-//        return *this;
-//    }
-//
-//    delete root_;
-//
-//    if (other.is_empty())
-//    {
-//        root_ = nullptr;
-//        clear_variables();
-//    }
-//    else
-//    {
-//        root_ = other.root_;
-//        other.root_ = nullptr;
-//
-//        root_->get_variables(variables_);
-//    }
-//
-//    return *this;
-//}
+Tree &Tree::operator=(Tree &&other) noexcept
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    delete root_;
+
+    if (other.is_empty())
+    {
+        root_ = nullptr;
+        clear_variables();
+    }
+    else
+    {
+        root_ = other.root_;
+        other.root_ = nullptr;
+
+        root_->get_variables(variables_);
+        other.variables_.clear();
+    }
+
+    return *this;
+}
 
 Tree::~Tree()
 {
