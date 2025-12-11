@@ -31,10 +31,7 @@ Tree::Tree(Tree &&other) noexcept
     : root_(nullptr),
     variables_(std::vector<Variable *>())
 {
-    if (!other.is_empty())
-    {
-        move_tree(std::move(other));
-    }
+    move_tree(std::move(other));
 }
 
 Tree &Tree::operator=(const Tree &other)
@@ -65,18 +62,8 @@ Tree &Tree::operator=(Tree &&other) noexcept
         return *this;
     }
 
-    delete root_;
-
-    if (other.is_empty())
-    {
-        root_ = nullptr;
-        clear_variables();
-    }
-    else
-    {
-        move_tree(std::move(other));
-    }
-
+    move_tree(std::move(other));
+   
     return *this;
 }
 
@@ -362,14 +349,17 @@ Error *Tree::set_variables(const std::vector<int> &variables)
 
 void Tree::move_tree(Tree &&other)
 {
+    delete root_;
     root_ = other.root_;
     other.root_ = nullptr;
 
+    clear_variables();
     variables_ = std::move(other.variables_);
 }
 
 void Tree::copy_tree(const Tree &other)
 {
+    delete root_;
     root_ = other.root_->clone();
     root_->get_variables(variables_);
 }

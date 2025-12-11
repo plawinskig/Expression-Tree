@@ -39,6 +39,8 @@ class Node
 public:
 	Node(int number_of_children = DEFAULT_NUM_OF_CHILDREN);
 
+	Node(const Node &) = delete;
+	Node &operator=(const Node &) = delete;
 	virtual ~Node();
 
 	virtual Node *clone() const = 0;
@@ -70,9 +72,6 @@ public:
 	static bool is_operation(std::string node_type);
 
 private:
-	Node(const Node &);
-	Node &operator=(const Node &);
-
 	Node *parent_;
 	std::vector<Node *> children_;
 };
