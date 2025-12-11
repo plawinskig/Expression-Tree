@@ -361,6 +361,8 @@ void Tree::copy_tree(const Tree &other)
 {
     delete root_;
     root_ = other.root_->clone();
+
+    clear_variables();
     root_->get_variables(variables_);
 }
 
