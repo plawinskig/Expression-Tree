@@ -715,6 +715,30 @@ TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly)
     EXPECT_TRUE(flag);
 }
 
+TEST(MySmartPointerTest, DefaultConstructorInitToNull) 
+{
+    MySmartPointer<int> ptr;
+
+    EXPECT_EQ(ptr.operator->(), nullptr);
+}
+
+TEST(MySmartPointerTest, DefaultConstructorDestructorSafe) 
+{
+    {
+        MySmartPointer<int> ptr;
+    } 
+}
+
+TEST(MySmartPointerTest, AssignToDefaultConstructed) 
+{
+    MySmartPointer<int> ptr;
+
+    ptr = MySmartPointer<int>(new int(10));
+
+    EXPECT_NE(ptr.operator->(), nullptr);
+    EXPECT_EQ(*ptr, 10);
+}
+
 TEST(MySmartPointerTest, ContainsStaticMemory)
 {
     //int val = 5;

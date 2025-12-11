@@ -6,17 +6,17 @@ RefCounter::RefCounter()
 {
 }
 
-int RefCounter::add()
+unsigned RefCounter::add()
 {
     return ++count_;
 }
 
-int RefCounter::dec()
+unsigned RefCounter::dec()
 {
     return --count_;
 }
 
-int RefCounter::get() const
+unsigned RefCounter::get() const
 {
     return count_;
 }

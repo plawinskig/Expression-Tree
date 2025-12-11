@@ -1,6 +1,6 @@
 #pragma once
 
-const int REF_COUNTER_DEFAULT_COUNT = 0;
+const unsigned REF_COUNTER_DEFAULT_COUNT = 0;
 
 class RefCounter
 {
@@ -10,10 +10,10 @@ public:
 	RefCounter(const RefCounter &) = delete;
 	RefCounter &operator=(const RefCounter &) = delete;
 
-	int add();
-	int dec();
-	int get() const;
+	unsigned add();
+	unsigned dec();
+	unsigned get() const;
 
 private:
-	int count_;
+	unsigned count_;
 };

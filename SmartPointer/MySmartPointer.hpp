@@ -6,7 +6,7 @@ template <typename T>
 class MySmartPointer
 {
 public:
-	MySmartPointer(T *pointer);
+	MySmartPointer(T *pointer = nullptr);
 
 	MySmartPointer(const MySmartPointer &other);
 	~MySmartPointer();
@@ -15,9 +15,9 @@ public:
 	T &operator*();
 	T *operator->();
 
+private:
 	void delete_if_unused();
 
-private:
 	RefCounter *counter_;
 	T *pointer_;
 };
@@ -53,10 +53,7 @@ inline MySmartPointer<T> &MySmartPointer<T>::operator=(const MySmartPointer &oth
 		return *this;
 	}
 
-	if (counter_)
-	{
-		delete_if_unused();
-	}
+	delete_if_unused();
 
 	pointer_ = other.pointer_;
 
