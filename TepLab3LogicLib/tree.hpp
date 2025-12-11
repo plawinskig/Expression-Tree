@@ -25,6 +25,7 @@ public:
 	Tree(Tree &&other) noexcept;
 	~Tree();
 	Tree &operator=(const Tree &other);
+	Tree &operator=(Tree &&other) noexcept;
 
 	Tree operator+(const Tree &other) const;
 
