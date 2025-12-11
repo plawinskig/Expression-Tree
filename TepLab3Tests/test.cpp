@@ -652,3 +652,62 @@ TEST(MySmartPointerTest, ArrayFlagsOfStack)
         EXPECT_TRUE(flags[i]) << "Flag at index " << i << " has not been set!";
     }
 }
+
+TEST(MySmartPointerTest, AssignmentOperatorOverwrites) {
+    bool flagA = false;
+    bool flagB = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(flagA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(flagB));
+
+        ptrA = ptrB;
+
+        EXPECT_TRUE(flagA);
+        EXPECT_FALSE(flagB);
+        EXPECT_EQ(&*ptrA, &*ptrB);
+    }
+
+    EXPECT_TRUE(flagB);
+}
+
+TEST(MySmartPointerTest, SelfAssignmentSafe) {
+    bool flag = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptr(new DestructionTracker(flag));
+
+        ptr = ptr;
+
+        EXPECT_FALSE(flag);
+        EXPECT_EQ(ptr->getValue(), 42);
+    }
+
+    EXPECT_TRUE(flag);
+}
+
+TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly) {
+    bool flag = false;
+
+    {
+        MySmartPointer<DestructionTracker> p1(new DestructionTracker(flag));
+        MySmartPointer<DestructionTracker> p2(p1);
+        MySmartPointer<DestructionTracker> p3(p1);
+
+        {
+            bool otherFlag = false;
+            MySmartPointer<DestructionTracker> p4(new DestructionTracker(otherFlag));
+
+            p4 = p1;
+
+            EXPECT_TRUE(otherFlag);
+            EXPECT_FALSE(flag); 
+
+            EXPECT_EQ(&*p4, &*p1);
+        } 
+
+        EXPECT_FALSE(flag);
+    }
+
+    EXPECT_TRUE(flag);
+}
