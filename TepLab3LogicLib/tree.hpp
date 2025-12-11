@@ -45,6 +45,9 @@ public:
 	Error *set_variables(const std::vector<int> &variables);
 
 private:
+	void move_tree(Tree &&other);
+	void copy_tree(const Tree &other);
+
 	void clear_variables();
 
 	void get_formula_to_string(Node *node, std::string &result) const;

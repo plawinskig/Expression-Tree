@@ -23,8 +23,7 @@ Tree::Tree(const Tree &other)
 {
     if (!other.is_empty())
     {
-        root_ = other.root_->clone();
-        root_->get_variables(variables_);
+        copy_tree(other);
     }
 }
 
@@ -34,11 +33,7 @@ Tree::Tree(Tree &&other) noexcept
 {
     if (!other.is_empty())
     {
-        root_ = other.root_;
-        other.root_ = nullptr;
-
-        root_->get_variables(variables_);
-        other.variables_.clear();
+        move_tree(std::move(other));
     }
 }
 
@@ -57,7 +52,7 @@ Tree &Tree::operator=(const Tree &other)
     }
     else
     {
-        load_new_formula(other.get_formula_to_string());
+        copy_tree(other);
     }
 
     return *this;
@@ -79,11 +74,7 @@ Tree &Tree::operator=(Tree &&other) noexcept
     }
     else
     {
-        root_ = other.root_;
-        other.root_ = nullptr;
-
-        root_->get_variables(variables_);
-        other.variables_.clear();
+        move_tree(std::move(other));
     }
 
     return *this;
@@ -367,6 +358,21 @@ Error *Tree::set_variables(const std::vector<int> &variables)
     }
 
     return nullptr;
+}
+
+void Tree::move_tree(Tree &&other)
+{
+    root_ = other.root_;
+    other.root_ = nullptr;
+
+    root_->get_variables(variables_);
+    other.variables_.clear();
+}
+
+void Tree::copy_tree(const Tree &other)
+{
+    root_ = other.root_->clone();
+    root_->get_variables(variables_);
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const
