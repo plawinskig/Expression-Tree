@@ -347,6 +347,21 @@ Error *Tree::set_variables(const std::vector<int> &variables)
     return nullptr;
 }
 
+Result<Tree *, Error> Tree::get_tree(const std::string &arg)
+{
+    Tree *tree = new Tree();
+    Error *err_load = tree->load_new_formula(arg);
+
+    if (!err_load->get_message().empty())
+    {
+        return err_load;
+    }
+
+    delete err_load;
+
+    return tree;
+}
+
 void Tree::move_tree(Tree &&other)
 {
     delete root_;

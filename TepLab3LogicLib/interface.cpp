@@ -80,7 +80,7 @@ void Interface::run()
 
 void Interface::handle_get(const std::string &arg)
 {
-    Result<Tree *, Error> result = get_tree(arg);
+    Result<Tree *, Error> result = Tree::get_tree(arg);
 
     if (result.is_success())
     {
@@ -99,21 +99,6 @@ void Interface::handle_get(const std::string &arg)
 
     ResultFileHandler<Tree *> handler;
     handler.write(result, TREE_SAVING_FILE_PATH);
-}
-
-Result<Tree *, Error> Interface::get_tree(const std::string &arg)
-{
-    Tree *tree = new Tree();
-    Error *err_load = tree->load_new_formula(arg);
-
-    if (!err_load->get_message().empty())
-    {
-        return err_load;
-    }
-
-    delete err_load;
-
-    return tree;
 }
 
 void Interface::handle_enter(const std::string &arg)

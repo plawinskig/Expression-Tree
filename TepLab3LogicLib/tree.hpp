@@ -7,6 +7,7 @@
 #include "error.hpp"
 #include "formula_elements.hpp"
 #include "string_helpers.hpp"
+#include "result.hpp"
 
 namespace
 {
@@ -43,6 +44,8 @@ public:
 	std::string get_variables_to_string() const;
 
 	Error *set_variables(const std::vector<int> &variables);
+
+	static Result<Tree *, Error> get_tree(const std::string &arg);
 
 private:
 	void move_tree(Tree &&other);

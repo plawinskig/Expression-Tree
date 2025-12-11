@@ -32,3 +32,55 @@ Incorrect number of arguments in '+'
 Required: 2
 Given: 1
 
+
+Tree 1)
+Empty input provided
+
+
+Tree 2)
++ a b
+
+Tree 3)
+Incorrect number of arguments in '+'
+Required: 2
+Given: 0
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+Incorrect number of arguments in '+'
+Required: 2
+Given: 1
+
+
+Tree 4)
+Character: '^' in 'A^' is not permitted - omitting
+
+
+Tree 5)
+Character: '+' in '++a' is not permitted - omitting
+Character: '+' in '+a' is not permitted - omitting
+
+
+Tree 6)
+Too many arguments in formula
+a ++ b
+  ^^^^
+
