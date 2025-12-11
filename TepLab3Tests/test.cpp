@@ -739,13 +739,6 @@ TEST(MySmartPointerTest, AssignToDefaultConstructed)
     EXPECT_EQ(*ptr, 10);
 }
 
-TEST(MySmartPointerTest, ContainsStaticMemory)
-{
-    //int val = 5;
-    //int *pointer = &val;
-    //MySmartPointer<int> smart_pointer(pointer);
-}
-
 TEST(MySmartPointerTest, DefaultConstructorIsCopyable) 
 {
     MySmartPointer<int> empty1;
@@ -776,3 +769,10 @@ TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers)
 
     EXPECT_EQ(p1.operator->(), nullptr);
 }
+
+//TEST(MySmartPointerTest, ContainsStaticMemory)
+//{
+//    int val = 5;
+//    int *pointer = &val;
+//    MySmartPointer<int> smart_pointer(pointer);
+//}

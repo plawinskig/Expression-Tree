@@ -28,6 +28,19 @@ Tree::Tree(const Tree &other)
     }
 }
 
+Tree::Tree(Tree &&other) noexcept
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
+{
+    if (!other.is_empty())
+    {
+        root_ = other.root_;
+        other.root_ = nullptr;
+
+        root_->get_variables(variables_);
+    }
+}
+
 Tree &Tree::operator=(const Tree &other)
 {
     if (this == &other)

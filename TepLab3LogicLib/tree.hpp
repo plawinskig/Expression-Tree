@@ -22,6 +22,7 @@ public:
 	Tree(std::string formula);
 
 	Tree(const Tree &other);
+	Tree(Tree &&other) noexcept;
 	~Tree();
 	Tree &operator=(const Tree &other);
 
