@@ -24,12 +24,15 @@
     <ClInclude Include="MySmartPointer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RefCounter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MySmartPointer.cpp">
+    <ClCompile Include="RefCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

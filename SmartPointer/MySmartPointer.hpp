@@ -1,17 +1,6 @@
 #pragma once
 
-class RefCounter
-{
-public:
-	RefCounter();
-
-	int add();
-	int dec();
-	int get();
-
-private:
-	int count_;
-};
+#include "RefCounter.hpp"
 
 template <typename T>
 class MySmartPointer
