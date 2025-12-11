@@ -10,9 +10,12 @@ public:
 
 	MySmartPointer(const MySmartPointer &other);
 	~MySmartPointer();
+	MySmartPointer<T> &operator=(const MySmartPointer &other);
 
 	T &operator*();
 	T *operator->();
+
+	void delete_if_unused();
 
 private:
 	RefCounter *counter_;
@@ -39,11 +42,24 @@ inline MySmartPointer<T>::MySmartPointer(const MySmartPointer &other)
 template<typename T>
 inline MySmartPointer<T>::~MySmartPointer()
 {
-	if (counter_->dec() == 0)
+	delete_if_unused();
+}
+
+template<typename T>
+inline MySmartPointer<T> &MySmartPointer<T>::operator=(const MySmartPointer &other)
+{
+	if (this == &other)
 	{
-		delete pointer_;
-		delete counter_;
+		return *this;
 	}
+
+	delete_if_unused();
+
+	pointer_ = other.pointer_;
+	counter_ = other.counter_;
+	counter_->add();
+
+	return *this;
 }
 
 template<typename T>
@@ -56,4 +72,14 @@ template<typename T>
 inline T *MySmartPointer<T>::operator->()
 {
 	return pointer_;
+}
+
+template<typename T>
+inline void MySmartPointer<T>::delete_if_unused()
+{
+	if (counter_->dec() == 0)
+	{
+		delete pointer_;
+		delete counter_;
+	}
 }
