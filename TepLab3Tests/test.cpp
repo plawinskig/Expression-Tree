@@ -857,7 +857,8 @@ TEST(MySmartPointerAssignmentTest, AssignmentOfSameResourceIsNoOp)
     EXPECT_EQ(ptr1.operator->(), ptr2.operator->());
 }
 
-TEST(MySmartPointerAssignmentTest, ChainedAssignment) {
+TEST(MySmartPointerAssignmentTest, ChainedAssignment) 
+{
     bool destA = false;
     bool destB = false;
     bool destC = false;
@@ -880,3 +881,20 @@ TEST(MySmartPointerAssignmentTest, ChainedAssignment) {
     EXPECT_TRUE(destC);
 }
 
+//TEST(MySmartPointerAssignmentTest, HybridPointers)
+//{
+//    bool dest = false;
+//
+//    DestructionTracker *ptr = new DestructionTracker(dest);
+//
+//    {
+//        MySmartPointer<DestructionTracker> p1(ptr);
+//
+//        {
+//            MySmartPointer<DestructionTracker> p2(ptr);
+//            p1 = p2;
+//        }
+//        
+//        p1.operator*();
+//    }
+//}
