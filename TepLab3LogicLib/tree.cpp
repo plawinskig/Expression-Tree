@@ -167,12 +167,11 @@ Tree Tree::join(const Tree &other) const
     {
         bool still_used = false;
 
-        for (std::vector<Variable *>::const_iterator it_variable = result.variables_.begin(); it_variable < result.variables_.end(); it_variable++)
+        for (std::vector<Variable *>::const_iterator it_variable = result.variables_.begin(); it_variable < result.variables_.end() && !still_used; it_variable++)
         {
             if (*it_variable == *it_candidate)
             {
                 still_used = true;
-                break;
             }
         }
 
