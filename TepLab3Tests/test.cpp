@@ -791,13 +791,6 @@ TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers)
     EXPECT_EQ(p1.operator->(), p2.operator->());
 }
 
-//TEST(MySmartPointerTest, ContainsStaticMemory)
-//{
-//    int val = 5;
-//    int *pointer = &val;
-//    MySmartPointer<int> smart_pointer(pointer);
-//}
-
 TEST(TreeTest, MoveTree)
 {
     Tree tree;
@@ -898,3 +891,10 @@ TEST(MySmartPointerAssignmentTest, ChainedAssignment)
 //        p1.operator*();
 //    }
 //}
+
+TEST(MySmartPointerTest, ContainsStaticMemory)
+{
+    int val = 5;
+    int *pointer = &val;
+    MySmartPointer<int> smart_pointer(pointer, true);
+}

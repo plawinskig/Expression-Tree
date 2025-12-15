@@ -6,7 +6,7 @@ template <typename T>
 class MySmartPointer
 {
 public:
-	MySmartPointer(T *pointer = nullptr);
+	MySmartPointer(T *pointer = nullptr, bool points_to_stack = false);
 
 	MySmartPointer(const MySmartPointer &other);
 	~MySmartPointer();
@@ -22,13 +22,15 @@ private:
 
 	RefCounter *counter_;
 	T *pointer_;
+	bool points_to_stack_;
 };
 
 
 template<typename T>
-inline MySmartPointer<T>::MySmartPointer(T *pointer)
+inline MySmartPointer<T>::MySmartPointer(T *pointer, bool points_to_stack)
 	: counter_(nullptr),
-	pointer_(pointer)
+	pointer_(pointer),
+	points_to_stack_(points_to_stack)
 {
 	if (pointer_)
 	{
@@ -40,7 +42,8 @@ inline MySmartPointer<T>::MySmartPointer(T *pointer)
 template<typename T>
 inline MySmartPointer<T>::MySmartPointer(const MySmartPointer &other)
 	: counter_(other.counter_),
-	pointer_(other.pointer_)
+	pointer_(other.pointer_),
+	points_to_stack_(other.points_to_stack_)
 {
 	if (counter_)
 	{
@@ -66,6 +69,7 @@ inline MySmartPointer<T> &MySmartPointer<T>::operator=(const MySmartPointer &oth
 
 	pointer_ = other.pointer_;
 	counter_ = other.counter_;
+	points_to_stack_ = other.points_to_stack_;
 
 	if (counter_)
 	{
@@ -98,7 +102,11 @@ inline void MySmartPointer<T>::delete_if_unused()
 {
 	if (counter_ && counter_->dec() == 0)
 	{
-		delete pointer_;
+		if (!points_to_stack_)
+		{
+			delete pointer_;
+		}
+		
 		delete counter_;
 	}
 }
