@@ -765,9 +765,30 @@ TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers)
     MySmartPointer<int> p1;
     MySmartPointer<int> p2;
 
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
     p1 = p2;
 
     EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
+    p2 = new int;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+
+    p2 = p1;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
+    p2 = new int;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+
+    p1 = p2;
+    EXPECT_NE(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+    EXPECT_EQ(p1.operator->(), p2.operator->());
 }
 
 //TEST(MySmartPointerTest, ContainsStaticMemory)
