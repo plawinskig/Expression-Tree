@@ -806,3 +806,77 @@ TEST(TreeTest, MoveTree)
     EXPECT_EQ("+ a b", tree.get_formula_to_string());
     EXPECT_EQ("[empty]", other.get_formula_to_string());
 }
+
+TEST(MySmartPointerAssignmentTest, StandardAssignmentSwapsOwnership) 
+{
+    bool destA = false;
+    bool destB = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(destA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(destB));
+
+        ptrA = ptrB;
+
+        EXPECT_TRUE(destA);
+
+        EXPECT_FALSE(destB);
+
+        EXPECT_EQ(ptrA.operator->(), ptrB.operator->());
+    }
+
+    EXPECT_TRUE(destB);
+}
+
+TEST(MySmartPointerAssignmentTest, SelfAssignmentProtection) 
+{
+    bool destroyed = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptr(new DestructionTracker(destroyed));
+
+        ptr = ptr;
+
+        EXPECT_FALSE(destroyed);
+        EXPECT_EQ(ptr->getValue(), 42);
+    }
+
+    EXPECT_TRUE(destroyed);
+}
+
+TEST(MySmartPointerAssignmentTest, AssignmentOfSameResourceIsNoOp) 
+{
+    bool destroyed = false;
+
+    MySmartPointer<DestructionTracker> ptr1(new DestructionTracker(destroyed));
+    MySmartPointer<DestructionTracker> ptr2(ptr1);
+
+    ptr1 = ptr2;
+
+    EXPECT_FALSE(destroyed);
+    EXPECT_EQ(ptr1.operator->(), ptr2.operator->());
+}
+
+TEST(MySmartPointerAssignmentTest, ChainedAssignment) {
+    bool destA = false;
+    bool destB = false;
+    bool destC = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(destA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(destB));
+        MySmartPointer<DestructionTracker> ptrC(new DestructionTracker(destC));
+
+        ptrA = ptrB = ptrC;
+
+        EXPECT_TRUE(destA);
+        EXPECT_TRUE(destB);
+        EXPECT_FALSE(destC);
+
+        EXPECT_EQ(ptrA.operator->(), ptrC.operator->());
+        EXPECT_EQ(ptrB.operator->(), ptrC.operator->());
+    }
+
+    EXPECT_TRUE(destC);
+}
+

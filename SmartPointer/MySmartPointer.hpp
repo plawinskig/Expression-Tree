@@ -56,12 +56,8 @@ inline MySmartPointer<T> &MySmartPointer<T>::operator=(const MySmartPointer &oth
 	delete_if_unused();
 
 	pointer_ = other.pointer_;
-
-	if (pointer_)
-	{
-		counter_ = other.counter_;
-		counter_->add();
-	}
+	counter_ = other.counter_;
+	counter_->add();
 
 	return *this;
 }
