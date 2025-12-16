@@ -7,6 +7,7 @@
 #include "error.hpp"
 #include "formula_elements.hpp"
 #include "string_helpers.hpp"
+#include "result.hpp"
 
 namespace
 {
@@ -22,8 +23,10 @@ public:
 	Tree(std::string formula);
 
 	Tree(const Tree &other);
+	Tree(Tree &&other) noexcept;
 	~Tree();
 	Tree &operator=(const Tree &other);
+	Tree &operator=(Tree &&other) noexcept;
 
 	Tree operator+(const Tree &other) const;
 
@@ -42,7 +45,12 @@ public:
 
 	Error *set_variables(const std::vector<int> &variables);
 
+	static Result<Tree *, Error> get_tree(const std::string &arg);
+
 private:
+	void move_tree(Tree &&other);
+	void copy_tree(const Tree &other);
+
 	void clear_variables();
 
 	void get_formula_to_string(Node *node, std::string &result) const;

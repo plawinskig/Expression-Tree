@@ -28,7 +28,6 @@ public:
 
 private:
     void handle_get(const std::string &arg);
-    Result<Tree *, Error> get_tree(const std::string &arg);
     void handle_enter(const std::string &arg);
     void handle_vars();
     void handle_print();

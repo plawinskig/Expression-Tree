@@ -3,6 +3,7 @@
 #include "string_helpers.hpp"
 #include "result.hpp"
 #include "result_tests.hpp"
+#include "MySmartPointer.hpp"
 #include <sstream>
 
 #define ABS_ERR 1e-3
@@ -513,4 +514,412 @@ TEST(ResultTest, InverseValueStaticFailure)
 
     ASSERT_FALSE(res.get_errors().empty());
     EXPECT_EQ(ErrorDivisionByZero().get_message(), res.get_errors()[0]->get_message());
+}
+
+class DestructionTracker 
+{
+public:
+    DestructionTracker(bool &flag) 
+        : destroyedFlag_(flag) 
+    {
+        destroyedFlag_ = false;
+    }
+
+    ~DestructionTracker() 
+    {
+        destroyedFlag_ = true;
+    }
+
+    int getValue() const 
+    { 
+        return 42; 
+    }
+
+private:
+    bool &destroyedFlag_;
+};
+
+TEST(RefCounterTest, InitialState) 
+{
+    RefCounter counter;
+    EXPECT_EQ(counter.get(), 0);
+}
+
+TEST(RefCounterTest, IncrementAndDecrement) 
+{
+    RefCounter counter;
+    counter.add();
+    EXPECT_EQ(counter.get(), 1);
+
+    counter.add();
+    EXPECT_EQ(counter.get(), 2);
+
+    counter.dec();
+    EXPECT_EQ(counter.get(), 1);
+}
+
+TEST(MySmartPointerTest, DereferenceOperator) 
+{
+    int *rawPtr = new int(100);
+    MySmartPointer<int> sp(rawPtr);
+
+    EXPECT_EQ(*sp, 100);
+
+    *sp = 200;
+    EXPECT_EQ(*sp, 200);
+}
+
+TEST(MySmartPointerTest, ArrowOperator) 
+{
+    bool isDestroyed = false;
+    MySmartPointer<DestructionTracker> sp(new DestructionTracker(isDestroyed));
+
+    EXPECT_EQ(sp->getValue(), 42);
+}
+
+TEST(MySmartPointerTest, DestructorDeletesObject) 
+{
+    bool isDestroyed = false;
+
+    {
+        MySmartPointer<DestructionTracker> sp(new DestructionTracker(isDestroyed));
+        EXPECT_FALSE(isDestroyed);
+    } 
+
+    EXPECT_TRUE(isDestroyed);
+}
+
+TEST(MySmartPointerTest, CopyConstructorSharesOwnership) 
+{
+    bool isDestroyed = false;
+
+    {
+        MySmartPointer<DestructionTracker> sp1(new DestructionTracker(isDestroyed));
+
+        {
+            MySmartPointer<DestructionTracker> sp2(sp1);
+
+            EXPECT_FALSE(isDestroyed);
+            EXPECT_EQ(&*sp1, &*sp2);
+        }
+
+        EXPECT_FALSE(isDestroyed);
+
+    } 
+
+    EXPECT_TRUE(isDestroyed);
+}
+
+TEST(MySmartPointerTest, IndependentPointers) 
+{
+    bool destroyed1 = false;
+    bool destroyed2 = false;
+
+    {
+        MySmartPointer<DestructionTracker> sp1(new DestructionTracker(destroyed1));
+        MySmartPointer<DestructionTracker> sp2(new DestructionTracker(destroyed2));
+    }
+
+    EXPECT_TRUE(destroyed1);
+    EXPECT_TRUE(destroyed2);
+}
+
+TEST(MySmartPointerTest, ArrayFlagsOfStack)
+{
+    const int size = 10;
+
+    bool flags[size] = { false };
+
+    {
+        std::vector<MySmartPointer<DestructionTracker>> pointers;
+        pointers.reserve(size);
+
+        for (int i = 0; i < size; i++)
+        {
+            pointers.push_back(MySmartPointer<DestructionTracker>(
+                new DestructionTracker(flags[i])
+            ));
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            EXPECT_FALSE(flags[i]);
+        }
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        EXPECT_TRUE(flags[i]) << "Flag at index " << i << " has not been set!";
+    }
+}
+
+TEST(MySmartPointerTest, AssignmentOperatorOverwrites) 
+{
+    bool flagA = false;
+    bool flagB = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(flagA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(flagB));
+
+        ptrA = ptrB;
+
+        EXPECT_TRUE(flagA);
+        EXPECT_FALSE(flagB);
+        EXPECT_EQ(&*ptrA, &*ptrB);
+    }
+
+    EXPECT_TRUE(flagB);
+}
+
+TEST(MySmartPointerTest, SelfAssignmentSafe) 
+{
+    bool flag = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptr(new DestructionTracker(flag));
+
+        ptr = ptr;
+
+        EXPECT_FALSE(flag);
+        EXPECT_EQ(ptr->getValue(), 42);
+    }
+
+    EXPECT_TRUE(flag);
+}
+
+TEST(MySmartPointerTest, AssignmentUpdatesRefCountsCorrectly) 
+{
+    bool flag = false;
+
+    {
+        MySmartPointer<DestructionTracker> p1(new DestructionTracker(flag));
+        MySmartPointer<DestructionTracker> p2(p1);
+        MySmartPointer<DestructionTracker> p3(p1);
+
+        {
+            bool otherFlag = false;
+            MySmartPointer<DestructionTracker> p4(new DestructionTracker(otherFlag));
+
+            p4 = p1;
+
+            EXPECT_TRUE(otherFlag);
+            EXPECT_FALSE(flag); 
+
+            EXPECT_EQ(&*p4, &*p1);
+        } 
+
+        EXPECT_FALSE(flag);
+    }
+
+    EXPECT_TRUE(flag);
+}
+
+TEST(MySmartPointerTest, DefaultConstructorInitToNull) 
+{
+    MySmartPointer<int> ptr;
+
+    EXPECT_EQ(ptr.operator->(), nullptr);
+}
+
+TEST(MySmartPointerTest, DefaultConstructorDestructorSafe) 
+{
+    {
+        MySmartPointer<int> ptr;
+    } 
+}
+
+TEST(MySmartPointerTest, AssignToDefaultConstructed) 
+{
+    MySmartPointer<int> ptr;
+
+    ptr = MySmartPointer<int>(new int(10));
+
+    EXPECT_NE(ptr.operator->(), nullptr);
+    EXPECT_EQ(*ptr, 10);
+}
+
+TEST(MySmartPointerTest, DefaultConstructorIsCopyable) 
+{
+    MySmartPointer<int> empty1;
+    MySmartPointer<int> empty2(empty1);
+
+    EXPECT_EQ(empty1.operator->(), nullptr);
+    EXPECT_EQ(empty2.operator->(), nullptr);
+}
+
+
+TEST(MySmartPointerTest, AssignValueToDefaultConstructed) 
+{
+    MySmartPointer<DestructionTracker> ptr;
+
+    bool destroyed = false;
+    ptr = MySmartPointer<DestructionTracker>(new DestructionTracker(destroyed));
+
+    EXPECT_FALSE(destroyed);
+    EXPECT_EQ(ptr->getValue(), 42);
+}
+
+TEST(MySmartPointerTest, AssignmentBetweenEmptyPointers) 
+{
+    MySmartPointer<int> p1;
+    MySmartPointer<int> p2;
+
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
+    p1 = p2;
+
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
+    p2 = new int;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+
+    p2 = p1;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_EQ(p2.operator->(), nullptr);
+
+    p2 = new int;
+    EXPECT_EQ(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+
+    p1 = p2;
+    EXPECT_NE(p1.operator->(), nullptr);
+    EXPECT_NE(p2.operator->(), nullptr);
+    EXPECT_EQ(p1.operator->(), p2.operator->());
+}
+
+//TEST(MySmartPointerTest, ContainsStaticMemory)
+//{
+//    int val = 5;
+//    int *pointer = &val;
+//    MySmartPointer<int> smart_pointer(pointer);
+//}
+
+TEST(TreeTest, MoveTree)
+{
+    Tree tree;
+    Tree other("+ a b");
+    tree = std::move(other);
+    EXPECT_EQ("+ a b", tree.get_formula_to_string());
+    EXPECT_EQ("[empty]", other.get_formula_to_string());
+}
+
+TEST(MySmartPointerAssignmentTest, StandardAssignmentSwapsOwnership) 
+{
+    bool destA = false;
+    bool destB = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(destA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(destB));
+
+        ptrA = ptrB;
+
+        EXPECT_TRUE(destA);
+
+        EXPECT_FALSE(destB);
+
+        EXPECT_EQ(ptrA.operator->(), ptrB.operator->());
+    }
+
+    EXPECT_TRUE(destB);
+}
+
+TEST(MySmartPointerAssignmentTest, SelfAssignmentProtection) 
+{
+    bool destroyed = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptr(new DestructionTracker(destroyed));
+
+        ptr = ptr;
+
+        EXPECT_FALSE(destroyed);
+        EXPECT_EQ(ptr->getValue(), 42);
+    }
+
+    EXPECT_TRUE(destroyed);
+}
+
+TEST(MySmartPointerAssignmentTest, AssignmentOfSameResourceIsNoOp) 
+{
+    bool destroyed = false;
+
+    MySmartPointer<DestructionTracker> ptr1(new DestructionTracker(destroyed));
+    MySmartPointer<DestructionTracker> ptr2(ptr1);
+
+    ptr1 = ptr2;
+
+    EXPECT_FALSE(destroyed);
+    EXPECT_EQ(ptr1.operator->(), ptr2.operator->());
+}
+
+TEST(MySmartPointerAssignmentTest, ChainedAssignment) 
+{
+    bool destA = false;
+    bool destB = false;
+    bool destC = false;
+
+    {
+        MySmartPointer<DestructionTracker> ptrA(new DestructionTracker(destA));
+        MySmartPointer<DestructionTracker> ptrB(new DestructionTracker(destB));
+        MySmartPointer<DestructionTracker> ptrC(new DestructionTracker(destC));
+
+        ptrA = ptrB = ptrC;
+
+        EXPECT_TRUE(destA);
+        EXPECT_TRUE(destB);
+        EXPECT_FALSE(destC);
+
+        EXPECT_EQ(ptrA.operator->(), ptrC.operator->());
+        EXPECT_EQ(ptrB.operator->(), ptrC.operator->());
+    }
+
+    EXPECT_TRUE(destC);
+}
+
+//TEST(MySmartPointerAssignmentTest, HybridPointers)
+//{
+//    bool dest = false;
+//
+//    DestructionTracker *ptr = new DestructionTracker(dest);
+//
+//    {
+//        MySmartPointer<DestructionTracker> p1(ptr);
+//
+//        {
+//            MySmartPointer<DestructionTracker> p2(ptr);
+//            p1 = p2;
+//        }
+//        
+//        p1.operator*();
+//    }
+//}
+
+void print_vec(std::vector<MySmartPointer<int> *> vec)
+{
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        std::cout << vec.at(i)<< " ";
+    }
+    std::cout << "\n";
+}
+
+TEST(MySmartPointerTest, Mod)
+{
+    MySmartPointer<int> *dyn;
+
+    {
+        MySmartPointer<int> orig(new int(42));
+        MySmartPointer<int> copy(orig);
+        dyn = new MySmartPointer<int>(copy);
+        print_vec(copy.get_all_this_sp());
+    }
+
+    print_vec(dyn->get_all_this_sp());
+    delete dyn;
+
 }

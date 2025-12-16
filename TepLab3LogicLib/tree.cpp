@@ -23,9 +23,15 @@ Tree::Tree(const Tree &other)
 {
     if (!other.is_empty())
     {
-        root_ = other.root_->clone();
-        root_->get_variables(variables_);
+        copy_tree(other);
     }
+}
+
+Tree::Tree(Tree &&other) noexcept
+    : root_(nullptr),
+    variables_(std::vector<Variable *>())
+{
+    move_tree(std::move(other));
 }
 
 Tree &Tree::operator=(const Tree &other)
@@ -43,9 +49,21 @@ Tree &Tree::operator=(const Tree &other)
     }
     else
     {
-        load_new_formula(other.get_formula_to_string());
+        copy_tree(other);
     }
 
+    return *this;
+}
+
+Tree &Tree::operator=(Tree &&other) noexcept
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    move_tree(std::move(other));
+   
     return *this;
 }
 
@@ -149,12 +167,11 @@ Tree Tree::join(const Tree &other) const
     {
         bool still_used = false;
 
-        for (std::vector<Variable *>::const_iterator it_variable = result.variables_.begin(); it_variable < result.variables_.end(); it_variable++)
+        for (std::vector<Variable *>::const_iterator it_variable = result.variables_.begin(); it_variable < result.variables_.end() && !still_used; it_variable++)
         {
             if (*it_variable == *it_candidate)
             {
                 still_used = true;
-                break;
             }
         }
 
@@ -327,6 +344,40 @@ Error *Tree::set_variables(const std::vector<int> &variables)
     }
 
     return nullptr;
+}
+
+Result<Tree *, Error> Tree::get_tree(const std::string &arg)
+{
+    Tree *tree = new Tree();
+    Error *err_load = tree->load_new_formula(arg);
+
+    if (!err_load->get_message().empty())
+    {
+        return err_load;
+    }
+
+    delete err_load;
+
+    return tree;
+}
+
+void Tree::move_tree(Tree &&other)
+{
+    delete root_;
+    root_ = other.root_;
+    other.root_ = nullptr;
+
+    clear_variables();
+    variables_ = std::move(other.variables_);
+}
+
+void Tree::copy_tree(const Tree &other)
+{
+    delete root_;
+    root_ = other.root_->clone();
+
+    clear_variables();
+    root_->get_variables(variables_);
 }
 
 void Tree::get_level_to_string(Node *node, std::string &result, int level) const
