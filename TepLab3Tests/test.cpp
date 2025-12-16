@@ -898,3 +898,28 @@ TEST(MySmartPointerAssignmentTest, ChainedAssignment)
 //        p1.operator*();
 //    }
 //}
+
+void print_vec(std::vector<MySmartPointer<int> *> vec)
+{
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        std::cout << vec.at(i)<< " ";
+    }
+    std::cout << "\n";
+}
+
+TEST(MySmartPointerTest, Mod)
+{
+    MySmartPointer<int> *dyn;
+
+    {
+        MySmartPointer<int> orig(new int(42));
+        MySmartPointer<int> copy(orig);
+        dyn = new MySmartPointer<int>(copy);
+        print_vec(copy.get_all_this_sp());
+    }
+
+    print_vec(dyn->get_all_this_sp());
+    delete dyn;
+
+}
