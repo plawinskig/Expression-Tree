@@ -5,6 +5,7 @@
 #include "result_tests.hpp"
 #include "MySmartPointer.hpp"
 #include <sstream>
+#include <cmath>
 
 #define ABS_ERR 1e-3
 

@@ -19,7 +19,7 @@ namespace
 	const std::string DEFAULT_VALUE_STRING = "1";
 	const int VALUE_BASE = 10;
 
-	const enum
+	enum
 	{
 		OP_ADDITION_INDEX,
 		OP_SUBTRACTION_INDEX,
